@@ -5,7 +5,6 @@
 // Updated: April 4, 2017
 // Archaic blocks denoted by wide commenting
 
-
 #include "TFile.h"
 #include "TDirectory.h"
 #include "TList.h"
@@ -28,35 +27,40 @@ using namespace std;
 #include "settings.h"
 
 // A list of pt dependent stuff (affects how we process)
-vector<string> hptlike = {"hpt",
-                          "hpt_evt",
-                          "hpt_jet",
-                          "hpt_pre",
-                          "hpt0",
-                          "hpt1",
-                          "hpt2",
-                          "hpt3",
-                          "hpt_jk1",
-                          "hpt_jk2",
-                          "hpt_jk3",
-                          "hpt_jk4",
-                          "hpt_jk5",
-                          "hpt_jk6",
-                          "hpt_jk7",
-                          "hpt_jk8",
-                          "hpt_jk9",
-                          "hpt_jk10",
-                          "hpt_noid",
-                          "hpt_noevtid",
-                          "hpt_nojetid",
-                          "hselpt",
-                          "hpt_r",
-                          "hpt_g",
-                          "hpt_gg",
-                          "hpt_g0",
-                          "hpt_g0tw",
-                          "hdjmass",
-                          "hdjmass0"};
+vector<string> hptlike = {
+    // "hpt",
+    // "hpt_evt",
+    // "hpt_jet",
+    // "hpt_pre",
+    // "hpt0",
+    // "hpt1",
+    // "hpt2",
+    // "hpt3",
+    // "hpt_jk1",
+    // "hpt_jk2",
+    // "hpt_jk3",
+    // "hpt_jk4",
+    // "hpt_jk5",
+    // "hpt_jk6",
+    // "hpt_jk7",
+    // "hpt_jk8",
+    // "hpt_jk9",
+    // "hpt_jk10",
+    // "hpt_noid",
+    // "hpt_noevtid",
+    // "hpt_nojetid",
+    // "hselpt",
+    // "hpt_r",
+    // "hpt_g",
+    // "hpt_gg",
+    // "hpt_g0",
+    // "hpt_g0tw",
+    "hdjmass",
+    "hdjmassUp",
+    "hdjmassDown",
+    "hdjmass0",
+    "hdjpt_leading",
+    "hdjpt_subleading"};
 
 void recurseFile(TDirectory *indir, TDirectory *outdir,
                  double etawid = 1., double etamid = 0., int lvl = 0);
@@ -66,38 +70,46 @@ std::map<std::string, double> triglumi;
 
 void HistosNormalize()
 {
-  TFile *fin = new TFile(Form("output-%s-1.root",jp::type),"READ");
+  TFile *fin = new TFile(Form("output-%s-1.root", jp::type), "READ");
   assert(fin && !fin->IsZombie());
 
-  TFile *fout = new TFile(Form("output-%s-2a.root",jp::type),"RECREATE");
+  TFile *fout = new TFile(Form("output-%s-2a.root", jp::type), "RECREATE");
   assert(fout and !fout->IsZombie());
 
-  if (jp::isdt and jp::usetriglumi) { // Setting up lumis
+  if (jp::isdt and jp::usetriglumi)
+  { // Setting up lumis
     cout << "Reading trigger luminosity from settings.h" << endl;
     int eraIdx = -1;
-    if (jp::usetriglumiera) {
+    if (jp::usetriglumiera)
+    {
       int eraNo = 0;
-      for (auto &eraMatch : jp::eras) {
-        if (std::regex_search(jp::run,eraMatch)) {
+      for (auto &eraMatch : jp::eras)
+      {
+        if (std::regex_search(jp::run, eraMatch))
+        {
           eraIdx = eraNo;
           break;
         }
         ++eraNo;
       }
-      if (eraIdx!=-1) cout << "Using weights according to the run era!" << endl;
-      else cout << "Could not locate the given era! :(" << endl;
+      if (eraIdx != -1)
+        cout << "Using weights according to the run era!" << endl;
+      else
+        cout << "Could not locate the given era! :(" << endl;
     }
-    for (unsigned int i = 0; i < jp::notrigs; ++i) {
-      double lumi = (jp::usetriglumiera ? jp::triglumiera[eraIdx][i]/1e6 : jp::triglumi[i]/1e6); // /ub to /pb
-      cout << Form(" *%s: %1.3f /pb", jp::triggers[i],lumi) << endl;
+    for (unsigned int i = 0; i < jp::notrigs; ++i)
+    {
+      double lumi = (jp::usetriglumiera ? jp::triglumiera[eraIdx][i] / 1e6 : jp::triglumi[i] / 1e6); // /ub to /pb
+      cout << Form(" *%s: %1.3f /pb", jp::triggers[i], lumi) << endl;
       triglumi[jp::triggers[i]] = lumi;
     }
   }
 
-  cout << "Calling HistosNormalize("<<jp::type<<");" << endl;
+  cout << "Calling HistosNormalize(" << jp::type << ");" << endl;
   cout << "Input file " << fin->GetName() << endl;
   cout << "Output file " << fout->GetName() << endl;
-  cout << "Starting recursive loop. This may take a minute" << endl << flush;
+  cout << "Starting recursive loop. This may take a minute" << endl
+       << flush;
 
   // Loop over all the directories recursively
   recurseFile(fin, fout);
@@ -108,14 +120,15 @@ void HistosNormalize()
   fout->Close();
   cout << "Output file closed" << endl;
   fout->Delete();
-  cout << "Output file pointer deleted" << endl << flush;
+  cout << "Output file pointer deleted" << endl
+       << flush;
 
   fin->Close();
   fin->Delete();
 } // HistosNormalize
 
-
-void recurseFile(TDirectory *indir, TDirectory *outdir, double etawid, double etamid, int lvl) {
+void recurseFile(TDirectory *indir, TDirectory *outdir, double etawid, double etamid, int lvl)
+{
   TDirectory *curdir = gDirectory;
 
   // Automatically go through the list of keys (directories)
@@ -124,17 +137,23 @@ void recurseFile(TDirectory *indir, TDirectory *outdir, double etawid, double et
   TObject *obj;
   TKey *key;
 
-  while ( (key = dynamic_cast<TKey*>(itkey.Next())) ) {
-    if (jp::debug) cout << key->GetName() << endl << flush;
-    obj = key->ReadObj(); assert(obj);
+  while ((key = dynamic_cast<TKey *>(itkey.Next())))
+  {
+    if (jp::debug)
+      cout << key->GetName() << endl
+           << flush;
+    obj = key->ReadObj();
+    assert(obj);
 
     // Found a subdirectory: copy it to output and go deeper
-    if (obj->InheritsFrom("TDirectory")) {
+    if (obj->InheritsFrom("TDirectory"))
+    {
       int loclvl = lvl;
       outdir->mkdir(obj->GetName());
       bool enteroutdir = outdir->cd(obj->GetName());
       assert(enteroutdir);
-      TDirectory *outdir2 = outdir->GetDirectory(obj->GetName()); assert(outdir2);
+      TDirectory *outdir2 = outdir->GetDirectory(obj->GetName());
+      assert(outdir2);
       outdir2->cd();
 
       bool enterindir = indir->cd(obj->GetName());
@@ -144,21 +163,31 @@ void recurseFile(TDirectory *indir, TDirectory *outdir, double etawid, double et
 
       // Check if directory name contains information on eta bin width
       float etamin, etamax;
-      if ( (sscanf(indir2->GetName(),"Eta_%f-%f",&etamin,&etamax)==2) and (etamax>etamin) ) {
-        etawid = 2.*(etamax-etamin);
-        etamid = 0.5*(etamax+etamin);
+      if ((sscanf(indir2->GetName(), "Eta_%f-%f", &etamin, &etamax) == 2) and (etamax > etamin))
+      {
+        etawid = 2. * (etamax - etamin);
+        etamid = 0.5 * (etamax + etamin);
         loclvl++;
-      } else if (TString(indir2->GetName()).Contains("FullEta")) {
-        loclvl++;
-      } else if (loclvl>0) {
-        loclvl++;
-        cout << endl << " trg: " << indir2->GetName();
       }
-      if (loclvl==1) cout << endl << "Entering: " << indir2->GetName();
+      else if (TString(indir2->GetName()).Contains("FullEta"))
+      {
+        loclvl++;
+      }
+      else if (loclvl > 0)
+      {
+        loclvl++;
+        cout << endl
+             << " trg: " << indir2->GetName();
+      }
+      if (loclvl == 1)
+        cout << endl
+             << "Entering: " << indir2->GetName();
 
       recurseFile(indir2, outdir2, etawid, etamid, loclvl);
       // inherits from TDirectory
-    } else if (obj->InheritsFrom("TH1")) { // Normalize (or just pass on) histogrammish objects
+    }
+    else if (obj->InheritsFrom("TH1"))
+    { // Normalize (or just pass on) histogrammish objects
       outdir->cd();
       string name = obj->GetName();
       string trgname = indir->GetName();
@@ -168,33 +197,44 @@ void recurseFile(TDirectory *indir, TDirectory *outdir, double etawid, double et
       double lumi = 1;
       double lumiref = 1;
 
-      if (jp::isdt) {
-        if (jp::usetriglumi) { // Use lumi info from settings.h
-          if (name=="hlumi") {
+      if (jp::isdt)
+      {
+        if (jp::usetriglumi)
+        { // Use lumi info from settings.h
+          if (name == "hlumi")
+          {
             // Overwrite hlumi
-            TH1D *hlumi = dynamic_cast<TH1D*>(indir->Get("hlumi")); assert(hlumi);
-            TH1D *hlumi0 = dynamic_cast<TH1D*>(indir->Get(Form("../%s/hlumi",jp::reftrig))); assert(hlumi0);
+            TH1D *hlumi = dynamic_cast<TH1D *>(indir->Get("hlumi"));
+            assert(hlumi);
+            TH1D *hlumi0 = dynamic_cast<TH1D *>(indir->Get(Form("../%s/hlumi", jp::reftrig)));
+            assert(hlumi0);
 
-            TH1D *hlumi_orig = dynamic_cast<TH1D*>(outdir->FindObject("hlumi_orig"));
-            if (!hlumi_orig) hlumi_orig = dynamic_cast<TH1D*>(hlumi->Clone("hlumi_orig"));
+            TH1D *hlumi_orig = dynamic_cast<TH1D *>(outdir->FindObject("hlumi_orig"));
+            if (!hlumi_orig)
+              hlumi_orig = dynamic_cast<TH1D *>(hlumi->Clone("hlumi_orig"));
 
-            TH1D *hlumi_new = dynamic_cast<TH1D*>(outdir->FindObject("hlumi"));
-            if (hlumi_new) hlumi = hlumi_new;
+            TH1D *hlumi_new = dynamic_cast<TH1D *>(outdir->FindObject("hlumi"));
+            if (hlumi_new)
+              hlumi = hlumi_new;
 
             double lumi = triglumi[trgname];
-            for (int i = 1; i != hlumi->GetNbinsX()+1; ++i) hlumi->SetBinContent(i, lumi);
+            for (int i = 1; i != hlumi->GetNbinsX() + 1; ++i)
+              hlumi->SetBinContent(i, lumi);
 
             double lumi0 = triglumi[jp::reftrig];
-            for (int i = 1; i != hlumi0->GetNbinsX()+1; ++i) hlumi0->SetBinContent(i, lumi0);
+            for (int i = 1; i != hlumi0->GetNbinsX() + 1; ++i)
+              hlumi0->SetBinContent(i, lumi0);
             continue;
           } // hlumi
 
           // Set lumi weights
           lumi = triglumi[trgname];
           lumiref = triglumi[jp::reftrig];
-        } else { // Use lumi info from hlumi
-          TH1D* lumihisto = dynamic_cast<TH1D*>(indir->Get("hlumi"));
-          TH1D* lumihistoref = dynamic_cast<TH1D*>(indir->Get(Form("../%s/hlumi",jp::reftrig)));
+        }
+        else
+        { // Use lumi info from hlumi
+          TH1D *lumihisto = dynamic_cast<TH1D *>(indir->Get("hlumi"));
+          TH1D *lumihistoref = dynamic_cast<TH1D *>(indir->Get(Form("../%s/hlumi", jp::reftrig)));
           assert(lumihisto);
           assert(lumihistoref);
 
@@ -204,8 +244,9 @@ void recurseFile(TDirectory *indir, TDirectory *outdir, double etawid, double et
         }
       }
 
-      if (std::find(hptlike.begin(), hptlike.end(), name) != hptlike.end()) { // A block for hpt objects
-        TH1D *hpt = dynamic_cast<TH1D*>(obj2);
+      if (std::find(hptlike.begin(), hptlike.end(), name) != hptlike.end())
+      { // A block for hpt objects
+        TH1D *hpt = dynamic_cast<TH1D *>(obj2);
         double norm0 = etawid;
 
         // Let's divide by a magical number. This is totally OK (disabled).
@@ -217,255 +258,308 @@ void recurseFile(TDirectory *indir, TDirectory *outdir, double etawid, double et
                       TString(obj2->GetName()).Contains("hpt0"));
         bool isjk = (TString(obj2->GetName()).Contains("hpt_jk"));
         bool isjet = (TString(obj2->GetName()).Contains("hpt_jet"));
-        bool hptstuff = (string(obj2->GetName())=="hpt") or isjk or isjet;
+        bool hptstuff = (string(obj2->GetName()) == "hpt") or isjk or isjet;
 
         // Normalization for luminosity
-        if (jp::isdt and lumiref>0) {
+        if (jp::isdt and lumiref > 0)
+        {
           bool ispre = (TString(obj2->GetName()).Contains("_pre"));
           if (ispre)
             norm0 *= lumiref;
-          else if (lumi>0)
-            norm0 *= lumi/lumiref;
+          else if (lumi > 0)
+            norm0 *= lumi / lumiref;
         }
 
         // Scale normalization for jackknife (but why?)
-        if (isjk) norm0 *= 0.9;
+        if (isjk)
+          norm0 *= 0.9;
 
         TProfile *peff;
-        if (jp::dotrigeffsimple) {
-          peff = dynamic_cast<TProfile*>(indir->Get("peff"));
+        if (jp::dotrigeffsimple)
+        {
+          peff = dynamic_cast<TProfile *>(indir->Get("peff"));
           assert(peff);
         }
 
         //// Test MC-based normalization for trigger efficiency
-        TH1D *htrigeff = dynamic_cast<TH1D*>(outdir->FindObject("htrigeff"));
+        TH1D *htrigeff = dynamic_cast<TH1D *>(outdir->FindObject("htrigeff"));
         TH1D *hpt_notrigeff = 0;
-        if (jp::dotrigeff) { // Requires output-MC-1.root, seldom in use
-          if (hptstuff) {
-            if (!htrigeff) { // This is done only once
-            TH1D *htrigeffmc = dynamic_cast<TH1D*>(outdir->FindObject("htrigeffmc"));
-            TH1D *htrigeffsf = dynamic_cast<TH1D*>(outdir->FindObject("htrigeffsf"));
-            TFile *fmc = new TFile("output-MC-1.root","READ");
-            assert(fmc and !fmc->IsZombie());
-            assert(fmc->cd("Standard"));
-            fmc->cd("Standard");
-            TDirectory *dmc0 = fmc->GetDirectory("Standard");
-            TDirectory *dmc = dmc0->GetDirectory(Form("Eta_%1.1f-%1.1f", etamid-0.25*etawid,etamid+0.25*etawid));
-            assert(dmc);
-            dmc->cd();
+        if (jp::dotrigeff)
+        { // Requires output-MC-1.root, seldom in use
+          if (hptstuff)
+          {
+            if (!htrigeff)
+            { // This is done only once
+              TH1D *htrigeffmc = dynamic_cast<TH1D *>(outdir->FindObject("htrigeffmc"));
+              TH1D *htrigeffsf = dynamic_cast<TH1D *>(outdir->FindObject("htrigeffsf"));
+              TFile *fmc = new TFile("output-MC-1.root", "READ");
+              assert(fmc and !fmc->IsZombie());
+              assert(fmc->cd("Standard"));
+              fmc->cd("Standard");
+              TDirectory *dmc0 = fmc->GetDirectory("Standard");
+              TDirectory *dmc = dmc0->GetDirectory(Form("Eta_%1.1f-%1.1f", etamid - 0.25 * etawid, etamid + 0.25 * etawid));
+              assert(dmc);
+              dmc->cd();
 
-            // Add MC truth based trigger efficiency
-            if (!htrigeffmc and dmc->cd(indir->GetName())) {
-              TDirectory *dir1 = dmc->GetDirectory(indir->GetName()); // Use the given trigger
-              assert(dir1);
-              TH1D *hpty = dynamic_cast<TH1D*>(dir1->Get("hpt")); assert(hpty);
+              // Add MC truth based trigger efficiency
+              if (!htrigeffmc and dmc->cd(indir->GetName()))
+              {
+                TDirectory *dir1 = dmc->GetDirectory(indir->GetName()); // Use the given trigger
+                assert(dir1);
+                TH1D *hpty = dynamic_cast<TH1D *>(dir1->Get("hpt"));
+                assert(hpty);
 
-              bool entermcdir = dmc->cd("mc"); // Use the 'mc' trigger
-              assert(entermcdir);
-              TDirectory *dir2 = dmc->GetDirectory("mc");
-              assert(dir2);
-              TH1D *hptx = dynamic_cast<TH1D*>(dir2->Get(Form("hpt_%s",indir->GetName())));
+                bool entermcdir = dmc->cd("mc"); // Use the 'mc' trigger
+                assert(entermcdir);
+                TDirectory *dir2 = dmc->GetDirectory("mc");
+                assert(dir2);
+                TH1D *hptx = dynamic_cast<TH1D *>(dir2->Get(Form("hpt_%s", indir->GetName())));
 
-              outdir->cd();
-              if (hpty and hptx) {
-                htrigeffmc = dynamic_cast<TH1D*>(hpty->Clone("htrigeffmc"));
-                htrigeffmc->Divide(hpty,hptx,1,1,"B");
+                outdir->cd();
+                if (hpty and hptx)
+                {
+                  htrigeffmc = dynamic_cast<TH1D *>(hpty->Clone("htrigeffmc"));
+                  htrigeffmc->Divide(hpty, hptx, 1, 1, "B");
+                }
               }
-            }
 
-            // Add data/MC scale factor for trigger efficiency
-            if (jp::isdt and !htrigeffsf) {
-              bool enterdir = dmc->cd(indir->GetName());
-              assert(enterdir);
-              TDirectory *dirmc = dmc->GetDirectory(indir->GetName());
-              assert(dirmc);
-              TProfile *pm = dynamic_cast<TProfile*>(dirmc->Get("ptrigefftp"));
-              TProfile *pd = dynamic_cast<TProfile*>(indir->Get("ptrigefftp"));
+              // Add data/MC scale factor for trigger efficiency
+              if (jp::isdt and !htrigeffsf)
+              {
+                bool enterdir = dmc->cd(indir->GetName());
+                assert(enterdir);
+                TDirectory *dirmc = dmc->GetDirectory(indir->GetName());
+                assert(dirmc);
+                TProfile *pm = dynamic_cast<TProfile *>(dirmc->Get("ptrigefftp"));
+                TProfile *pd = dynamic_cast<TProfile *>(indir->Get("ptrigefftp"));
 
-              outdir->cd();
-              if (pm and pd) {
-                htrigeffsf = pm->ProjectionX("htrigeffsf");
-                htrigeffsf->Divide(pd,pm,1);
+                outdir->cd();
+                if (pm and pd)
+                {
+                  htrigeffsf = pm->ProjectionX("htrigeffsf");
+                  htrigeffsf->Divide(pd, pm, 1);
+                }
               }
-            }
 
-            // Combine MC trigger efficiency and scalefactor
-            if (htrigeffmc) { // not available for 'mc' directory
-              outdir->cd();
-              htrigeff = dynamic_cast<TH1D*>(htrigeffmc->Clone("htrigeff"));
-              assert(jp::ismc || htrigeffsf);
-              if (jp::isdt) htrigeff->Multiply(htrigeffsf);
+              // Combine MC trigger efficiency and scalefactor
+              if (htrigeffmc)
+              { // not available for 'mc' directory
+                outdir->cd();
+                htrigeff = dynamic_cast<TH1D *>(htrigeffmc->Clone("htrigeff"));
+                assert(jp::ismc || htrigeffsf);
+                if (jp::isdt)
+                  htrigeff->Multiply(htrigeffsf);
 
-              TH1D *h = dynamic_cast<TH1D*>(indir->Get("hpt"));
-              assert(outdir->FindObject("hpt_notrigeff")==0);
-              outdir->cd();
-              hpt_notrigeff = dynamic_cast<TH1D*>(h->Clone("hpt_notrigeff"));
-            }
+                TH1D *h = dynamic_cast<TH1D *>(indir->Get("hpt"));
+                assert(outdir->FindObject("hpt_notrigeff") == 0);
+                outdir->cd();
+                hpt_notrigeff = dynamic_cast<TH1D *>(h->Clone("hpt_notrigeff"));
+              }
 
-            fmc->Close();
+              fmc->Close();
             } // set trigeff (once)
-          } // trigeff only for some histos
-        } // jp::dotrigeff
+          }   // trigeff only for some histos
+        }     // jp::dotrigeff
 
         //// Scale data to account for time dependence
-        TH1D *htimedep = dynamic_cast<TH1D*>(outdir->FindObject("htimedep"));
+        TH1D *htimedep = dynamic_cast<TH1D *>(outdir->FindObject("htimedep"));
         TH1D *hpt_notimedep = 0, *hpt_withtimedep = 0;
         double ktime = 0.0;
-        if (jp::dotimedep) { // Seldom used
-          if (hptstuff) {
-            if (!htimedep) { // This is done only once
-              TH1D *htimefit = dynamic_cast<TH1D*>(outdir->FindObject("htimefit"));
+        if (jp::dotimedep)
+        { // Seldom used
+          if (hptstuff)
+          {
+            if (!htimedep)
+            { // This is done only once
+              TH1D *htimefit = dynamic_cast<TH1D *>(outdir->FindObject("htimefit"));
 
-              TH1D *h = dynamic_cast<TH1D*>(indir->Get("hpt"));
-              TH1D *hsel = dynamic_cast<TH1D*>(indir->Get("hselpt"));
-              TH1D *hpre = dynamic_cast<TH1D*>(indir->Get("hpt_pre"));
+              TH1D *h = dynamic_cast<TH1D *>(indir->Get("hpt"));
+              TH1D *hsel = dynamic_cast<TH1D *>(indir->Get("hselpt"));
+              TH1D *hpre = dynamic_cast<TH1D *>(indir->Get("hpt_pre"));
 
               outdir->cd();
-              if (h) hpt_notimedep = dynamic_cast<TH1D*>(h->Clone("hpt_notimedep"));
-              if (hpre and h) htimedep = dynamic_cast<TH1D*>(hpre->Clone("htimedep"));
-              if (hpre and h) htimedep->Divide(hpre,h);//,1,1,"B");
+              if (h)
+                hpt_notimedep = dynamic_cast<TH1D *>(h->Clone("hpt_notimedep"));
+              if (hpre and h)
+                htimedep = dynamic_cast<TH1D *>(hpre->Clone("htimedep"));
+              if (hpre and h)
+                htimedep->Divide(hpre, h); //,1,1,"B");
 
-              if (htimedep and lumi>0 and lumiref>0)
-                htimedep->Scale(lumi/lumiref); // This sounds incorrect, idea from the old code
+              if (htimedep and lumi > 0 and lumiref > 0)
+                htimedep->Scale(lumi / lumiref); // This sounds incorrect, idea from the old code
 
               // Find proper pT range and fit
               double minpt = 0.;
               double maxpt = 6500.;
-              if (hsel) {
-                for (int i = 1; i != hsel->GetNbinsX()+1; ++i) {
-                  if (hsel->GetBinContent(i)!=0 and hsel->GetBinLowEdge(i)>=jp::xmin57) {
-                    if (minpt<20) minpt = hsel->GetBinLowEdge(i);
-                    maxpt = hsel->GetBinLowEdge(i+1);
+              if (hsel)
+              {
+                for (int i = 1; i != hsel->GetNbinsX() + 1; ++i)
+                {
+                  if (hsel->GetBinContent(i) != 0 and hsel->GetBinLowEdge(i) >= jp::xmin57)
+                  {
+                    if (minpt < 20)
+                      minpt = hsel->GetBinLowEdge(i);
+                    maxpt = hsel->GetBinLowEdge(i + 1);
                   }
                 }
               }
-              TF1 *ftmp = new TF1("ftmp","[0]",minpt,maxpt);
-              ftmp->SetParameter(0,1);
-              if (htimedep and htimedep->Integral()>0) htimedep->Fit(ftmp,"QRN");
+              TF1 *ftmp = new TF1("ftmp", "[0]", minpt, maxpt);
+              ftmp->SetParameter(0, 1);
+              if (htimedep and htimedep->Integral() > 0)
+                htimedep->Fit(ftmp, "QRN");
 
-              if (htimedep and ftmp->GetParameter(0)>0)
-                ktime = 1./ftmp->GetParameter(0);
+              if (htimedep and ftmp->GetParameter(0) > 0)
+                ktime = 1. / ftmp->GetParameter(0);
 
-              if (htimedep) {
+              if (htimedep)
+              {
                 outdir->cd();
-                htimefit = dynamic_cast<TH1D*>(hsel->Clone("htimefit"));
-                hpt_withtimedep = dynamic_cast<TH1D*>(h->Clone("hpt_withtimedep"));
+                htimefit = dynamic_cast<TH1D *>(hsel->Clone("htimefit"));
+                hpt_withtimedep = dynamic_cast<TH1D *>(h->Clone("hpt_withtimedep"));
 
-                for (int i = 1; i != htimefit->GetNbinsX()+1; ++i) {
+                for (int i = 1; i != htimefit->GetNbinsX() + 1; ++i)
+                {
 
-                  if (hsel->GetBinContent(i)!=0) {
+                  if (hsel->GetBinContent(i) != 0)
+                  {
                     htimefit->SetBinContent(i, ftmp->GetParameter(0));
                     htimefit->SetBinError(i, ftmp->GetParError(0));
                   }
 
                   // Calculate with time dependence here to add ktime fit error
-                  hpt_withtimedep->SetBinContent(i, hpt_notimedep->GetBinContent(i)
-                                                * htimefit->GetBinContent(i));
-                  double err1 = hpt_notimedep->GetBinError(i)
-                    / hpt_notimedep->GetBinContent(i);
-                  double err2 = htimefit->GetBinError(i)
-                    / htimefit->GetBinContent(i);
-                  hpt_withtimedep->SetBinError(i, hpt_notimedep->GetBinContent(i)
-                                              * sqrt(pow(err1,2) + pow(err2,2)));
+                  hpt_withtimedep->SetBinContent(i, hpt_notimedep->GetBinContent(i) * htimefit->GetBinContent(i));
+                  double err1 = hpt_notimedep->GetBinError(i) / hpt_notimedep->GetBinContent(i);
+                  double err2 = htimefit->GetBinError(i) / htimefit->GetBinContent(i);
+                  hpt_withtimedep->SetBinError(i, hpt_notimedep->GetBinContent(i) * sqrt(pow(err1, 2) + pow(err2, 2)));
                 }
               }
-            } else { // We need ktime even if all this has already been calculated
-              TH1D *hsel = dynamic_cast<TH1D*>(indir->Get("hselpt"));
+            }
+            else
+            { // We need ktime even if all this has already been calculated
+              TH1D *hsel = dynamic_cast<TH1D *>(indir->Get("hselpt"));
 
               // Find proper pT range and fit
               double minpt = 0.;
               double maxpt = 6500.;
-              if (hsel) {
-                for (int i = 1; i != hsel->GetNbinsX()+1; ++i) {
-                  if (hsel->GetBinContent(i)!=0 &&
-                    hsel->GetBinLowEdge(i)>=jp::xmin57) {
-                    if (minpt<20) minpt = hsel->GetBinLowEdge(i);
-                    maxpt = hsel->GetBinLowEdge(i+1);
-                    }
+              if (hsel)
+              {
+                for (int i = 1; i != hsel->GetNbinsX() + 1; ++i)
+                {
+                  if (hsel->GetBinContent(i) != 0 &&
+                      hsel->GetBinLowEdge(i) >= jp::xmin57)
+                  {
+                    if (minpt < 20)
+                      minpt = hsel->GetBinLowEdge(i);
+                    maxpt = hsel->GetBinLowEdge(i + 1);
+                  }
                 }
               }
 
-              TF1 *ftmp = new TF1("ftmp","[0]",minpt,maxpt);
-              ftmp->SetParameter(0,1);
-              if (htimedep and htimedep->Integral()>0) htimedep->Fit(ftmp,"QRN");
+              TF1 *ftmp = new TF1("ftmp", "[0]", minpt, maxpt);
+              ftmp->SetParameter(0, 1);
+              if (htimedep and htimedep->Integral() > 0)
+                htimedep->Fit(ftmp, "QRN");
 
-              if (htimedep and ftmp->GetParameter(0)>0)
-                ktime = 1./ftmp->GetParameter(0);
+              if (htimedep and ftmp->GetParameter(0) > 0)
+                ktime = 1. / ftmp->GetParameter(0);
             } // fetch ktime
-          } // timedep only for some histos
-        } // jp::dotimedep
+          }   // timedep only for some histos
+        }     // jp::dotimedep
 
-        if (jp::dotrigeffsimple) assert(hpt->GetNbinsX()==peff->GetNbinsX() or isoth);
+        if (jp::dotrigeffsimple)
+          assert(hpt->GetNbinsX() == peff->GetNbinsX() or isoth);
 
         // Lumi weighting checked in each bin separately
-        for (int binidx = 1; binidx != hpt->GetNbinsX()+1; ++binidx) {
+        for (int binidx = 1; binidx != hpt->GetNbinsX() + 1; ++binidx)
+        {
           // Normalization for bin width in y, pT
           double norm = hpt->GetBinWidth(binidx) * norm0;
           double trigeff = 1.;
           double pt = hpt->GetBinCenter(binidx);
           // Normalization for all the common efficiencies
-          if (jp::dotrigeffsimple and !isgen and peff->GetBinContent(binidx)!=0)
+          if (jp::dotrigeffsimple and !isgen and peff->GetBinContent(binidx) != 0)
             norm *= peff->GetBinContent(binidx);
 
           // Test MC-based normalization for trigger efficiency
-          if (htrigeff) {
-            if (htrigeff->GetBinContent(binidx)!=0) {
-              trigeff = min(1.,max(0.,htrigeff->GetBinContent(binidx))); // Efficiency between 0 and 1
-              if (jp::dotrigefflowptonly and pt>=114) trigeff = 1;
+          if (htrigeff)
+          {
+            if (htrigeff->GetBinContent(binidx) != 0)
+            {
+              trigeff = min(1., max(0., htrigeff->GetBinContent(binidx))); // Efficiency between 0 and 1
+              if (jp::dotrigefflowptonly and pt >= 114)
+                trigeff = 1;
               norm *= trigeff;
             }
           }
 
           // Correct data for time-dependence
           double norm_notime = norm;
-          if (ktime>0.0) norm *= ktime;
+          if (ktime > 0.0)
+            norm *= ktime;
 
-          assert(norm!=0);
+          assert(norm != 0);
           hpt->SetBinContent(binidx, hpt->GetBinContent(binidx) / norm);
           hpt->SetBinError(binidx, hpt->GetBinError(binidx) / norm);
 
-          if (hpt_notrigeff) {
-            hpt_notrigeff->SetBinContent(binidx, (hpt_notrigeff->GetBinContent(binidx)/ norm) * trigeff);
-            hpt_notrigeff->SetBinError(binidx, (hpt_notrigeff->GetBinError(binidx)/ norm) * trigeff);
+          if (hpt_notrigeff)
+          {
+            hpt_notrigeff->SetBinContent(binidx, (hpt_notrigeff->GetBinContent(binidx) / norm) * trigeff);
+            hpt_notrigeff->SetBinError(binidx, (hpt_notrigeff->GetBinError(binidx) / norm) * trigeff);
           }
-          if (hpt_notimedep) {
-            hpt_notimedep->SetBinContent(binidx, hpt_notimedep->GetBinContent(binidx)/ norm_notime);
-            hpt_notimedep->SetBinError(binidx, hpt_notimedep->GetBinError(binidx)/ norm_notime);
+          if (hpt_notimedep)
+          {
+            hpt_notimedep->SetBinContent(binidx, hpt_notimedep->GetBinContent(binidx) / norm_notime);
+            hpt_notimedep->SetBinError(binidx, hpt_notimedep->GetBinError(binidx) / norm_notime);
           }
-          if (hpt_withtimedep) { // ktime already applied => use norm_notime
-            hpt_withtimedep->SetBinContent(binidx, hpt_withtimedep->GetBinContent(binidx)/ norm_notime);
-            hpt_withtimedep->SetBinError(binidx, hpt_withtimedep->GetBinError(binidx)/ norm_notime);
+          if (hpt_withtimedep)
+          { // ktime already applied => use norm_notime
+            hpt_withtimedep->SetBinContent(binidx, hpt_withtimedep->GetBinContent(binidx) / norm_notime);
+            hpt_withtimedep->SetBinError(binidx, hpt_withtimedep->GetBinError(binidx) / norm_notime);
           }
 
-          if (jp::dotrigeffsimple and !isgen and !isoth) {
-            if (peff->GetBinContent(binidx)==0 and hpt->GetBinContent(binidx)!=0) { // Zero peff but non-zero hpt
-              if (hpt->GetBinCenter(binidx)>jp::recopt and hpt->GetBinCenter(binidx)*cosh(etamid)<3500.) // Good pt and eta region
-                cerr << "Hist " << hpt->GetName() << " " << indir->GetName() << " pt=" << hpt->GetBinCenter(binidx) << " etamid = " << etamid << endl << flush;
+          if (jp::dotrigeffsimple and !isgen and !isoth)
+          {
+            if (peff->GetBinContent(binidx) == 0 and hpt->GetBinContent(binidx) != 0)
+            {                                                                                                  // Zero peff but non-zero hpt
+              if (hpt->GetBinCenter(binidx) > jp::recopt and hpt->GetBinCenter(binidx) * cosh(etamid) < 3500.) // Good pt and eta region
+                cerr << "Hist " << hpt->GetName() << " " << indir->GetName() << " pt=" << hpt->GetBinCenter(binidx) << " etamid = " << etamid << endl
+                     << flush;
             }
           }
         } // for binidx
-      } else if (jp::isdt) { // TH3, TH2 and TH1 that is not a hpt object
+      }
+      else if (jp::isdt)
+      { // TH3, TH2 and TH1 that is not a hpt object
         // This we do only for data - there are no lumi weights to be applied for MC
         TString namehandle(name);
         TRegexp re_profile("^p");
         bool isprofile = namehandle.Contains(re_profile);
-        if (isprofile) {
-          if (obj->InheritsFrom("TProfile")) {
+        if (isprofile)
+        {
+          if (obj->InheritsFrom("TProfile"))
+          {
             // For TProfile scale acts in a problematic way but add has scaling properties
-            TProfile *handle = dynamic_cast<TProfile*>(obj2);
+            TProfile *handle = dynamic_cast<TProfile *>(obj2);
             handle->Reset();
-            handle->Add(dynamic_cast<TProfile*>(obj),lumiref/lumi);
+            handle->Add(dynamic_cast<TProfile *>(obj), lumiref / lumi);
           }
-        } else if (!namehandle.Contains("hlumi")) {
-          if (obj->InheritsFrom("TH3")) {
-            TH3D *handle = dynamic_cast<TH3D*>(obj2);
-            handle->Scale(lumiref/lumi);
-          } else if (obj->InheritsFrom("TH2")) {
-            TH2D *handle = dynamic_cast<TH2D*>(obj2);
-            handle->Scale(lumiref/lumi);
-          } else if (obj->InheritsFrom("TH1")) {
-            TH1D *handle = dynamic_cast<TH1D*>(obj2);
-            handle->Scale(lumiref/lumi);
+        }
+        else if (!namehandle.Contains("hlumi"))
+        {
+          if (obj->InheritsFrom("TH3"))
+          {
+            TH3D *handle = dynamic_cast<TH3D *>(obj2);
+            handle->Scale(lumiref / lumi);
+          }
+          else if (obj->InheritsFrom("TH2"))
+          {
+            TH2D *handle = dynamic_cast<TH2D *>(obj2);
+            handle->Scale(lumiref / lumi);
+          }
+          else if (obj->InheritsFrom("TH1"))
+          {
+            TH1D *handle = dynamic_cast<TH1D *>(obj2);
+            handle->Scale(lumiref / lumi);
           }
         }
       }
@@ -475,7 +569,9 @@ void recurseFile(TDirectory *indir, TDirectory *outdir, double etawid, double et
       obj2->Delete();
       indir->cd();
       // inherits from TH1
-    } else { // Others
+    }
+    else
+    { // Others
       // Save the stuff into an identical directory
       TObject *obj2 = obj->Clone(obj->GetName()); // Copy the input object to output
       outdir->cd();

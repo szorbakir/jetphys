@@ -753,6 +753,7 @@ bool HistosFill::PreRun()
   // 2. get the hqgl_q and hqgl_g for each eta bin, store in array
   // 3. find correct hqgl_q and hqgl_g from array (normalized)
   // 4. calculate probg = g / (q+g)
+  /*
   if (jp::doqglfile)
   {
     TFile *finmc = new TFile(jp::qglfile, "READ");
@@ -807,7 +808,7 @@ bool HistosFill::PreRun()
       }   // for ipt
     }     // for ieta
   }
-
+  */
   PrintInfo("Finished pre-run processing!", true);
   return true;
 }
@@ -1614,13 +1615,13 @@ void HistosFill::FillBasic(string name)
 void HistosFill::FillSingleBasic(HistosBasic *h)
 {
   assert(h);
-  h->hpttmp->Reset();
-  h->hpt_tmp->Reset();
-  if (h->ismcdir)
-  {
-    assert(h->hpt_g0_tmp);
-    h->hpt_g0_tmp->Reset();
-  }
+  // h->hpttmp->Reset();
+  // h->hpt_tmp->Reset();
+  // if (h->ismcdir)
+  // {
+  //   assert(h->hpt_g0_tmp);
+  //   h->hpt_g0_tmp->Reset();
+  // }
 
   _w = _w0 * _wt[h->trigname];
   if (_w <= 0)
@@ -1686,10 +1687,10 @@ void HistosFill::FillSingleBasic(HistosBasic *h)
     cout << "Calculate and fill dijet mass" << endl
          << flush;
 
-  if (h->ismcdir)
-    h->hpthat->Fill(pthat, _w);
-  if (h->ismcdir)
-    h->hpthatnlo->Fill(pthat);
+  // if (h->ismcdir)
+  //   h->hpthat->Fill(pthat, _w);
+  // if (h->ismcdir)
+  //   h->hpthatnlo->Fill(pthat);
 
   //{ Pre-calculate some nice garden tools
   int i0 = jt3leads[0];
@@ -1749,6 +1750,9 @@ void HistosFill::FillSingleBasic(HistosBasic *h)
           assert(h->hdjmassDown);
           h->hdjmassDown->Fill(djmassDown, _w);
         }
+
+        h->hdjpt_leading->Fill(_j1.Pt(), _w);
+        h->hdjpt_subleading->Fill(_j2.Pt(), _w);
 
         assert(h->hdjmass0);
         h->hdjmass0->Fill(djmass, _w);
@@ -2501,6 +2505,7 @@ void HistosFill::FillSingleBasic(HistosBasic *h)
     }       // pt visible
   }         // for jetidx
   */
+  /* 
   // Event statistics
   for (int xidx = 1; xidx != h->hpt_tmp->GetNbinsX() + 1; ++xidx)
   {
@@ -2513,7 +2518,7 @@ void HistosFill::FillSingleBasic(HistosBasic *h)
       h->hpt_jet->Fill(pt, _w * njet);
     }
   } // for xidx
-
+  */
   /* 
   if (jp::ismc)
   {
