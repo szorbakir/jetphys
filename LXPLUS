@@ -1,0 +1,119 @@
+Updated 18th Jan. 2017
+Author Hannu Siikonen (hannu.siikonen@cern.ch)
+
+#####################################################
+# Instructions for running on LXPLUS (recommended!) #
+#####################################################
+
+Perform the steps described in README at least to the level that a working combination 
+of jetphys and jecsys is present. The default Data paths in mk_fillHistos.C are the
+ones given for Run II 2016. Replace if necessary. Running on LXPLUS is useful, since
+the tuple sizes have been exploding, and it does not make sense to store them locally.
+
+## Running on LXPLUS (locally on a working node):
+
+# General setup:
+# Using c++/ROOT from cvmfs or CMSSW does not basically work.
+# We need to load ROOT and stuff from elsewhere
+export SCRAM_ARCH=slc6_amd64_gcc493
+source /afs/cern.ch/sw/lcg/contrib/gcc/4.9.3/x86_64-slc6/setup.sh
+source /afs/cern.ch/sw/lcg/app/releases/ROOT/6.06.04/x86_64-slc6-gcc49-opt/root/bin/thisroot.sh
+# A newer alternative:
+source /afs/cern.ch/sw/lcg/external/gcc/4.9.3/x86_64-slc6-gcc49-opt/setup.sh
+export SCRAM_ARCH=slc6_amd64_gcc493
+source /afs/cern.ch/sw/lcg/releases/ROOT/6.08.02-99084/x86_64-slc6-gcc49-opt/bin/thisroot.sh
+
+
+# Preliminary steps for data:
+
+Once...
+
+settings.h:
+- Check that jp::ntrigger is set correctly
+- Check that jp::triggers is set correctly
+- Check that jp::trigthr is set correctly
+- Check that jp::trigranges is set correctly
+(the above can be checked mostly from https://twiki.cern.ch/twiki/bin/view/CMS/InclusiveJetsLegacy)
+- Check that jp::triglumi is set correctly
+(this can be done using brilcalc, see the commented out commands)
+
+Always...
+
+settings.h:
+- Check that jp::type is set to DATA
+- Check that jp::jecgt_[dt] points to the correct file
+
+mk_fillHistos.C:
+- Check that the correct files are uncommented
+
+# Preliminary steps for MC:
+
+Once...
+
+- Produce the pileup histograms within pileup folder
+(it is recommended to do this before making copies of the jetphys folder, you can find instructions
+within the folder)
+
+Always...
+
+settings.h:
+- Check that jp::type is set to MC or HW
+
+mk_fillHistos.C:
+- Check that the correct files are uncommented
+
+- Check that the correct pileup_DT.root file is present in the pileup folder
+
+# Before running
+
+- It is recommended to make a separate copy of jetphys for each tuple/set of tuples that is processed
+- Set up ROOT and gcc, e.g. by running cmsenv in a CMSSW setup
+- You must either leave the ssh session on during the run or set up a persistent session
+
+# Instructions for a persistent session
+
+Once... 
+
+- Run: ktutil
+- Type: add_entry -password -p [YOURUSERNAME]@CERN.CH -k 1 -e arcfour-hmac-md5
+- Type: add_entry -password -p [YOURUSERNAME]@CERN.CH -k 1 -e aes256-cts
+- Type: wkt [YOURUSERNAME].keytab
+- Close ktutil session: Ctrl+D
+- Store the created [YOURUSERNAME].keytab file into a desired place
+- Note! Don't ever leave this file into a place where others can find/use it
+
+- run: root -l mk_fillHistos.C
+
+- NOTE: screen -dr works as long as the user return to the same machine
+
+Always:
+
+- Run: kinit -k -t [PATHTOKEYTAB]/[YOURUSERNAME].keytab [YOURUSERNAME]@CERN.CH
+- Run: k5reauth -f -i 3600 -p USERNAME -k /path/to/USERNAME.keytab -- screen
+
+The latter command creates a screen session. You can escape the screen and leave
+it running by pressing ctrl+a+d and come back with 'screen -dr'. If there are
+multiple screens on, this won't work and screen gives error messages. The messages
+should give an idea what to do next.
+
+Running the dataset from B to E takes something like 12 hours.
+Optionally one can select some subsets of the files and hadd the results later.
+This seems to work decently enough.
+
+## Running on LXPLUS (batch; deprecated & never worked very well):
+
+This is slower than running locally, but parallellism helps. Here the alternative file
+mk_fillHistosBatch.C is used. Due to the intricacies of modern ROOT, one cannot pass
+command line arguments, but the current processor index is inserted manually to the
+running script. The processor index is the same as the index of the file to be read,
+defined in mk_fillHistosBatch.C. The user must provide the script lxplus_fillHistos.C
+the current location and the name of the directory where the results are to be copied.
+
+Finally, run
+
+bsub -n N -q 2nw lxplus_fillHistos.sh N
+
+N is the amount of processors and it must be passed both to the script and to bsub.
+Different queues may be used. The script hadds the results after getting the results
+done.
+
