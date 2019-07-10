@@ -1,0 +1,7 @@
+executable            = scriptForHTCondor.sh
+arguments             = $(ClusterID) $(ProcId)
+output                = work.$(ClusterId).$(ProcId).out
+error                 = work.$(ClusterId).$(ProcId).err
+log                   = work.$(ClusterId).log
++JobFlavour           = "tomorrow"
+queue

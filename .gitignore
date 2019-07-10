@@ -4,5 +4,6 @@ CondFormats
 *_C*
 *.log
 *~
-RESULTS_STUDIES
+results
 reports
+*.swp*
