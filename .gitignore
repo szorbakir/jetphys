@@ -1,7 +1,9 @@
 settings.h
 CondFormats
 *.root
-*_C*
+*.so
+*.d
+*.pcm
 *.log
 *~
 results
