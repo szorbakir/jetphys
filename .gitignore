@@ -1,9 +1,10 @@
 settings.h
 CondFormats
 *.root
-*_C*
+*.so
+*.d
+*.pcm
 *.log
 *~
-RESULTS_STUDIES
 reports
 *.*swp*
