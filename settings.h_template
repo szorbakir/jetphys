@@ -43,6 +43,9 @@ namespace jp {
   // Debugging info
   constexpr bool debug = false;
 
+  //Do up and down JEC shifting on dijet mass
+  constexpr bool doUnc = true;
+
   // Save git version info (recommended)
   constexpr bool gitinfo = true;
 
@@ -56,7 +59,7 @@ namespace jp {
   // In case of DATA, choose run (all options given in dtfiles).
   // This also affects the hot zone cuts done in MC.
   // The naming format is "RunX...", where X should be chosen correctly.
-  constexpr const char* run = "RunC";
+  constexpr const char* run = "RunB";
   // In case of flat MC, choose file (all options given in mcfiles)
   constexpr const char* mcfile = "P8M1"; //"P8M1" or "P8CP5"
   constexpr const char* hwfile = "HS1";
@@ -66,7 +69,7 @@ namespace jp {
   // Do we use ht binned MC (if not, we use flat; if yes pthatbins must be set to false)
   constexpr bool htbins = false;
 
-  const unsigned int   yid = 3; // 0:2016, 1:2017, 2:2017 LowPU, 3:2018
+  const unsigned int   yid = 1; // 0:2016, 1:2017, 2:2017 LowPU, 3:2018
   const unsigned int   yrs = 4; // Number of supported Run years
 
   // Luminosity weighting options (DATA)
@@ -92,7 +95,7 @@ namespace jp {
   // Number of events to process (-1 for all)
   constexpr Long64_t nentries =
   -1; // all
-  //10; // debug
+  //1; // debug
   //100; //debug
   //1000;
   //10000; // shorter test run
@@ -125,11 +128,11 @@ namespace jp {
   // Produce basic set of histograms
   constexpr bool doBasicHistos = true;
   // Produce full-eta TH3 histograms
-  constexpr bool doEtaHistos = true;
+  constexpr bool doEtaHistos = false;
   // Special reco/gen histos in mc
   constexpr bool doEtaHistosMcResponse = false; // Special studies
   // Toggle 3D asymmetry and mpf histos off, if too much space is consumed
-  constexpr bool do3dHistos = true;
+  constexpr bool do3dHistos = false;
   // Toggle phi histograms
   constexpr bool doPhiHistos = false;
   // Toggle development histos
@@ -330,12 +333,14 @@ namespace jp {
 
   //{ BEGIN DT/MC: File options
 
-  constexpr const char* filepath = "/work/jet_tuples/";
-  //constexpr const char* filepath = "root://eoscms.cern.ch//eos/cms/store/group/phys_smp/Multijet/13TeV/";
+  //constexpr const char* filepath = "jet_tuples/";
+  constexpr const char* filepath = "root://eoscms.cern.ch//eos/cms/store/user/izorbaki/";
 
     //{ BEGIN DT: Files
+    //constexpr const array<const char*,yrs> dtpath_ =
+    //  {"Data/2016/Final/","Data/2017/RRMar18/","Data/2017/RRMar18/","Data/2018/"};
     constexpr const array<const char*,yrs> dtpath_ =
-      {"Data/2016/Final/","Data/2017/RRMar18/","Data/2017/RRMar18/","Data/2018/"};
+      {"2016/","2017/JetHT/","2017Low_PU/","2018/"};
     constexpr const char* dtpath = dtpath_.at(yid);
 
     const array<map<string,vector<const char*>>,yrs> dtfiles_ = {{
@@ -350,7 +355,7 @@ namespace jp {
         {"RunH" ,{"H_ZB.root", "H.root"}}
       },
       {
-        {"RunB",{"B_ZB.root", "B.root"}},
+        {"RunB",{"Run2017B_zb.root", "Run2017B.root"}},
         {"RunC",{"C_ZB.root", "C.root"}},
         {"RunD",{"D_ZB.root", "D.root"}},
         {"RunE",{"E_ZB.root", "E.root"}},
@@ -574,6 +579,20 @@ namespace jp {
     {10, 12, 15, 18, 21, 24, 28, 32, 37, 43, 49, 56, 64, 74, 84, 97, 114, 133, 153, 174, 196, 220, 245, 272, 300, 330, 362, 395, 430, 468, 507, 548, 592, 638, 686, 737, 790, 846, 905, 967, 1032} // Eta_3.5-4.0
   };
   constexpr const unsigned int noptranges = sizeof(ptrangevseta)/sizeof(ptrangevseta[0]);
+
+  //Dijet mass binning
+  constexpr const unsigned int nomass_eta = 43;
+  constexpr const double massrangevseta[][nomass_eta] = {
+      {67, 88, 119, 156, 197, 244, 296, 354, 419, 489, 565, 649, 740, 838, 944, 1058, 1181, 1313, 1455, 1607, 1770, 1945, 2132, 2332, 2546, 2775, 3019, 3279, 3558, 3854, 4171, 4509, 4869, 5253, 5663, 6099, 6564, 7060, 7589, 8152, 8752, 9391, 10072}, // Eta_0.0-0.5
+      {88, 119, 156, 197, 244, 296, 354, 419, 489, 565, 649, 740, 838, 944, 1058, 1181, 1313, 1455, 1607, 1770, 1945, 2132, 2332, 2546, 2775, 3019, 3279, 3558, 3854, 4171, 4509, 4869, 5253, 5663, 6099, 6564, 7060, 7589, 8152, 8752, 9391, 10072, 0},  //Eta_0.5-1.0
+      {137, 176, 220, 270, 325, 386, 453, 526, 606, 693, 788, 890, 1000, 1118, 1246, 1383, 1530, 1687, 1856, 2037, 2231, 2438, 2659, 2895, 3147, 3416, 3704, 4010, 4337, 4686, 5058, 5455, 5877, 6328, 6808, 7320, 7866, 8447, 9067, 9726, 10430, 0, 0},  // Eta_1.0-1.5
+      {220, 270, 325, 386, 453, 526, 606, 693, 788, 890, 1000, 1118, 1246, 1383, 1530, 1687, 1856, 2037, 2231, 2438, 2659, 2895, 3147, 3416, 3704, 4010, 4337, 4686, 5058, 5455, 5877, 6328, 6808, 7320, 7866, 8447, 9067, 9726, 10430, 0, 0, 0, 0},      // Eta_1.5-2.0
+      {354, 419, 489, 565, 649, 740, 838, 944, 1058, 1181, 1313, 1455, 1607, 1770, 1945, 2132, 2332, 2546, 2775, 3019, 3279, 3558, 3854, 4171, 4509, 4869, 5253, 5663, 6099, 6564, 7060, 7589, 8152, 8752, 9391, 10072, 0, 0, 0, 0, 0, 0, 0},             //Eta_2.0-2.5
+      {354, 419, 489, 565, 649, 740, 838, 944, 1058, 1181, 1313, 1455, 1607, 1770, 1945, 2132, 2332, 2546, 2775, 3019, 3279, 3558, 3854, 4171, 4509, 4869, 5253, 5663, 6099, 6564, 7060, 7589, 8152, 8752, 9391, 10072, 0, 0, 0, 0, 0, 0, 0},             //dummy bin
+      {354, 419, 489, 565, 649, 740, 838, 944, 1058, 1181, 1313, 1455, 1607, 1770, 1945, 2132, 2332, 2546, 2775, 3019, 3279, 3558, 3854, 4171, 4509, 4869, 5253, 5663, 6099, 6564, 7060, 7589, 8152, 8752, 9391, 10072, 0, 0, 0, 0, 0, 0, 0},             //dummy bin
+      {354, 419, 489, 565, 649, 740, 838, 944, 1058, 1181, 1313, 1455, 1607, 1770, 1945, 2132, 2332, 2546, 2775, 3019, 3279, 3558, 3854, 4171, 4509, 4869, 5253, 5663, 6099, 6564, 7060, 7589, 8152, 8752, 9391, 10072, 0, 0, 0, 0, 0, 0, 0}              //dummy bin};
+  };
+  constexpr const unsigned int nomassranges = sizeof(massrangevseta) / sizeof(massrangevseta[0]);
 
   constexpr const double wetarange[] = {
     -5.191, -3.839, -3.489, -3.139, -2.964, -2.853, -2.650, -2.500, -2.322, -2.172, -1.930, -1.653, -1.479, -1.305, -1.044, -0.783, -0.522, -0.261,
