@@ -297,8 +297,8 @@ void HistosCombine()
   recurseFile(fin, fout, "hdjmassUp", false);
   recurseFile(fin, fout, "hdjmassDown", false);
   recurseFile(fin, fout, "hdjmass0", false);
-  recurseFile(fin, fout, "hdjpt_leading", false);
-  recurseFile(fin, fout, "hdjpt_subleading", false);
+  recurseFile(fin, fout, "hdjpt_leading", true);
+  recurseFile(fin, fout, "hdjpt_subleading", true);
 
   if (!jp::ismc)
     recurseFile(fin, fout, "peff_new");
