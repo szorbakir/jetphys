@@ -8,3 +8,6 @@ CondFormats
 *~
 reports
 *.*swp*
+.__*
+*.err
+*.out

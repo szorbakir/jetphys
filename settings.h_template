@@ -59,7 +59,7 @@ namespace jp {
   // In case of DATA, choose run (all options given in dtfiles).
   // This also affects the hot zone cuts done in MC.
   // The naming format is "RunX...", where X should be chosen correctly.
-  constexpr const char* run = "RunB";
+  constexpr const char* run = "RunC";
   // In case of flat MC, choose file (all options given in mcfiles)
   constexpr const char* mcfile = "P8M1"; //"P8M1" or "P8CP5"
   constexpr const char* hwfile = "HS1";
@@ -356,10 +356,10 @@ namespace jp {
       },
       {
         {"RunB",{"Run2017B_zb.root", "Run2017B.root"}},
-        {"RunC",{"C_ZB.root", "C.root"}},
-        {"RunD",{"D_ZB.root", "D.root"}},
-        {"RunE",{"E_ZB.root", "E.root"}},
-        {"RunF",{"F_ZB.root", "F.root"}}
+        {"RunC",{"Run2017C_zb.root", "Run2017C.root"}},
+        {"RunD",{"Run2017D_zb.root", "Run2017D.root"}},
+        {"RunE",{"Run2017E_zb.root", "Run2017E.root"}},
+        {"RunF",{"Run2017F_zb.root", "Run2017F.root"}}
       },
       {
         {"RunH_FSQJ2",{"H_FSQJ2.root"}},
