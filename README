@@ -1,1 +1,22 @@
-Will be updated!!!
+1-) Clone jetphys and jecsys repositories to your working area:
+
+  git clone https://github.com/szorbakir/jetphys.git
+  git clone https://github.com/szorbakir/jecsys.git
+  
+2-) Do linking beetwen jetphys and jecsys:
+
+  cd jetphys/
+  ln -s ../jecsys/CondFormats
+
+3-) Create "settings.h" file using "settings.h_template"
+
+4-) If you find newer JEC files store them into "jecsys/CondFormats/JetMETObjects/data/" and edit the "settings.h" file
+
+5-) Source dedicated ROOT and GCC versions:
+  
+  source /cvmfs/sft.cern.ch/lcg/contrib/gcc/4.9.3/x86_64-slc6/setup.csh
+  source /cvmfs/sft.cern.ch/lcg/app/releases/ROOT/6.06.04/x86_64-slc6-gcc49-opt/root/bin/thisroot.csh
+
+6-) Then, run the below command to fill histograms:
+  
+  root -l -b -q mk_HistosFill.C
