@@ -1,3 +1,9 @@
+***************************************************************************
+If you want to use full analysis package clone this branch:
+
+  git clone --branch fullAnalysis https://github.com/szorbakir/jetphys.git
+***************************************************************************
+
 1-) Clone jetphys and jecsys repositories to your working area:
 
   git clone https://github.com/szorbakir/jetphys.git
@@ -10,7 +16,7 @@
 
 3-) Create "settings.h" file using "settings.h_template"
 
-4-) If you find newer JEC files store them into "jecsys/CondFormats/JetMETObjects/data/" and edit the "settings.h" file
+4-) If you find newer JEC files store them into "jecsys/CondFormats/JetMETObjects/data/" and edit the "settings.h" file.
 
 5-) Source dedicated ROOT and GCC versions:
   
