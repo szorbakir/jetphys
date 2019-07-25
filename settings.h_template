@@ -59,7 +59,7 @@ namespace jp {
   // In case of DATA, choose run (all options given in dtfiles).
   // This also affects the hot zone cuts done in MC.
   // The naming format is "RunX...", where X should be chosen correctly.
-  constexpr const char* run = "RunC";
+  constexpr const char* run = "RunB";
   // In case of flat MC, choose file (all options given in mcfiles)
   constexpr const char* mcfile = "P8M1"; //"P8M1" or "P8CP5"
   constexpr const char* hwfile = "HS1";
@@ -69,7 +69,7 @@ namespace jp {
   // Do we use ht binned MC (if not, we use flat; if yes pthatbins must be set to false)
   constexpr bool htbins = false;
 
-  const unsigned int   yid = 1; // 0:2016, 1:2017, 2:2017 LowPU, 3:2018
+  const unsigned int   yid = 3; // 0:2016, 1:2017, 2:2017 LowPU, 3:2018
   const unsigned int   yrs = 4; // Number of supported Run years
 
   // Luminosity weighting options (DATA)
@@ -94,9 +94,9 @@ namespace jp {
   //{ BEGIN run settings
   // Number of events to process (-1 for all)
   constexpr Long64_t nentries =
-  -1; // all
+  //-1; // all
   //1; // debug
-  //100; //debug
+  100; //debug
   //1000;
   //10000; // shorter test run
   //100000; // short test run
@@ -289,7 +289,7 @@ namespace jp {
     "_V18",
     "_V32",
     "_V32",
-    "_V6"
+    "_V8"
   };
   const string jecversdt = jecversdt_.at(yid);
   const array<string,yrs> jecversmc_ = {
@@ -340,11 +340,11 @@ namespace jp {
     //constexpr const array<const char*,yrs> dtpath_ =
     //  {"Data/2016/Final/","Data/2017/RRMar18/","Data/2017/RRMar18/","Data/2018/"};
     constexpr const array<const char*,yrs> dtpath_ =
-      {"2016/","2017/JetHT/","2017Low_PU/","2018/"};
+      {"2016/","2017/JetHT/","2017Low_PU/","2018/JetHT/"};
     constexpr const char* dtpath = dtpath_.at(yid);
 
     const array<map<string,vector<const char*>>,yrs> dtfiles_ = {{
-      {
+      { //They are not present, but they will be created.
         {"RunB" ,{"B_ZB.root", "B.root"}},
         {"RunC" ,{"C_ZB.root", "C.root"}},
         {"RunD" ,{"D_ZB.root", "D.root"}},
@@ -361,7 +361,7 @@ namespace jp {
         {"RunE",{"Run2017E_zb.root", "Run2017E.root"}},
         {"RunF",{"Run2017F_zb.root", "Run2017F.root"}}
       },
-      {
+      { //They are not present, but they will be created.
         {"RunH_FSQJ2",{"H_FSQJ2.root"}},
         {"RunH_FSQJ2Fwd",{"H_FSQJ2.root"}},
         {"RunH_LEG",{"H_LEG.root"}},
@@ -371,10 +371,10 @@ namespace jp {
         {"RunH_ZB",{"H_ZB.root"}}
       },
       {
-        {"RunA",{"A_ZB.root", "A.root"}},
-        {"RunB",{"B_ZB.root", "B.root"}},
-        {"RunC",{"C_ZB.root","C.root"}},
-        {"RunD",{"D_ZB.root","D.root"}}
+        {"RunA",{"Run2018A_zb.root", "Run2018A.root"}},
+        {"RunB",{"Run2018B_zb.root", "Run2018B.root"}},
+        {"RunC",{"Run2018C_zb.root", "Run2018C.root"}},
+        {"RunD",{"Run2018D_zb.root", "Run2018D.root"}}
       }
     }};
     const map<string,vector<const char*>> dtfiles = dtfiles_.at(yid);
