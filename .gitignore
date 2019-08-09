@@ -11,4 +11,4 @@ reports
 .__*
 *.err
 *.out
-scriptForHTCondor.sh
+*HTCondor*
