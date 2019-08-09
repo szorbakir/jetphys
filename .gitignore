@@ -12,3 +12,5 @@ reports
 *.err
 *.out
 *HTCondor*
+HTCondor.sub
+scriptForHTCondor.sh
