@@ -349,8 +349,8 @@ namespace jp {
         {"RunC" ,{"Run2016C_zb.root", "Run2016C.root"}},
         {"RunD" ,{"Run2016D_zb.root", "Run2016D.root"}},
         {"RunE" ,{"Run2016E_zb.root", "Run2016E.root"}},
-        {"RunFe",{"Run2016Fe_zb.root", "Run2016Fe.root"}},
-        {"RunFl",{"Run2016Fl_zb.root", "Run2016Fl.root"}},
+        {"RunFe",{"Run2016Fearly_zb.root", "Run2016Fearly.root"}},
+        {"RunFl",{"Run2016Flate_zb.root", "Run2016Flate.root"}},
         {"RunG" ,{"Run2016G_zb.root", "Run2016G.root"}},
         {"RunH" ,{"Run2016H_zb.root", "Run2016H.root"}}
       },
