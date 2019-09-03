@@ -140,12 +140,13 @@ void mk_HistosFill() {
 
       for (auto &fname : jp::pthatfiles) {
         const char *name1 = Form("%s%s%s.root",p,ps,fname);
-        const char *name2 = Form("%s%s%s_ext.root",p,ps,fname);
+        //const char *name2 = Form("%s%s%s_ext.root",p,ps,fname);
         
-        std::ifstream stream1(name1);
-        std::ifstream stream2(name2);
-        if (stream1.good()) files.push_back(name1);
-        if (stream2.good()) files.push_back(name2);
+        //std::ifstream stream1(name1);
+        //std::ifstream stream2(name2);
+        //if (stream1.good()) files.push_back(name1);
+        //if (stream2.good()) files.push_back(name2);
+        files.push_back(name1);
       }
     } else if (jp::htbins) {
       cout << "Running over ht binned files in pythia8" << endl;
