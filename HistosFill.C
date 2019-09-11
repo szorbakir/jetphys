@@ -2546,8 +2546,6 @@ void HistosFill::FillSingleBasic(HistosBasic *h)
 
         if (goodjets_gen and etamaxdj_gen >= h->etamin and etamaxdj_gen < h->etamax)
         {
-          cout << "Gen mass: " << djmass_gen << endl;
-
           assert(h->hdjmass_gen);
           h->hdjmass_gen->Fill(djmass_gen, _w);
         }
