@@ -59,6 +59,7 @@ public:
 
   // dijet mass
   TH1D *hdjmass;
+  TH1D *hdjmass_gen;
   TH1D *hdjmassUp;
   TH1D *hdjmassDown;
   TH1D *hdjmass0;

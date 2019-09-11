@@ -1065,6 +1065,7 @@ bool HistosFill::AcceptEvent()
       jtgeny[jetidx] = gp4.Rapidity();
       jtgeneta[jetidx] = gp4.Eta();
       jtgenphi[jetidx] = gp4.Phi();
+      //jtgene[jetidx] = gp4.E();
     }
 
     if (jp::debug)
@@ -1380,6 +1381,7 @@ bool HistosFill::AcceptEvent()
       gen_jteta[gjetidx] = genp4.Eta(); // for matching
       gen_jtphi[gjetidx] = genp4.Phi(); // for matching
       gen_jty[gjetidx] = genp4.Rapidity();
+      gen_jte[gjetidx] = genp4.E();
 
       // Ozlem: loop for finding partonflavor by matching genjets and jets
       int ireco = -1;
@@ -1712,6 +1714,7 @@ void HistosFill::FillSingleBasic(HistosBasic *h)
     if (i1 >= 0 and _jetids[i1] and jtpt[i1] > jp::recopt)
     { // Second leading jet
       //{ Calculate and fill dijet mass.
+
       _j1.SetPtEtaPhiE(jtpt[i0], jteta[i0], jtphi[i0], jte[i0]);
       _j2.SetPtEtaPhiE(jtpt[i1], jteta[i1], jtphi[i1], jte[i1]);
 
@@ -2519,13 +2522,39 @@ void HistosFill::FillSingleBasic(HistosBasic *h)
     }
   } // for xidx
   */
-  /* 
+
   if (jp::ismc)
   {
     if (jp::debug)
       cout << "Truth loop:" << endl;
     for (int gjetidx = 0; gjetidx != gen_njt; ++gjetidx)
-    { // Unbiased gen spectrum (for each trigger)
+    {
+      //Calculate gen dijet mass
+      if (gen_njt >= 2)
+      {
+        _j1_gen.SetPtEtaPhiE(gen_jtpt[0], gen_jteta[0], gen_jtphi[0], gen_jte[0]);
+        _j2_gen.SetPtEtaPhiE(gen_jtpt[1], gen_jteta[1], gen_jtphi[1], gen_jte[1]);
+
+        double djmass_gen = (_j1_gen + _j2_gen).M();
+
+        cout << "Before conditions -> gen mass: " << djmass_gen << endl;
+        cout << "Before conditions -> leading pt: " << gen_jtpt[0] << endl;
+        cout << "Before conditions -> subleading pt: " << gen_jtpt[1] << endl;
+
+        double etamaxdj_gen = max(fabs(gen_jteta[0]), fabs(gen_jteta[1]));
+        bool goodjets_gen = (gen_jtpt[0] > 30. and gen_jtpt[1] > 30.);
+
+        if (goodjets_gen and etamaxdj_gen >= h->etamin and etamaxdj_gen < h->etamax)
+        {
+          cout << "Gen mass: " << djmass_gen << endl;
+
+          assert(h->hdjmass_gen);
+          h->hdjmass_gen->Fill(djmass_gen, _w);
+        }
+      }
+
+      /* 
+      // Unbiased gen spectrum (for each trigger) 
       double etagen = gen_jteta[gjetidx];
       double ptgen = gen_jtpt[gjetidx];
 
@@ -2561,11 +2590,12 @@ void HistosFill::FillSingleBasic(HistosBasic *h)
 
           assert(h->hpt_g0_tmp);
           h->hpt_g0_tmp->Fill(gen_jtpt[gjetidx]);
-        } // mcdir (a subset of jp::ismc)
+        } // mcdir (a subset of jp::ismc) 
       }   // gen jet eta
-    }     // genjet loop
-  }       // MC
-  */
+      */
+    } // genjet loop
+  }   // MC
+
 } // FillSingleBasic
 
 // Write and delete histograms

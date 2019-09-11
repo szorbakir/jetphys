@@ -107,6 +107,7 @@ HistosBasic::HistosBasic(TDirectory *dir, string trigname, double etamin, double
 
   // dijet mass
   hdjmass = new TH1D("hdjmass", "", nx_mass, &x_mass[0]);
+  hdjmass_gen = new TH1D("hdjmass_gen", "", nx_mass, &x_mass[0]);
 
   if (jp::doUnc)
   {
