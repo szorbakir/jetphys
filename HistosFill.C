@@ -2537,9 +2537,9 @@ void HistosFill::FillSingleBasic(HistosBasic *h)
 
         double djmass_gen = (_j1_gen + _j2_gen).M();
 
-        cout << "Before conditions -> gen mass: " << djmass_gen << endl;
-        cout << "Before conditions -> leading pt: " << gen_jtpt[0] << endl;
-        cout << "Before conditions -> subleading pt: " << gen_jtpt[1] << endl;
+        // cout << "Before conditions -> gen mass: " << djmass_gen << endl;
+        // cout << "Before conditions -> leading pt: " << gen_jtpt[0] << endl;
+        // cout << "Before conditions -> subleading pt: " << gen_jtpt[1] << endl;
 
         double etamaxdj_gen = max(fabs(gen_jteta[0]), fabs(gen_jteta[1]));
         bool goodjets_gen = (gen_jtpt[0] > 30. and gen_jtpt[1] > 30.);
