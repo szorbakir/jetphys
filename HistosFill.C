@@ -719,43 +719,68 @@ bool HistosFill::PreRun()
     if (jp::yid == 0)
     {
       YearTag = "16";
-      if (std::regex_search(jp::run, regex("^Run[BCD]")))
-        HotTag = "BCD";
-      else if (std::regex_search(jp::run, regex("^RunE")))
-        HotTag = "EF";
-      else if (std::regex_search(jp::run, regex("^RunFe")))
-        HotTag = "EF";
-      else if (std::regex_search(jp::run, regex("^RunFl")))
-        HotTag = "GH";
-      else if (std::regex_search(jp::run, regex("^Run[GH]")))
-        HotTag = "GH";
+
+      if (!jp::ismc)
+      {
+        if (std::regex_search(jp::run, regex("^Run[BCD]")))
+          HotTag = "BCD";
+        else if (std::regex_search(jp::run, regex("^RunE")))
+          HotTag = "EF";
+        else if (std::regex_search(jp::run, regex("^RunFe")))
+          HotTag = "EF";
+        else if (std::regex_search(jp::run, regex("^RunFl")))
+          HotTag = "GH";
+        else if (std::regex_search(jp::run, regex("^Run[GH]")))
+          HotTag = "GH";
+      }
+      else if (jp::ismc)
+      {
+        HotTag = "MC";
+      }
     }
     else if (jp::yid == 1)
     {
       YearTag = "17";
-      if (std::regex_search(jp::run, regex("^RunB")))
-        HotTag = "B";
-      else if (std::regex_search(jp::run, regex("^RunC")))
-        HotTag = "C";
-      else if (std::regex_search(jp::run, regex("^RunD")))
-        HotTag = "D";
-      else if (std::regex_search(jp::run, regex("^RunE")))
-        HotTag = "E";
-      else if (std::regex_search(jp::run, regex("^RunF")))
-        HotTag = "F";
+
+      if (!jp::ismc)
+      {
+        if (std::regex_search(jp::run, regex("^RunB")))
+          HotTag = "B";
+        else if (std::regex_search(jp::run, regex("^RunC")))
+          HotTag = "C";
+        else if (std::regex_search(jp::run, regex("^RunD")))
+          HotTag = "D";
+        else if (std::regex_search(jp::run, regex("^RunE")))
+          HotTag = "E";
+        else if (std::regex_search(jp::run, regex("^RunF")))
+          HotTag = "F";
+      }
+      else if (jp::ismc)
+      {
+        HotTag = "MC";
+      }
     }
     else if (jp::yid == 3)
     {
       YearTag = "18";
-      if (std::regex_search(jp::run, regex("^RunA")))
-        HotTag = "B";
-      else if (std::regex_search(jp::run, regex("^RunB")))
-        HotTag = "C";
-      else if (std::regex_search(jp::run, regex("^RunC")))
-        HotTag = "D";
-      else if (std::regex_search(jp::run, regex("^RunD")))
-        HotTag = "E";
+
+      if (!jp::ismc)
+      {
+        if (std::regex_search(jp::run, regex("^RunA")))
+          HotTag = "B";
+        else if (std::regex_search(jp::run, regex("^RunB")))
+          HotTag = "C";
+        else if (std::regex_search(jp::run, regex("^RunC")))
+          HotTag = "D";
+        else if (std::regex_search(jp::run, regex("^RunD")))
+          HotTag = "E";
+      }
+      else if (jp::ismc)
+      {
+        HotTag = "MC";
+      }
     }
+
     assert(HotTag != "");
     fHotExcl = new TFile(Form("rootfiles/hotjets/hotjets-%srun%s.root", YearTag.c_str(), HotTag.c_str()), "READ");
     assert(fHotExcl and !fHotExcl->IsZombie() and Form("file rootfiles/hotjets/hotjets-%srun%s.root missing", YearTag.c_str(), HotTag.c_str()));
@@ -772,42 +797,66 @@ bool HistosFill::PreRun()
     if (jp::yid == 0)
     {
       YearTag = "16";
-      if (std::regex_search(jp::run, regex("^Run[BCD]")))
-        ColdTag = "BCD";
-      else if (std::regex_search(jp::run, regex("^RunE")))
-        ColdTag = "EF";
-      else if (std::regex_search(jp::run, regex("^RunFe")))
-        ColdTag = "EF";
-      else if (std::regex_search(jp::run, regex("^RunFl")))
-        ColdTag = "GH";
-      else if (std::regex_search(jp::run, regex("^Run[GH]")))
-        ColdTag = "GH";
+
+      if (!jp::ismc)
+      {
+        if (std::regex_search(jp::run, regex("^Run[BCD]")))
+          ColdTag = "BCD";
+        else if (std::regex_search(jp::run, regex("^RunE")))
+          ColdTag = "EF";
+        else if (std::regex_search(jp::run, regex("^RunFe")))
+          ColdTag = "EF";
+        else if (std::regex_search(jp::run, regex("^RunFl")))
+          ColdTag = "GH";
+        else if (std::regex_search(jp::run, regex("^Run[GH]")))
+          ColdTag = "GH";
+      }
+      else if (jp::ismc)
+      {
+        ColdTag = "MC";
+      }
     }
     else if (jp::yid == 1)
     {
       YearTag = "17";
-      if (std::regex_search(jp::run, regex("^RunB")))
-        ColdTag = "B";
-      else if (std::regex_search(jp::run, regex("^RunC")))
-        ColdTag = "C";
-      else if (std::regex_search(jp::run, regex("^RunD")))
-        ColdTag = "D";
-      else if (std::regex_search(jp::run, regex("^RunE")))
-        ColdTag = "E";
-      else if (std::regex_search(jp::run, regex("^RunF")))
-        ColdTag = "F";
+
+      if (!jp::ismc)
+      {
+        if (std::regex_search(jp::run, regex("^RunB")))
+          ColdTag = "B";
+        else if (std::regex_search(jp::run, regex("^RunC")))
+          ColdTag = "C";
+        else if (std::regex_search(jp::run, regex("^RunD")))
+          ColdTag = "D";
+        else if (std::regex_search(jp::run, regex("^RunE")))
+          ColdTag = "E";
+        else if (std::regex_search(jp::run, regex("^RunF")))
+          ColdTag = "F";
+      }
+      else if (jp::ismc)
+      {
+        ColdTag = "MC";
+      }
     }
     else if (jp::yid == 3)
     {
       YearTag = "18";
-      if (std::regex_search(jp::run, regex("^RunA")))
-        ColdTag = "B";
-      else if (std::regex_search(jp::run, regex("^RunB")))
-        ColdTag = "C";
-      else if (std::regex_search(jp::run, regex("^RunC")))
-        ColdTag = "D";
-      else if (std::regex_search(jp::run, regex("^RunD")))
-        ColdTag = "E";
+
+      if (!jp::ismc)
+      {
+        if (std::regex_search(jp::run, regex("^RunA")))
+          ColdTag = "B";
+        else if (std::regex_search(jp::run, regex("^RunB")))
+          ColdTag = "C";
+        else if (std::regex_search(jp::run, regex("^RunC")))
+          ColdTag = "D";
+        else if (std::regex_search(jp::run, regex("^RunD")))
+          ColdTag = "E";
+      }
+      else if (jp::ismc)
+      {
+        ColdTag = "MC";
+      }
     }
     assert(ColdTag != "");
     fColdExcl = new TFile(Form("rootfiles/coldjets/coldjets-%srun%s.root", YearTag.c_str(), ColdTag.c_str()), "READ");
