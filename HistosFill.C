@@ -567,6 +567,7 @@ bool HistosFill::PreRun()
   PrintInfo(Form("Running over %s", jp::ismc ? "MC" : "data"));
   PrintInfo(Form("%s time-dependent JEC (IOV)", jp::useIOV ? "Applying" : "Not applying"));
   PrintInfo(Form("%s Hot zone exclusion in eta-phi plane", jp::doVetoHot ? "Doing" : "Not doing"));
+  PrintInfo(Form("%s Cold zone exclusion in eta-phi plane", jp::doVetoCold ? "Doing" : "Not doing"));
   *ferr << endl;
 
   _eraIdx = -1;
@@ -714,8 +715,10 @@ bool HistosFill::PreRun()
   if (jp::doVetoHot)
   {
     string HotTag = "";
+    string YearTag = "";
     if (jp::yid == 0)
     {
+      YearTag = "16";
       if (std::regex_search(jp::run, regex("^Run[BCD]")))
         HotTag = "BCD";
       else if (std::regex_search(jp::run, regex("^RunE")))
@@ -729,6 +732,7 @@ bool HistosFill::PreRun()
     }
     else if (jp::yid == 1)
     {
+      YearTag = "17";
       if (std::regex_search(jp::run, regex("^RunB")))
         HotTag = "B";
       else if (std::regex_search(jp::run, regex("^RunC")))
@@ -740,12 +744,78 @@ bool HistosFill::PreRun()
       else if (std::regex_search(jp::run, regex("^RunF")))
         HotTag = "F";
     }
+    else if (jp::yid == 3)
+    {
+      YearTag = "18";
+      if (std::regex_search(jp::run, regex("^RunA")))
+        HotTag = "B";
+      else if (std::regex_search(jp::run, regex("^RunB")))
+        HotTag = "C";
+      else if (std::regex_search(jp::run, regex("^RunC")))
+        HotTag = "D";
+      else if (std::regex_search(jp::run, regex("^RunD")))
+        HotTag = "E";
+    }
     assert(HotTag != "");
-    fHotExcl = new TFile(Form("rootfiles/hotjets-run%s.root", HotTag.c_str()), "READ");
-    assert(fHotExcl and !fHotExcl->IsZombie() and Form("file rootfiles/hotjets-run%s.root missing", HotTag.c_str()));
-    h2HotExcl = (TH2D *)fHotExcl->Get(Form("h2hot%s", jp::HotType));
+    fHotExcl = new TFile(Form("rootfiles/hotjets/hotjets-%srun%s.root", YearTag.c_str(), HotTag.c_str()), "READ");
+    assert(fHotExcl and !fHotExcl->IsZombie() and Form("file rootfiles/hotjets/hotjets-%srun%s.root missing", YearTag.c_str(), HotTag.c_str()));
+    h2HotExcl = (TH2D *)fHotExcl->Get("h2hot");
     assert(h2HotExcl and "erroneous eta-phi exclusion type");
-    PrintInfo(Form("Loading hot zone corrections rootfiles/hotjets-run%s.root with h2hot %s", HotTag.c_str(), jp::HotType));
+    PrintInfo(Form("Loading hot zone corrections rootfiles/hotjets/hotjets-%srun%s.root with h2hot %s", YearTag.c_str(), HotTag.c_str(), jp::HotType));
+    cout << "Loading hot zone corrections rootfiles/hotjets/hotjets-" + YearTag + "run" + HotTag + ".root with h2hot " << endl;
+  }
+
+  if (jp::doVetoCold)
+  {
+    string ColdTag = "";
+    string YearTag = "";
+    if (jp::yid == 0)
+    {
+      YearTag = "16";
+      if (std::regex_search(jp::run, regex("^Run[BCD]")))
+        ColdTag = "BCD";
+      else if (std::regex_search(jp::run, regex("^RunE")))
+        ColdTag = "EF";
+      else if (std::regex_search(jp::run, regex("^RunFe")))
+        ColdTag = "EF";
+      else if (std::regex_search(jp::run, regex("^RunFl")))
+        ColdTag = "GH";
+      else if (std::regex_search(jp::run, regex("^Run[GH]")))
+        ColdTag = "GH";
+    }
+    else if (jp::yid == 1)
+    {
+      YearTag = "17";
+      if (std::regex_search(jp::run, regex("^RunB")))
+        ColdTag = "B";
+      else if (std::regex_search(jp::run, regex("^RunC")))
+        ColdTag = "C";
+      else if (std::regex_search(jp::run, regex("^RunD")))
+        ColdTag = "D";
+      else if (std::regex_search(jp::run, regex("^RunE")))
+        ColdTag = "E";
+      else if (std::regex_search(jp::run, regex("^RunF")))
+        ColdTag = "F";
+    }
+    else if (jp::yid == 3)
+    {
+      YearTag = "18";
+      if (std::regex_search(jp::run, regex("^RunA")))
+        ColdTag = "B";
+      else if (std::regex_search(jp::run, regex("^RunB")))
+        ColdTag = "C";
+      else if (std::regex_search(jp::run, regex("^RunC")))
+        ColdTag = "D";
+      else if (std::regex_search(jp::run, regex("^RunD")))
+        ColdTag = "E";
+    }
+    assert(ColdTag != "");
+    fColdExcl = new TFile(Form("rootfiles/coldjets/coldjets-%srun%s.root", YearTag.c_str(), ColdTag.c_str()), "READ");
+    assert(fColdExcl and !fColdExcl->IsZombie() and Form("file rootfiles/coldjets/coldjets-%srun%s.root missing", YearTag.c_str(), ColdTag.c_str()));
+    h2ColdExcl = (TH2D *)fColdExcl->Get("h2cold");
+    assert(h2ColdExcl and "erroneous eta-phi exclusion type");
+    cout << "Loading hot zone corrections rootfiles/coldtjets/coldjets-" + YearTag + "run" + ColdTag + ".root with h2cold" << endl;
+    PrintInfo(Form("Loading cold zone corrections rootfiles/coldjets/coldjets-%srun%s.root with h2cold %s", YearTag.c_str(), ColdTag.c_str(), jp::ColdType));
   }
 
   // Qgl: load quark/gluon probability histos (Ozlem)
@@ -1065,7 +1135,6 @@ bool HistosFill::AcceptEvent()
       jtgeny[jetidx] = gp4.Rapidity();
       jtgeneta[jetidx] = gp4.Eta();
       jtgenphi[jetidx] = gp4.Phi();
-      //jtgene[jetidx] = gp4.E();
     }
 
     if (jp::debug)
@@ -1381,7 +1450,6 @@ bool HistosFill::AcceptEvent()
       gen_jteta[gjetidx] = genp4.Eta(); // for matching
       gen_jtphi[gjetidx] = genp4.Phi(); // for matching
       gen_jty[gjetidx] = genp4.Rapidity();
-      gen_jte[gjetidx] = genp4.E();
 
       // Ozlem: loop for finding partonflavor by matching genjets and jets
       int ireco = -1;
@@ -1714,9 +1782,14 @@ void HistosFill::FillSingleBasic(HistosBasic *h)
     if (i1 >= 0 and _jetids[i1] and jtpt[i1] > jp::recopt)
     { // Second leading jet
       //{ Calculate and fill dijet mass.
-
       _j1.SetPtEtaPhiE(jtpt[i0], jteta[i0], jtphi[i0], jte[i0]);
       _j2.SetPtEtaPhiE(jtpt[i1], jteta[i1], jtphi[i1], jte[i1]);
+
+      if (jtpt[i0] < jtpt[i1])
+      {
+        cout << "Leading Jet Pt: " << jtpt[i0] << "   "
+             << "Subleading Jet Pt: " << jtpt[i1] << endl;
+      }
 
       if (jp::doUnc)
       {
@@ -2522,37 +2595,13 @@ void HistosFill::FillSingleBasic(HistosBasic *h)
     }
   } // for xidx
   */
-
+  /* 
   if (jp::ismc)
   {
     if (jp::debug)
       cout << "Truth loop:" << endl;
     for (int gjetidx = 0; gjetidx != gen_njt; ++gjetidx)
-    {
-      //Calculate gen dijet mass
-      if (gen_njt >= 2)
-      {
-        _j1_gen.SetPtEtaPhiE(gen_jtpt[0], gen_jteta[0], gen_jtphi[0], gen_jte[0]);
-        _j2_gen.SetPtEtaPhiE(gen_jtpt[1], gen_jteta[1], gen_jtphi[1], gen_jte[1]);
-
-        double djmass_gen = (_j1_gen + _j2_gen).M();
-
-        // cout << "Before conditions -> gen mass: " << djmass_gen << endl;
-        // cout << "Before conditions -> leading pt: " << gen_jtpt[0] << endl;
-        // cout << "Before conditions -> subleading pt: " << gen_jtpt[1] << endl;
-
-        double etamaxdj_gen = max(fabs(gen_jteta[0]), fabs(gen_jteta[1]));
-        bool goodjets_gen = (gen_jtpt[0] > 30. and gen_jtpt[1] > 30.);
-
-        if (goodjets_gen and etamaxdj_gen >= h->etamin and etamaxdj_gen < h->etamax)
-        {
-          assert(h->hdjmass_gen);
-          h->hdjmass_gen->Fill(djmass_gen, _w);
-        }
-      }
-
-      /* 
-      // Unbiased gen spectrum (for each trigger) 
+    { // Unbiased gen spectrum (for each trigger)
       double etagen = gen_jteta[gjetidx];
       double ptgen = gen_jtpt[gjetidx];
 
@@ -2588,12 +2637,11 @@ void HistosFill::FillSingleBasic(HistosBasic *h)
 
           assert(h->hpt_g0_tmp);
           h->hpt_g0_tmp->Fill(gen_jtpt[gjetidx]);
-        } // mcdir (a subset of jp::ismc) 
+        } // mcdir (a subset of jp::ismc)
       }   // gen jet eta
-      */
-    } // genjet loop
-  }   // MC
-
+    }     // genjet loop
+  }       // MC
+  */
 } // FillSingleBasic
 
 // Write and delete histograms
@@ -3483,8 +3531,16 @@ void HistosFill::FillJetID(vector<bool> &id)
     {
       // Abort if one of the leading jets is in a difficult zone
       assert(h2HotExcl);
-      bool good = h2HotExcl->GetBinContent(h2HotExcl->FindBin(jteta[jetidx], jtphi[jetidx])) <= 0;
-      id[jetidx] = (id[jetidx] and good);
+      bool goodHot = h2HotExcl->GetBinContent(h2HotExcl->FindBin(jteta[jetidx], jtphi[jetidx])) <= 0;
+      id[jetidx] = (id[jetidx] and goodHot);
+    }
+
+    if (jp::doVetoCold)
+    {
+      // Abort if one of the leading jets is in a difficult zone
+      assert(h2ColdExcl);
+      bool goodCold = h2ColdExcl->GetBinContent(h2ColdExcl->FindBin(jteta[jetidx], jtphi[jetidx])) <= 0;
+      id[jetidx] = (id[jetidx] and goodCold);
     }
   }
 } // FillJetID

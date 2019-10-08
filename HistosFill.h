@@ -287,13 +287,15 @@ private:
   TH1D *_pumc;
   TH1D *hmcweight;
   TH2D *h2HotExcl;
+  TH2D *h2ColdExcl;
   TH2F *_h2mu = 0;
   TH3D *_h3probg;
 
   TFile *_outfile;
   TFile *fHotExcl;
+  TFile *fColdExcl;
 
-  TLorentzVector p4, gp4, genp4, _j1, _j2, _j1_gen, _j2_gen, _j1Up, _j1Down, _j2Up, _j2Down;
+  TLorentzVector p4, gp4, genp4, _j1, _j2, _j1Up, _j1Down, _j2Up, _j2Down;
   jec::IOV _iov;
   FactorizedJetCorrector *_JEC, *_L1RC;
   JetCorrectionUncertainty *_jecUnc;
@@ -361,7 +363,6 @@ private:
   Float_t jtgeny[_maxnjt];   //EXTRA
   Float_t jtgeneta[_maxnjt]; //[njt]
   Float_t jtgenphi[_maxnjt]; //[njt]
-  //Float_t jtgene[_maxnjt];   //[njt]
 
   Float_t *qgl;        //[_maxnjt];   //[njt]
   Int_t *partonflavor; //[_maxnjt];   //[njt]
@@ -395,7 +396,6 @@ private:
   Float_t gen_jteta[_maxnjt]; //[njt]
   Float_t gen_jtphi[_maxnjt]; //[njt]
   Float_t gen_jty[_maxnjt];   //[njt]
-  Float_t gen_jte[_maxnjt];   //[njt]
   Int_t gen_partonflavor[_maxnjt];
 
   Float_t &rho;
