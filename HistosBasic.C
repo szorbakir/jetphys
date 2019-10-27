@@ -60,6 +60,19 @@ HistosBasic::HistosBasic(TDirectory *dir, string trigname, double etamin, double
   }
   const int nx_mass = x_mass.size() - 1;
 
+  // half mass bins
+  unsigned int ieta_mass_half = int(0.5 * (etamin + etamax) / 0.5);
+  assert(ieta_mass_half < jp::nomassranges_half);
+  vector<double> x_mass_half;
+  // Chose ptrange according to eta
+  for (unsigned int i = 0; i < jp::nomass_eta_half and jp::massrangevseta_half[ieta_mass_half][i] != 0; ++i)
+  {
+    if (jp::massrangevseta_half[ieta_mass_half][i] < 0.001)
+      break; // There are zeros in the end of the array when we're out of barrel
+    x_mass_half.push_back(jp::massrangevseta_half[ieta_mass_half][i]);
+  }
+  const int nx_mass_half = x_mass_half.size() - 1;
+
   vector<double> y(51);
   for (unsigned int i = 0; i != y.size(); ++i)
     y[i] = -5. + 0.2 * i;
@@ -107,13 +120,19 @@ HistosBasic::HistosBasic(TDirectory *dir, string trigname, double etamin, double
 
   // dijet mass
   hdjmass = new TH1D("hdjmass", "", nx_mass, &x_mass[0]);
-  hdjmass_gen = new TH1D("hdjmass_gen", "", nx_mass, &x_mass[0]);
+  hdjmass_half = new TH1D("hdjmass_half", "", nx_mass_half, &x_mass_half[0]);
 
   if (jp::doUnc)
   {
     hdjmassUp = new TH1D("hdjmassUp", "", nx_mass, &x_mass[0]);
     hdjmassDown = new TH1D("hdjmassDown", "", nx_mass, &x_mass[0]);
   }
+
+  //GEN Info
+  hdjmass_gen = new TH1D("hdjmass_gen", "", nx_mass, &x_mass[0]);
+  hdjmass_half_gen = new TH1D("hdjmass_half_gen", "", nx_mass_half, &x_mass_half[0]);
+  hdjpt_leading_gen = new TH1D("hdjpt_leading_gen", "", nx, &x[0]);
+  hdjpt_subleading_gen = new TH1D("hdjpt_subleading_gen", "", nx, &x[0]);
 
   hdjmass0 = new TH1D("hdjmass0", "", static_cast<int>(jp::sqrts), 0., jp::sqrts);
   hdjmass_a01 = new TH1D("hdjmass_a01", "", nx, &x[0]);

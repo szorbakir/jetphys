@@ -863,7 +863,7 @@ bool HistosFill::PreRun()
     assert(fColdExcl and !fColdExcl->IsZombie() and Form("file rootfiles/coldjets/coldjets-%srun%s.root missing", YearTag.c_str(), ColdTag.c_str()));
     h2ColdExcl = (TH2D *)fColdExcl->Get("h2cold");
     assert(h2ColdExcl and "erroneous eta-phi exclusion type");
-    cout << "Loading hot zone corrections rootfiles/coldtjets/coldjets-" + YearTag + "run" + ColdTag + ".root with h2cold" << endl;
+    cout << "Loading cold zone corrections rootfiles/coldtjets/coldjets-" + YearTag + "run" + ColdTag + ".root with h2cold" << endl;
     PrintInfo(Form("Loading cold zone corrections rootfiles/coldjets/coldjets-%srun%s.root with h2cold %s", YearTag.c_str(), ColdTag.c_str(), jp::ColdType));
   }
 
@@ -1499,6 +1499,7 @@ bool HistosFill::AcceptEvent()
       gen_jteta[gjetidx] = genp4.Eta(); // for matching
       gen_jtphi[gjetidx] = genp4.Phi(); // for matching
       gen_jty[gjetidx] = genp4.Rapidity();
+      gen_jte[gjetidx] = genp4.E();
 
       // Ozlem: loop for finding partonflavor by matching genjets and jets
       int ireco = -1;
@@ -1834,12 +1835,7 @@ void HistosFill::FillSingleBasic(HistosBasic *h)
       _j1.SetPtEtaPhiE(jtpt[i0], jteta[i0], jtphi[i0], jte[i0]);
       _j2.SetPtEtaPhiE(jtpt[i1], jteta[i1], jtphi[i1], jte[i1]);
 
-      if (jtpt[i0] < jtpt[i1])
-      {
-        cout << "Leading Jet Pt: " << jtpt[i0] << "   "
-             << "Subleading Jet Pt: " << jtpt[i1] << endl;
-      }
-
+      // Calculate up and down variation of the lorentz vectors
       if (jp::doUnc)
       {
         _j1Up = _j1 * (1 + unc);
@@ -1851,6 +1847,7 @@ void HistosFill::FillSingleBasic(HistosBasic *h)
 
       double djmass = (_j1 + _j2).M();
 
+      // Calculate up and down mass
       double djmassUp = 0.;
       double djmassDown = 0.;
       if (jp::doUnc)
@@ -1867,6 +1864,11 @@ void HistosFill::FillSingleBasic(HistosBasic *h)
         assert(h->hdjmass);
         h->hdjmass->Fill(djmass, _w);
 
+        // Half binned mass histo
+        assert(h->hdjmass_half);
+        h->hdjmass_half->Fill(djmass, _w);
+
+        // Fill djmass histos with JEC unc.
         if (jp::doUnc)
         {
           assert(h->hdjmassUp);
@@ -1876,7 +1878,10 @@ void HistosFill::FillSingleBasic(HistosBasic *h)
           h->hdjmassDown->Fill(djmassDown, _w);
         }
 
+        // Leading and subleading pt of the dijet system
+        assert(h->hdjpt_leading);
         h->hdjpt_leading->Fill(_j1.Pt(), _w);
+        assert(h->hdjpt_subleading);
         h->hdjpt_subleading->Fill(_j2.Pt(), _w);
 
         assert(h->hdjmass0);
@@ -2644,7 +2649,7 @@ void HistosFill::FillSingleBasic(HistosBasic *h)
     }
   } // for xidx
   */
-  /* 
+
   if (jp::ismc)
   {
     if (jp::debug)
@@ -2659,7 +2664,35 @@ void HistosFill::FillSingleBasic(HistosBasic *h)
         if (jp::debug)
           cout << "genjet " << gjetidx << "/" << gen_njt << " ptg=" << ptgen << " etag=" << etagen << endl;
 
-        h->hpt_g0tw->Fill(ptgen, _w);
+        //Calculate gen dijet mass
+        if (gen_njt >= 2)
+        {
+          _j1_gen.SetPtEtaPhiE(gen_jtpt[0], gen_jteta[0], gen_jtphi[0], gen_jte[0]);
+          _j2_gen.SetPtEtaPhiE(gen_jtpt[1], gen_jteta[1], gen_jtphi[1], gen_jte[1]);
+
+          double djmass_gen = (_j1_gen + _j2_gen).M();
+
+          double etamaxdj_gen = max(fabs(gen_jteta[0]), fabs(gen_jteta[1]));
+          bool goodjets_gen = (gen_jtpt[0] > 30. and gen_jtpt[1] > 30.);
+
+          if (goodjets_gen and etamaxdj_gen >= h->etamin and etamaxdj_gen < h->etamax)
+          {
+            assert(h->hdjmass_gen);
+            h->hdjmass_gen->Fill(djmass_gen, _w);
+
+            // Fill half binned gen spectrum
+            assert(h->hdjmass_half_gen);
+            h->hdjmass_half_gen->Fill(djmass_gen, _w);
+
+            // Leading and subleading pt of generated dijet mass system
+            assert(h->hdjpt_leading_gen);
+            h->hdjpt_leading_gen->Fill(_j1_gen.Pt(), _w);
+            assert(h->hdjpt_subleading_gen);
+            h->hdjpt_subleading_gen->Fill(_j2_gen.Pt(), _w);
+          }
+        }
+
+        /*h->hpt_g0tw->Fill(ptgen, _w);
         // Ozlem: (gluon vs quark)
         if (gen_partonflavor[gjetidx] == 21)
           h->hgpt_g0tw->Fill(ptgen, _w);
@@ -2686,11 +2719,10 @@ void HistosFill::FillSingleBasic(HistosBasic *h)
 
           assert(h->hpt_g0_tmp);
           h->hpt_g0_tmp->Fill(gen_jtpt[gjetidx]);
-        } // mcdir (a subset of jp::ismc)
-      }   // gen jet eta
-    }     // genjet loop
-  }       // MC
-  */
+      } // mcdir (a subset of jp::ismc)*/
+      } // gen jet eta
+    }   // genjet loop
+  }     // MC
 } // FillSingleBasic
 
 // Write and delete histograms

@@ -59,7 +59,7 @@ public:
 
   // dijet mass
   TH1D *hdjmass;
-  TH1D *hdjmass_gen;
+  TH1D *hdjmass_half;
   TH1D *hdjmassUp;
   TH1D *hdjmassDown;
   TH1D *hdjmass0;
@@ -77,6 +77,12 @@ public:
 
   TH1D *hdjpt_leading;
   TH1D *hdjpt_subleading;
+
+  //Gen Info
+  TH1D *hdjmass_gen;
+  TH1D *hdjmass_half_gen;
+  TH1D *hdjpt_leading_gen;
+  TH1D *hdjpt_subleading_gen;
 
   // Ozlem: new histograms for quark/gluon study
   // TH1D *hgpt;

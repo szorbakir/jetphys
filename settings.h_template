@@ -55,17 +55,17 @@ namespace jp {
   // Algorithm to use ("AK4PF" or "AK8PF" + "chs" for chs jets)
   constexpr const char* algo = "AK4PFchs";
   // Data type ("DATA", "MC", "HW", or "NU")
-  constexpr const char* type = "DATA";
+  constexpr const char* type = "MC";
   // In case of DATA, choose run (all options given in dtfiles).
   // This also affects the hot zone cuts done in MC.
   // The naming format is "RunX...", where X should be chosen correctly.
-  constexpr const char* run = "RunB";
+  constexpr const char* run = "RunC";
   // In case of flat MC, choose file (all options given in mcfiles)
   constexpr const char* mcfile = "P8M1"; //"P8M1" or "P8CP5"
   constexpr const char* hwfile = "HS1";
   constexpr const char* nufile = "NuGun";
   // Do we use pthat binned MC (if not, we use flat or htbinned)
-  constexpr bool pthatbins = false;
+  constexpr bool pthatbins = true;
   // Do we use ht binned MC (if not, we use flat; if yes pthatbins must be set to false)
   constexpr bool htbins = false;
 
@@ -95,7 +95,7 @@ namespace jp {
   // Number of events to process (-1 for all)
   constexpr Long64_t nentries =
   -1; // all
-  //1; // debug
+  //10; // debug
   //100; //debug
   //1000;
   //10000; // shorter test run
@@ -173,13 +173,13 @@ namespace jp {
   // Decide whether or not to simulate triggers from MC (this is slow)
   constexpr bool domctrigsim = true;
   // Use "mc" trigger for whole pT range instead of stiching triggers together in HistosCombine (false requires trigsim)
-  constexpr bool usemctrig = false;
+  constexpr bool usemctrig = true;
 
   const array<vector<const char*>,yrs> triggers_ = {{
     {"jt0","jt40","jt60","jt80","jt140","jt200","jt260","jt320","jt400","jt450"},
-    {"jt0","jt40","jt60","jt80","jt140","jt200","jt260","jt320","jt400","jt450","jt500"},
+    {"jt0","jt40","jt60","jt80","jt140","jt200","jt260","jt320","jt400","jt450"},
     {"jt0","jt15","jt25","jt40","jt60","jt80","jt140"},
-    {"jt0","jt40","jt60","jt80","jt140","jt200","jt260","jt320","jt400","jt450","jt500"}
+    {"jt0","jt40","jt60","jt80","jt140","jt200","jt260","jt320","jt400","jt450"}
   }};
   const vector<const char*> triggers = triggers_.at(yid);
   const unsigned int notrigs = triggers.size();
@@ -187,37 +187,37 @@ namespace jp {
   // reference trigger for PU profile in the mc folder and for trigger lumi weighting
   constexpr const array<const char*,yrs> reftrig_ = {
     "jt450",
-    "jt500",
+    "jt450",
     "jt140",
-    "jt500"
+    "jt450"
   };
   constexpr const char* reftrig = reftrig_.at(yid);
 
   // Thresholds for the corresponding triggers (same as in trigger name)
   const array<vector<double>,yrs> trigthr_ = {{
     {0,40,60,80,140,200,260,320,400,450    },
-    {0,40,60,80,140,200,260,320,400,450,500},
+    {0,40,60,80,140,200,260,320,400,450},
     {0,15,25,40,60,80,140},
-    {0,40,60,80,140,200,260,320,400,450,500}
+    {0,40,60,80,140,200,260,320,400,450}
   }};
   const vector<double> trigthr = trigthr_.at(yid);
 
   // Trigger ranges (differ from thresholds)
   const array<vector<array<double,2>>,yrs> trigranges_ = {{
-    {{{0,49},{49,84},{84,114},{114,196},{196,272},{272,330},{330,395},{395,468},{468,548},{548,6500}          }},
-    {{{0,49},{49,84},{84,114},{114,196},{196,272},{272,330},{330,395},{395,468},{468,548},{548,686},{686,6500}}},
+    {{{0,49},{49,84},{84,114},{114,196},{196,272},{272,330},{330,395},{395,468},{468,548},{548,6500}}},
+    {{{0,49},{49,84},{84,114},{114,196},{196,272},{272,330},{330,395},{395,468},{468,548},{548,6500}}},
     {{{0,28},{28,37},{37,49},{49,84},{84,114},{114,196},{196,272}}},
-    {{{0,49},{49,84},{84,114},{114,196},{196,272},{272,330},{330,395},{395,468},{468,548},{548,686},{686,6500}}}
+    {{{0,49},{49,84},{84,114},{114,196},{196,272},{272,330},{330,395},{395,468},{468,548},{548,6500}}}
   }}; // V[5,6], AK4
   const vector<array<double,2>> trigranges = trigranges_.at(yid);
 
   // Trigger lumis for weighting in /ub
   const array<vector<double>,yrs> triglumi_ = {{
-  // ZB         PFJ40      PFJ60       PFJ80       PFJ140       PFJ200        PFJ260        PFJ320         PFJ400         PFJ450          
-    { 29036.821, 250019.11 , 676345.122, 2602658.803, 22609385.05 , 96089534.929, 559334225.38 , 1663980103.656, 4870543838.98 , 34184232596.775},  // 2016
-    { 75086.268, 340487.186, 998075.452, 4171433.311, 39740193.824, 218749681.165, 555199860.716, 1407215678.758, 4213837750.579, 10451819594.184}, // 2017
-    {     1.   ,     1.   ,      1.   ,      1.   ,       1.   ,        1.   ,        1.}, // H Dummy values
-    { 75831.608, 231122.765, 764683.719, 4998554.8, 46417090.061, 199877328.665, 455315402.462, 1751671521.33, 3618303294.319, 7193355038.764}      // 2018
+  // ZB          PFJ40       PFJ60       PFJ80        PFJ140        PFJ200         PFJ260         PFJ320          PFJ400          PFJ450          
+    { 29036.821, 250019.11,  676345.122, 2602658.803, 22609385.05,  96089534.929,  559334225.38,  1663980103.656, 4870543838.98,  34184232596.775},  // 2016
+    { 75086.268, 340487.186, 998075.452, 4171433.311, 39740193.824, 218749681.165, 555199860.716, 1407215678.758, 4213837750.579, 10451819594.184},  // 2017
+    {     1.   ,     1.   ,      1.    ,       1.   ,       1.   ,        1.   ,        1.},                                                         // H Dummy values
+    { 75831.608, 231122.765, 764683.719, 4998554.8,   46417090.061, 199877328.665, 455315402.462, 1751671521.33,  3618303294.319, 7193355038.764}    // 2018
   }}; // in /ub
   const vector<double> triglumi = triglumi_.at(yid);
 
@@ -236,15 +236,15 @@ namespace jp {
   const array<vector<vector<double>>,yrs> triglumiera_ = {{
   // 2016 values: (zb,jt40-jt450)
     {{
-  //   ZB        PFJ40     PFJ60      PFJ80       PFJ140      PFJ200       PFJ260        PFJ320        PFJ400         PFJ450              Era
-      {12272.564,42777.404,154339.679,1013725.894,6678362.048,31439255.077,138379573.748,423036630.016,1156112123.522,5780974274.166}, // B
-      { 1267.369,21826.26 , 62136.999, 197392.975,2000961.79 ,10062309.79 , 48166077.979,135218220.578, 412946722.943,2573399420.069}, // C
-      { 1898.671,36624.724,104611.27 , 328062.586,3357266.779,16824336.184, 76550163.736,225203181.004, 683469876.284,4248383597.366}, // D
-      { 3011.27 ,31294.62 , 86426.534, 270224.019,2763649.831,13071806.045, 65431121.382,191469713.187, 583096480.718,4008663475.924}, // E
-      { 1504.894,21653.271, 48745.957, 136195.575,1491075.627, 6052884.716, 38701199.163,116084466.056, 348342950.9  ,2704118419.004}, // Fe
-      {  215.493, 2828.924,  7205.162,  18382.409, 204124.035,  681254.62 ,  6502077.341, 18270869.363,  53084258.548, 397499983.002}, // Fl
-      { 3165.916,48839.939,123669.326, 370518.873,3628983.85 ,11996221.263,102627755.009,310855295.835, 921468153.924,7540487746.602}, // G
-      { 5700.644,58972.432,131684.466, 398826.083,3841266.079,12723493.628,111360342.779,333826688.043, 982546425.482,8605689857.939}  // H
+  //   ZB         PFJ40      PFJ60       PFJ80        PFJ140        PFJ200       PFJ260        PFJ320        PFJ400         PFJ450              Era
+      {12272.564, 42777.404, 154339.679, 1013725.894,  6678362.048, 31439255.077,138379573.748,423036630.016,1156112123.522,5780974274.166}, // B
+      { 1267.369, 21826.26 ,  62136.999,  197392.975,  2000961.79 , 10062309.79 , 48166077.979,135218220.578, 412946722.943,2573399420.069}, // C
+      { 1898.671, 36624.724, 104611.27 ,  328062.586,  3357266.779, 16824336.184, 76550163.736,225203181.004, 683469876.284,4248383597.366}, // D
+      { 3011.27 , 31294.62 ,  86426.534,  270224.019,  2763649.831, 13071806.045, 65431121.382,191469713.187, 583096480.718,4008663475.924}, // E
+      { 1504.894, 21653.271,  48745.957,  136195.575,  1491075.627,  6052884.716, 38701199.163,116084466.056, 348342950.9  ,2704118419.004}, // Fe
+      {  215.493,  2828.924,   7205.162,   18382.409,  204124.035,    681254.62 ,  6502077.341, 18270869.363,  53084258.548, 397499983.002}, // Fl
+      { 3165.916, 48839.939, 123669.326,  370518.873, 3628983.85 ,  11996221.263,102627755.009,310855295.835, 921468153.924,7540487746.602}, // G
+      { 5700.644, 58972.432, 131684.466,  398826.083, 3841266.079,  12723493.628,111360342.779,333826688.043, 982546425.482,8605689857.939}  // H
     }},
   // 2017 values: (zb,jt40-jt500)
     {{
@@ -293,7 +293,7 @@ namespace jp {
   };
   const string jecversdt = jecversdt_.at(yid);
   const array<string,yrs> jecversmc_ = {
-    "_V15",
+    "_V11",
     "_V32",
     "_V32",
     //"_V3",
@@ -324,8 +324,8 @@ namespace jp {
 
   //{ BEGIN For MC reweighting purposes, PU profiles for data and MC
   constexpr bool reweighPU = true;
-  constexpr const char* pudata = "pileup/curr/pileup_DT.root";
-  constexpr const char* pumc   = "pileup/curr/pileup_MC.root";
+  constexpr const char* pudata = "pileup/DT/16_LRRAUG/pileup_DT.root";
+  constexpr const char* pumc   = "pileup/MC/16/pileup_P8M1.root";
   constexpr const char* puhw   = "pileup/curr/pileup_HW.root";
   constexpr const char* punu   = "pileup/curr/pileup_NU.root";
   constexpr const double maxpu = 80.0;
@@ -334,8 +334,8 @@ namespace jp {
   //{ BEGIN DT/MC: File options
 
   //constexpr const char* filepath = "jet_tuples/";
-  constexpr const char* filepath = "root://eoscms.cern.ch//eos/cms/store/user/izorbaki/";
-    
+  //constexpr const char* filepath = "root://eoscms.cern.ch//eos/cms/store/user/izorbaki/";
+    constexpr const char* filepath = "root://eoscms.cern.ch//eos/cms/store/group/phys_jetmet/hsiikone/";
   //{ BEGIN DT: Files
     //constexpr const array<const char*,yrs> dtpath_ =
     //  {"Data/2016/Final/","Data/2017/RRMar18/","Data/2017/RRMar18/","Data/2018/"};
@@ -346,13 +346,13 @@ namespace jp {
     const array<map<string,vector<const char*>>,yrs> dtfiles_ = {{
       { //They are not present, but they will be created.
         {"RunB" ,{"Run2016B_zb.root", "Run2016B.root"}},
-        {"RunC" ,{"C_ZB.root", "C.root"}},
-        {"RunD" ,{"D_ZB.root", "D.root"}},
-        {"RunE" ,{"E_ZB.root", "E.root"}},
-        {"RunFe",{"Fe_ZB.root", "Fe.root"}},
-        {"RunFl",{"Fl_ZB.root", "Fl.root"}},
-        {"RunG" ,{"G_ZB.root", "G.root"}},
-        {"RunH" ,{"H_ZB.root", "H.root"}}
+        {"RunC" ,{"Run2016C_zb.root", "Run2016C.root"}},
+        {"RunD" ,{"Run2016D_zb.root", "Run2016D.root"}},
+        {"RunE" ,{"Run2016E_zb.root", "Run2016E.root"}},
+        {"RunFe",{"Run2016Fearly_zb.root", "Run2016Fearly.root"}},
+        {"RunFl",{"Run2016Flate_zb.root", "Run2016Flate.root"}},
+        {"RunG" ,{"Run2016G_zb.root", "Run2016G.root"}},
+        {"RunH" ,{"Run2016H_zb.root", "Run2016H.root"}}
       },
       {
         {"RunB",{"Run2017B_zb.root", "Run2017B.root"}},
@@ -411,7 +411,7 @@ namespace jp {
     //{ BEGIN MC: Process pThatbinned file options
     // All the following values need to be updated, if other source tuples are used.
     const array<const char*,yrs> pthatpath_ = {
-      "MC/2016/P8M1/",
+      "SIM/2016/P8M1/",
       "MC/2017/P8CP5/",
       "MC/2017/P8CP5/",
       "MC/2018/P8CP5/"
@@ -502,11 +502,11 @@ namespace jp {
 
   //{ BEGIN Special HistosFill analyses that are not typically needed
   // Eta phi exclusion due to hot ECAL regions (produced with dataequality.C)
-  constexpr bool doVetoHot = false;
+  constexpr bool doVetoHot = true;
   const constexpr char HotType[] = ""; // h2hotr (Robert) or h2hotm (Mikko) if any
 
   // Eta phi exclusion due to cold ECAL regions (produced with dataequality.C)
-  constexpr bool doVetoCold = false;
+  constexpr bool doVetoCold = true;
   const constexpr char ColdType[] = ""; // h2coldr (Robert) or h2coldm (Mikko) if any
 
   // Check for duplicates (warning: takes a lot of memory!)
@@ -588,15 +588,29 @@ namespace jp {
   constexpr const unsigned int nomass_eta = 43;
   constexpr const double massrangevseta[][nomass_eta] = {
       {67, 88, 119, 156, 197, 244, 296, 354, 419, 489, 565, 649, 740, 838, 944, 1058, 1181, 1313, 1455, 1607, 1770, 1945, 2132, 2332, 2546, 2775, 3019, 3279, 3558, 3854, 4171, 4509, 4869, 5253, 5663, 6099, 6564, 7060, 7589, 8152, 8752, 9391, 10072}, // Eta_0.0-0.5
-      {88, 119, 156, 197, 244, 296, 354, 419, 489, 565, 649, 740, 838, 944, 1058, 1181, 1313, 1455, 1607, 1770, 1945, 2132, 2332, 2546, 2775, 3019, 3279, 3558, 3854, 4171, 4509, 4869, 5253, 5663, 6099, 6564, 7060, 7589, 8152, 8752, 9391, 10072, 0},  //Eta_0.5-1.0
-      {137, 176, 220, 270, 325, 386, 453, 526, 606, 693, 788, 890, 1000, 1118, 1246, 1383, 1530, 1687, 1856, 2037, 2231, 2438, 2659, 2895, 3147, 3416, 3704, 4010, 4337, 4686, 5058, 5455, 5877, 6328, 6808, 7320, 7866, 8447, 9067, 9726, 10430, 0, 0},  // Eta_1.0-1.5
-      {220, 270, 325, 386, 453, 526, 606, 693, 788, 890, 1000, 1118, 1246, 1383, 1530, 1687, 1856, 2037, 2231, 2438, 2659, 2895, 3147, 3416, 3704, 4010, 4337, 4686, 5058, 5455, 5877, 6328, 6808, 7320, 7866, 8447, 9067, 9726, 10430, 0, 0, 0, 0},      // Eta_1.5-2.0
-      {354, 419, 489, 565, 649, 740, 838, 944, 1058, 1181, 1313, 1455, 1607, 1770, 1945, 2132, 2332, 2546, 2775, 3019, 3279, 3558, 3854, 4171, 4509, 4869, 5253, 5663, 6099, 6564, 7060, 7589, 8152, 8752, 9391, 10072, 0, 0, 0, 0, 0, 0, 0},             //Eta_2.0-2.5
-      {354, 419, 489, 565, 649, 740, 838, 944, 1058, 1181, 1313, 1455, 1607, 1770, 1945, 2132, 2332, 2546, 2775, 3019, 3279, 3558, 3854, 4171, 4509, 4869, 5253, 5663, 6099, 6564, 7060, 7589, 8152, 8752, 9391, 10072, 0, 0, 0, 0, 0, 0, 0},             //dummy bin
-      {354, 419, 489, 565, 649, 740, 838, 944, 1058, 1181, 1313, 1455, 1607, 1770, 1945, 2132, 2332, 2546, 2775, 3019, 3279, 3558, 3854, 4171, 4509, 4869, 5253, 5663, 6099, 6564, 7060, 7589, 8152, 8752, 9391, 10072, 0, 0, 0, 0, 0, 0, 0},             //dummy bin
-      {354, 419, 489, 565, 649, 740, 838, 944, 1058, 1181, 1313, 1455, 1607, 1770, 1945, 2132, 2332, 2546, 2775, 3019, 3279, 3558, 3854, 4171, 4509, 4869, 5253, 5663, 6099, 6564, 7060, 7589, 8152, 8752, 9391, 10072, 0, 0, 0, 0, 0, 0, 0}              //dummy bin};
+      {88, 119, 156, 197, 244, 296, 354, 419, 489, 565, 649, 740, 838, 944, 1058, 1181, 1313, 1455, 1607, 1770, 1945, 2132, 2332, 2546, 2775, 3019, 3279, 3558, 3854, 4171, 4509, 4869, 5253, 5663, 6099, 6564, 7060, 7589, 8152, 8752, 9391, 10072, 0},  // Eta_0.5-1.0
+      {137, 176, 220, 270, 325, 386, 453, 526, 606, 693, 788, 890, 1000, 1118, 1246, 1383, 1530, 1687, 1856, 2037, 2231, 2438, 2659, 2895, 3147, 3416, 3704, 4010, 4337, 4686, 5058, 5455, 5877, 6328, 6808, 7320, 7866, 8447, 9067, 9726, 10072, 0, 0},  // Eta_1.0-1.5
+      {220, 270, 325, 386, 453, 526, 606, 693, 788, 890, 1000, 1118, 1246, 1383, 1530, 1687, 1856, 2037, 2231, 2438, 2659, 2895, 3147, 3416, 3704, 4010, 4337, 4686, 5058, 5455, 5877, 6328, 6808, 7320, 7866, 8447, 9067, 9726, 10072, 0, 0, 0, 0},      // Eta_1.5-2.0
+      {354, 419, 489, 565, 649, 740, 838, 944, 1058, 1181, 1313, 1455, 1607, 1770, 1945, 2132, 2332, 2546, 2775, 3019, 3279, 3558, 3854, 4171, 4509, 4869, 5253, 5663, 6099, 6564, 7060, 7589, 8152, 8752, 9391, 10072, 0, 0, 0, 0, 0, 0, 0},             // Eta_2.0-2.5
+      {354, 419, 489, 565, 649, 740, 838, 944, 1058, 1181, 1313, 1455, 1607, 1770, 1945, 2132, 2332, 2546, 2775, 3019, 3279, 3558, 3854, 4171, 4509, 4869, 5253, 5663, 6099, 6564, 7060, 7589, 8152, 8752, 9391, 10072, 0, 0, 0, 0, 0, 0, 0},             // dummy bin
+      {354, 419, 489, 565, 649, 740, 838, 944, 1058, 1181, 1313, 1455, 1607, 1770, 1945, 2132, 2332, 2546, 2775, 3019, 3279, 3558, 3854, 4171, 4509, 4869, 5253, 5663, 6099, 6564, 7060, 7589, 8152, 8752, 9391, 10072, 0, 0, 0, 0, 0, 0, 0},             // dummy bin
+      {354, 419, 489, 565, 649, 740, 838, 944, 1058, 1181, 1313, 1455, 1607, 1770, 1945, 2132, 2332, 2546, 2775, 3019, 3279, 3558, 3854, 4171, 4509, 4869, 5253, 5663, 6099, 6564, 7060, 7589, 8152, 8752, 9391, 10072, 0, 0, 0, 0, 0, 0, 0}              // dummy bin};
   };
   constexpr const unsigned int nomassranges = sizeof(massrangevseta) / sizeof(massrangevseta[0]);
+
+  //Half Dijet mass binning
+  constexpr const unsigned int nomass_eta_half = 22;
+  constexpr const double massrangevseta_half[][nomass_eta_half] = {
+      {67, 119, 197, 296, 419, 565, 740, 944, 1181, 1455, 1770, 2132, 2546, 3019, 3558, 4171, 4869, 5663, 6564, 7589, 8752, 10072},   // Eta_0.0-0.5
+      {88, 156, 244, 354, 489, 649, 838, 1058, 1313, 1607, 1945, 2332, 2775, 3279, 3854, 4509, 5253, 6099, 7060, 8152, 9391, 10072},  // Eta_0.5-1.0
+      {137, 220, 325, 453, 606, 788, 1000, 1246, 1530, 1856, 2231, 2659, 3147, 3704, 4337, 5058, 5877, 6808, 7866, 9067, 10072, 0},   // Eta_1.0-1.5
+      {220, 325, 453, 606, 788, 1000, 1246, 1530, 1856, 2231, 2659, 3147, 3704, 4337, 5058, 5877, 6808, 7866, 9067, 10072, 0, 0},     // Eta_1.5-2.0
+      {354, 489, 649, 838, 1058, 1313, 1607, 1945, 2332, 2775, 3279, 3854, 4509, 5253, 6099, 7060, 8152, 9391, 10072, 0, 0, 0},       // Eta_2.0-2.5
+      {354, 489, 649, 838, 1058, 1313, 1607, 1945, 2332, 2775, 3279, 3854, 4509, 5253, 6099, 7060, 8152, 9391, 10072, 0, 0, 0},       // dummy
+      {354, 489, 649, 838, 1058, 1313, 1607, 1945, 2332, 2775, 3279, 3854, 4509, 5253, 6099, 7060, 8152, 9391, 10072, 0, 0, 0},       // dummy
+      {354, 489, 649, 838, 1058, 1313, 1607, 1945, 2332, 2775, 3279, 3854, 4509, 5253, 6099, 7060, 8152, 9391, 10072, 0, 0, 0}        // dummy
+  };
+  constexpr const unsigned int nomassranges_half = sizeof(massrangevseta_half) / sizeof(massrangevseta_half[0]);
 
   constexpr const double wetarange[] = {
     -5.191, -3.839, -3.489, -3.139, -2.964, -2.853, -2.650, -2.500, -2.322, -2.172, -1.930, -1.653, -1.479, -1.305, -1.044, -0.783, -0.522, -0.261,
