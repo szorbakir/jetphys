@@ -1250,7 +1250,7 @@ bool HistosFill::AcceptEvent()
         double dPt = jtpt[jetidx] - jtgenpt[index];
         smearFactor = 1 + (sf - 1.) * dPt / jtpt[jetidx];
 
-        cout << "Smear with matched..." << endl;
+        //cout << "Smear with matched..." << endl;
       }
       else if (sf > 1)
       {
@@ -1260,11 +1260,11 @@ bool HistosFill::AcceptEvent()
 
         smearFactor = 1. + d(gen);
 
-        cout << "Smear with distribution..." << endl;
+        //cout << "Smear with distribution..." << endl;
       }
       else
       {
-        std::cout << "Impossible to smear this jet" << std::endl;
+        //std::cout << "Impossible to smear this jet" << std::endl;
       }
 
       if (p4.E() * smearFactor < MIN_JET_ENERGY)
