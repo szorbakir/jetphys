@@ -1186,6 +1186,109 @@ bool HistosFill::AcceptEvent()
       jtgenphi[jetidx] = gp4.Phi();
     }
 
+    //cout << jtgenpt[jetidx] << " " << jtgeny[jetidx] << " " << jtgenphi[jetidx] << " " << jtgeneta[jetidx] << endl;
+
+    if (jp::ismc and jp::doSF)
+    {
+
+      JME::JetResolutionScaleFactor resolution_sf = JME::JetResolutionScaleFactor("CondFormats/JetMETObjects/data/JME/" + jp::sfFile + ".txt");
+      JME::JetResolution resolution = JME::JetResolution("CondFormats/JetMETObjects/data/JME/" + jp::resolutionFile + ".txt");
+
+      //Define only one parameter`
+      JME::JetParameters parameters;
+      parameters.setJetPt(p4.Pt());
+      parameters.setJetEta(p4.Eta());
+      parameters.setRho(rho);
+
+      float sf = resolution_sf.getScaleFactor(parameters);
+      //float sf = resolution_sf.getScaleFactor(parameters, Variation::UP);
+      //float sf = resolution_sf.getScaleFactor(parameters, Variation::DOWN);
+
+      float r = resolution.getResolution(parameters);
+
+      double smearFactor = 1.;
+      bool _matched = false;
+      int index = 0;
+
+      std::random_device rd{};
+      std::mt19937 gen{rd()};
+
+      double m_dR_max = 0.2;
+      double min_dR = std::numeric_limits<double>::infinity();
+      static constexpr const double MIN_JET_ENERGY = 1e-2;
+
+      // ****************** compute smearing factor with jet constituents then smear the four vector and re-set the jet constituents ******************* //
+      for (int k = 0; k < gen_njt; k++)
+      {
+
+        float p1 = jtphi[jetidx];
+        float p2 = jtgenphi[k];
+        float e1 = jteta[jetidx]; // https://github.com/cms-sw/cmssw/blob/master/DataFormats/Math/interface/deltaR.h#L11-L30 //
+        float e2 = jtgeneta[k];
+        auto dp = std::abs(p1 - p2);
+        if (dp > (M_PI))
+          dp -= (2 * M_PI);
+        double dR = sqrt((e1 - e2) * (e1 - e2) + dp * dp);
+
+        if (dR > min_dR)
+          continue;
+
+        if (dR < m_dR_max)
+        {
+          double dPt = std::abs(jtgenpt[k] - jtpt[jetidx]);
+          if (dPt > 3 * r)
+            continue; // should be dPt < 3 * resolution
+
+          min_dR = dR;
+          _matched = true;
+          index = k;
+        }
+      }
+
+      if (_matched)
+      {
+        double dPt = jtpt[jetidx] - jtgenpt[index];
+        smearFactor = 1 + (sf - 1.) * dPt / jtpt[jetidx];
+
+        cout << "Smear with matched..." << endl;
+      }
+      else if (sf > 1)
+      {
+
+        double sigma = r * std::sqrt(sf * sf - 1);
+        std::normal_distribution<double> d{0, sigma};
+
+        smearFactor = 1. + d(gen);
+
+        cout << "Smear with distribution..." << endl;
+      }
+      else
+      {
+        std::cout << "Impossible to smear this jet" << std::endl;
+      }
+
+      if (p4.E() * smearFactor < MIN_JET_ENERGY)
+      {
+        // Negative or too small smearFactor. We would change direction of the jet
+        // and this is not what we want.
+        // Recompute the smearing factor in order to have jet.energy() == MIN_JET_ENERGY
+        double newSmearFactor = MIN_JET_ENERGY / p4.E();
+        smearFactor = newSmearFactor;
+      }
+
+      // If everything is fine, smear the reco jet in simulation, need to do sorting jets after smearing...
+      p4 *= smearFactor;
+
+      // Re-setting variables after smearing.
+      jte[jetidx] = p4.E();
+      jtpt[jetidx] = p4.Pt();
+      jteta[jetidx] = p4.Eta();
+      jtphi[jetidx] = p4.Phi();
+      jty[jetidx] = p4.Rapidity();
+      if (jp::doMpfHistos)
+        jtpt_nol2l3[jetidx] = p4.Pt() / jec_res;
+    }
+
     if (jp::debug)
       cout << "Jet " << jetidx << " corrected!" << endl;
 
