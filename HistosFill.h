@@ -295,7 +295,7 @@ private:
   TFile *fHotExcl;
   TFile *fColdExcl;
 
-  TLorentzVector p4, gp4, genp4, _j1, _j2, _j1Up, _j1Down, _j2Up, _j2Down, _j1_gen, _j2_gen;
+  TLorentzVector p4, gp4, genp4, _j1, _j2, _j3, _j1Up, _j1Down, _j2Up, _j2Down, _j1_gen, _j2_gen;
   jec::IOV _iov;
   FactorizedJetCorrector *_JEC, *_L1RC;
   JetCorrectionUncertainty *_jecUnc;
