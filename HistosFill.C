@@ -1964,8 +1964,8 @@ void HistosFill::FillSingleBasic(HistosBasic *h)
   }
 
   double djmass = (_j1 + _j2).M();
+  
   // Calculate up and down mass
-
   double djmassUp = 0.;
   double djmassDown = 0.;
   if (jp::doUnc)
@@ -1981,7 +1981,7 @@ void HistosFill::FillSingleBasic(HistosBasic *h)
 
   bool goodPt = (jtpt[i0] > 30. and jtpt[i1] > 30.);
   bool goodPt_up = (_j1Up.Pt() > 30. and _j2Up.Pt() > 30.);
-  bool goodPt_down = (_j2Up.Pt() > 30. and _j2Down.Pt() > 30.);
+  bool goodPt_down = (_j1Down.Pt() > 30. and _j2Down.Pt() > 30.);
 
   // The eta sectors are filled according to max rapidity
   if (ymaxdj >= h->etamin and ymaxdj < h->etamax and goodPt)
@@ -2017,7 +2017,7 @@ void HistosFill::FillSingleBasic(HistosBasic *h)
     h->pdjmass0_ptratio->Fill(djmass, _j1.Pt() / _j2.Pt(), _w);
   }
 
-  // Up Shift dijet mass hist
+  // Up shifted dijet mass hist
   if (jp::doUnc and ymaxdj_up >= h->etamin and ymaxdj_up < h->etamax and goodPt_up)
   {
     if (_j1Up.Pt() < 30. or _j2Up.Pt() < 30.)
@@ -2029,7 +2029,7 @@ void HistosFill::FillSingleBasic(HistosBasic *h)
     h->hdjmassUp_new->Fill(djmassUp, _w);
   }
 
-  // Down Shift dijet mass hist
+  // Down shifted dijet mass hist
   if (jp::doUnc and ymaxdj_down >= h->etamin and ymaxdj_down < h->etamax and goodPt_down)
   {
     if (_j1Down.Pt() < 30. or _j2Down.Pt() < 30.)
