@@ -62,6 +62,8 @@ public:
   TH1D *hdjmass_half;
   TH1D *hdjmassUp;
   TH1D *hdjmassDown;
+  TH1D *hdjmassUp_new;
+  TH1D *hdjmassDown_new;
   TH1D *hdjmass0;
   //TH1D *hdjmass_a01;
   //TH1D *hdjmass_a02;
@@ -77,31 +79,31 @@ public:
   TH1D *hdjmass_half_gen;
   TH1D *hdjpt_leading_gen;
   TH1D *hdjpt_subleading_gen;
-  
+
   // Acceptance and background studies for inclusive jets
   TProfile *paccept_vsPt;
   TProfile *pbg_vsPt;
 
   // unfolding studies dijet mass
-  TH2D *matrix_gen_reco;  
-  TH2D *h2jetres; // 2D delta mass vs mass plots for resolution studies  
+  TH2D *matrix_gen_reco;
+  TH2D *h2jetres;        // 2D delta mass vs mass plots for resolution studies
   TProfile *pdjmass_res; // Profile plot to monitor mean value of mass resolution
 
   //Lost gen jets investigation
   TH1D *djmass_matched; // Reco Mjj spectrum under DR matching and eta range (reco and gen are in same eta bin)
-  TH1D *gen_djmassX0; // Gen Mjj spectrum under dR criteria (reco and gen are  in same eta bin)
-  TH1D *gen_djmassX1; // Gen Mjj spectrum under dR criteria (only gen eta bin)
-  TH1D *gen_djmassX2; // Gen Mjj spectrum under loose dR(0.4) criteria (only gen eta bin)
-  TH1D *gen_djmassX3; // Gen Mjj spectrum under dR criteria (Third reco jet included to dR calculation && only gen eta bin)
-  TH1D *gen_djmassX4; // Gen Mjj spectrum (Anything else)
-  
+  TH1D *gen_djmassX0;   // Gen Mjj spectrum under dR criteria (reco and gen are  in same eta bin)
+  TH1D *gen_djmassX1;   // Gen Mjj spectrum under dR criteria (only gen eta bin)
+  TH1D *gen_djmassX2;   // Gen Mjj spectrum under loose dR(0.4) criteria (only gen eta bin)
+  TH1D *gen_djmassX3;   // Gen Mjj spectrum under dR criteria (Third reco jet included to dR calculation && only gen eta bin)
+  TH1D *gen_djmassX4;   // Gen Mjj spectrum (Anything else)
+
   // jet mass (for the two leading jets)
   //TH1D *hjmass;
   //TH1D *hjmass0;
   //TH1D *hjmass_a01;
   //TH1D *hjmass_a02;
   //TH1D *hjmass_a03;
-  
+
   // Ozlem: new histograms for quark/gluon study
   // TH1D *hgpt;
   // TH1D *hgpt0;

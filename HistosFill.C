@@ -1934,224 +1934,268 @@ void HistosFill::FillSingleBasic(HistosBasic *h)
   //////////////////// DIJET MASS /////////////////////////////////////
   ////////////////////////////////////////////////////////////////////
 
-  // RECO-LEVEL calculation 
+  // RECO-LEVEL calculation
 
   if (_pass_qcdmet and i0 >= 0 and _jetids[i0] and jtpt[i0] > jp::recopt)
   { // First leading jet
     if (i1 >= 0 and _jetids[i1] and jtpt[i1] > jp::recopt)
     { // Second leading jet
-      
+
       //{ Calculate and fill dijet mass.
       _j1.SetPtEtaPhiE(jtpt[i0], jteta[i0], jtphi[i0], jte[i0]);
       _j2.SetPtEtaPhiE(jtpt[i1], jteta[i1], jtphi[i1], jte[i1]);
-    }  //Second leading jet
-   }  // First leading jet 
+    } //Second leading jet
+  }   // First leading jet
 
-      //Small check on jet pt ordering.
-      if (jtpt[i0] <= jtpt[i1]) cout << "Error!! " << " Event: " << _jentry << " Leading Pt:  "<< jtpt[i0]<< " Subleading Pt: " << jtpt[i1] << endl; 
-      //or jtpt[i0] < jp::recopt or jtpt[i1] < jp::recopt 
-      
-      // Calculate up and down variation of the lorentz vectors
-      if (jp::doUnc)
+  //Small check on jet pt ordering.
+  if (jtpt[i0] <= jtpt[i1])
+    cout << "Error!! "
+         << " Event: " << _jentry << " Leading Pt:  " << jtpt[i0] << " Subleading Pt: " << jtpt[i1] << endl;
+  //or jtpt[i0] < jp::recopt or jtpt[i1] < jp::recopt
+
+  // Calculate up and down variation of the lorentz vectors
+  if (jp::doUnc)
+  {
+    _j1Up = _j1 * (1 + unc);
+    _j1Down = _j1 * (1 - unc);
+
+    _j2Up = _j2 * (1 + unc);
+    _j2Down = _j2 * (1 - unc);
+  }
+
+  double djmass = (_j1 + _j2).M();
+  // Calculate up and down mass
+
+  double djmassUp = 0.;
+  double djmassDown = 0.;
+  if (jp::doUnc)
+  {
+    djmassUp = (_j1Up + _j2Up).M();
+    djmassDown = (_j1Down + _j2Down).M();
+  }
+
+  //double etamaxdj = max(fabs(jteta[i0]), fabs(jteta[i1]));
+  double ymaxdj = max(fabs(jty[i0]), fabs(jty[i1]));
+  double ymaxdj_up = max(fabs(_j1Up.Rapidity()), fabs(_j2Up.Rapidity()));
+  double ymaxdj_down = max(fabs(_j1Down.Rapidity()), fabs(_j2Down.Rapidity()));
+
+  bool goodPt = (jtpt[i0] > 30. and jtpt[i1] > 30.);
+  bool goodPt_up = (_j1Up.Pt() > 30. and _j2Up.Pt() > 30.);
+  bool goodPt_down = (_j2Up.Pt() > 30. and _j2Down.Pt() > 30.);
+
+  // The eta sectors are filled according to max rapidity
+  if (ymaxdj >= h->etamin and ymaxdj < h->etamax and goodPt)
+  {
+    assert(h->hdjmass);
+    h->hdjmass->Fill(djmass, _w);
+
+    // Half binned mass histo
+    assert(h->hdjmass_half);
+    h->hdjmass_half->Fill(djmass, _w);
+
+    // Fill djmass histos with JEC unc.
+    if (jp::doUnc)
+    {
+      assert(h->hdjmassUp);
+      h->hdjmassUp->Fill(djmassUp, _w);
+
+      assert(h->hdjmassDown);
+      h->hdjmassDown->Fill(djmassDown, _w);
+    }
+
+    // Leading and subleading pt of the dijet system
+    assert(h->hdjpt_leading);
+    h->hdjpt_leading->Fill(_j1.Pt(), _w);
+    assert(h->hdjpt_subleading);
+    h->hdjpt_subleading->Fill(_j2.Pt(), _w);
+
+    assert(h->hdjmass0);
+    h->hdjmass0->Fill(djmass, _w);
+    assert(h->pdjmass_ptratio);
+    h->pdjmass_ptratio->Fill(djmass, _j1.Pt() / _j2.Pt(), _w);
+    assert(h->pdjmass0_ptratio);
+    h->pdjmass0_ptratio->Fill(djmass, _j1.Pt() / _j2.Pt(), _w);
+  }
+
+  // Up Shift dijet mass hist
+  if (jp::doUnc and ymaxdj_up >= h->etamin and ymaxdj_up < h->etamax and goodPt_up)
+  {
+    if (_j1Up.Pt() < 30. or _j2Up.Pt() < 30.)
+    {
+      cout << "Error! Up Pt failed!" << endl;
+      cout << "Leading Pt: " << _j1Up.Pt() << " Subleading Pt: " << _j2Up.Pt() << endl;
+    }
+    assert(h->hdjmassUp);
+    h->hdjmassUp_new->Fill(djmassUp, _w);
+  }
+
+  // Down Shift dijet mass hist
+  if (jp::doUnc and ymaxdj_down >= h->etamin and ymaxdj_down < h->etamax and goodPt_down)
+  {
+    if (_j1Down.Pt() < 30. or _j2Down.Pt() < 30.)
+    {
+      cout << "Error! Down Pt failed!" << endl;
+      cout << "Leading Pt: " << _j1Down.Pt() << " Subleading Pt: " << _j2Down.Pt() << endl;
+    }
+
+    assert(h->hdjmassDown);
+    h->hdjmassDown_new->Fill(djmassDown, _w);
+  }
+
+  // GEN-LEVEL calculation
+  if (jp::ismc)
+  {
+    if (gen_njt >= 2 and gen_jtpt[0] > jp::recopt and gen_jtpt[1] > jp::recopt)
+    {
+
+      _j1_gen.SetPtEtaPhiE(gen_jtpt[0], gen_jteta[0], gen_jtphi[0], gen_jte[0]);
+      _j2_gen.SetPtEtaPhiE(gen_jtpt[1], gen_jteta[1], gen_jtphi[1], gen_jte[1]);
+    }
+    double djmass_gen = (_j1_gen + _j2_gen).M();
+    //double etamaxdj_gen = max(fabs(gen_jteta[0]), fabs(gen_jteta[1]));
+    double ymaxdj_gen = max(fabs(gen_jty[0]), fabs(gen_jty[1]));
+    bool gen_goodPt = (gen_jtpt[0] > 30. and gen_jtpt[1] > 30.);
+
+    if (gen_goodPt and ymaxdj_gen >= h->etamin and ymaxdj_gen < h->etamax)
+    {
+      assert(h->hdjmass_gen);
+      h->hdjmass_gen->Fill(djmass_gen, _w);
+
+      // Fill half binned gen spectrum
+      assert(h->hdjmass_half_gen);
+      h->hdjmass_half_gen->Fill(djmass_gen, _w);
+
+      // Leading and subleading pt of generated dijet mass system
+      assert(h->hdjpt_leading_gen);
+      h->hdjpt_leading_gen->Fill(_j1_gen.Pt(), _w);
+      assert(h->hdjpt_subleading_gen);
+      h->hdjpt_subleading_gen->Fill(_j2_gen.Pt(), _w);
+    } // gen dijet mass eta range
+
+    // ACCEPTANCE and BACKGROUND
+    //First testing with inclusive jets to see everything is working properly.
+
+    //BACKGROUND
+    for (int j = 0; j != njt; ++j)
+    {
+      bool _ISmatched = false;
+
+      _j1.SetPtEtaPhiE(jtpt[j], jteta[j], jtphi[j], jte[j]);
+      double yreco = jty[j];
+      bool goodPt = (jtpt[j] > 30.);
+      bool reco_id = (_pass && _pass_qcdmet && goodPt && _jetids[j]);
+      if (!reco_id)
+        continue;
+
+      for (int k = 0; k != gen_njt; ++k)
       {
-        _j1Up = _j1 * (1 + unc);
-        _j1Down = _j1 * (1 - unc);
 
-        _j2Up = _j2 * (1 + unc);
-        _j2Down = _j2 * (1 - unc);
-      }
+        bool _ismatched = false;
+        double DR;
+        DR = 1000;
 
-      double djmass = (_j1 + _j2).M();
-      // Calculate up and down mass
-      double djmassUp = 0.;
-      double djmassDown = 0.;
-      if (jp::doUnc)
-      {
-        djmassUp = (_j1Up + _j2Up).M();
-        djmassDown = (_j1Down + _j2Down).M();
-      }
+        _j1_gen.SetPtEtaPhiE(gen_jtpt[k], gen_jteta[k], gen_jtphi[k], gen_jte[k]);
+        double ygen = jtgeny[k];
+        bool gen_goodPt = (gen_jtpt[k] > 30.);
+        if (!gen_goodPt)
+          continue;
 
-      //double etamaxdj = max(fabs(jteta[i0]), fabs(jteta[i1]));
-      double ymaxdj = max(fabs(jty[i0]), fabs(jty[i1]));
-      bool goodPt = (jtpt[i0]>30. and jtpt[i1]>30.);
-      // The eta sectors are filled according to max rapidity
-      
-      if (ymaxdj >= h->etamin and ymaxdj < h->etamax and goodPt)
-      {
-        assert(h->hdjmass);
-        h->hdjmass->Fill(djmass, _w);
+        DR = (_j1_gen.DeltaR(_j1));
 
-        // Half binned mass histo
-        assert(h->hdjmass_half);
-        h->hdjmass_half->Fill(djmass, _w);
+        if (DR < 0.2)
+          _ismatched = true;
 
-        // Fill djmass histos with JEC unc.
-        if (jp::doUnc)
+        if (_ismatched)
         {
-          assert(h->hdjmassUp);
-          h->hdjmassUp->Fill(djmassUp, _w);
+          _ISmatched = true;
+          break;
+        }
+      } //gen jet
 
-          assert(h->hdjmassDown);
-          h->hdjmassDown->Fill(djmassDown, _w);
+      // Filling background profile plots..
+      if (fabs(yreco) >= h->etamin && fabs(yreco) < h->etamax)
+      {
+
+        assert(h->pbg_vsPt);
+        h->pbg_vsPt->Fill(jtpt[j], _ISmatched ? 0 : 1, _w); // the reason it is reversed (mathced=0 ; unmatched=1) because BACKGROUND = 1-(matched/all)
+
+      } //matching and filling
+    }   //reco jet
+        //BACKGROUND
+
+    //ACCEPTANCE
+    for (int j = 0; j != gen_njt; ++j)
+    {
+
+      bool _ISmatched = false;
+
+      _j2_gen.SetPtEtaPhiE(gen_jtpt[j], gen_jteta[j], gen_jtphi[j], gen_jte[j]);
+      double ygen = jtgeny[j];
+      bool gen_goodPt = (gen_jtpt[j] > 30.);
+      if (!gen_goodPt)
+        continue;
+
+      for (int k = 0; k != njt; ++k)
+      {
+
+        double DR_two;
+        DR_two = 1000;
+        bool _ismatched = false;
+
+        _j2.SetPtEtaPhiE(jtpt[k], jteta[k], jtphi[k], jte[k]);
+        //	double yreco = jty[k];
+        bool goodPt = (jtpt[k] > 30.);
+        bool reco_id = (_pass && _pass_qcdmet && goodPt && _jetids[k]);
+        if (!reco_id)
+          continue;
+
+        DR_two = (_j2_gen.DeltaR(_j2));
+        if (DR_two < 0.2)
+          _ismatched = true; //
+
+        if (_ismatched)
+        {
+          _ISmatched = true;
+          break;
         }
 
-        // Leading and subleading pt of the dijet system
-        assert(h->hdjpt_leading);
-        h->hdjpt_leading->Fill(_j1.Pt(), _w);
-        assert(h->hdjpt_subleading);
-        h->hdjpt_subleading->Fill(_j2.Pt(), _w);
+      } //reco jet
 
-        assert(h->hdjmass0);
-        h->hdjmass0->Fill(djmass, _w);
-        assert(h->pdjmass_ptratio);
-        h->pdjmass_ptratio->Fill(djmass, _j1.Pt() / _j2.Pt(), _w);
-        assert(h->pdjmass0_ptratio);
-        h->pdjmass0_ptratio->Fill(djmass, _j1.Pt() / _j2.Pt(), _w);
-      } 
-        //GEN-LEVEL calculation
-	
-	if (jp::ismc)
-  	{
-  	if (gen_njt >=2 and gen_jtpt[0] > jp::recopt and gen_jtpt[1] > jp::recopt)
-  	{ 
-    	       
-          _j1_gen.SetPtEtaPhiE(gen_jtpt[0], gen_jteta[0], gen_jtphi[0], gen_jte[0]);
-          _j2_gen.SetPtEtaPhiE(gen_jtpt[1], gen_jteta[1], gen_jtphi[1], gen_jte[1]);
-	}
-          double djmass_gen = (_j1_gen + _j2_gen).M();
-          //double etamaxdj_gen = max(fabs(gen_jteta[0]), fabs(gen_jteta[1]));
-          double ymaxdj_gen = max(fabs(gen_jty[0]), fabs(gen_jty[1]));
-	  bool gen_goodPt = (gen_jtpt[0]>30. and gen_jtpt[1]>30.);	
+      // Filling acceptance profile plots..
+      if (fabs(ygen) >= h->etamin && fabs(ygen) < h->etamax)
+      {
 
+        assert(h->paccept_vsPt);
+        h->paccept_vsPt->Fill(gen_jtpt[j], _ISmatched ? 1 : 0, _w);
+      } //matching and filling
+    }   //gen jet
+        //ACCEPTANCE
 
-          if (gen_goodPt and ymaxdj_gen >= h->etamin and ymaxdj_gen < h->etamax)
-          {
-            assert(h->hdjmass_gen);
-            h->hdjmass_gen->Fill(djmass_gen, _w);
+    // Unfolding studies for dijet mass
+    // Resolution studies are also added inside of this loop 19/9/2018
+    // Resolution studies are performed on well matched dijet pairs
 
-            // Fill half binned gen spectrum
-            assert(h->hdjmass_half_gen);
-            h->hdjmass_half_gen->Fill(djmass_gen, _w);
+    if (gen_njt >= 2 and njt >= 2 and jp::doRmatrix)
+    {
 
-            // Leading and subleading pt of generated dijet mass system
-            assert(h->hdjpt_leading_gen);
-            h->hdjpt_leading_gen->Fill(_j1_gen.Pt(), _w);
-            assert(h->hdjpt_subleading_gen);
-            h->hdjpt_subleading_gen->Fill(_j2_gen.Pt(), _w);
-          } // gen dijet mass eta range
-	
-	// ACCEPTANCE and BACKGROUND
-	//First testing with inclusive jets to see everything is working properly.
-	
-	//BACKGROUND
-	for (int j = 0; j != njt; ++j) {
-  	bool _ISmatched = false;	
-		
-		_j1.SetPtEtaPhiE(jtpt[j],jteta[j],jtphi[j],jte[j]);
-		double yreco = jty[j];
-             	bool goodPt = (jtpt[j]>30.);
-	     	bool reco_id  = (_pass && _pass_qcdmet && goodPt && _jetids[j]);
-		if (!reco_id) continue;
-		
-		for (int k = 0; k != gen_njt; ++k) { 
-		
-  	     		bool _ismatched = false; 
-    	     		double DR;
-    	     		DR=1000;
-		
-			_j1_gen.SetPtEtaPhiE(gen_jtpt[k],gen_jteta[k],gen_jtphi[k],gen_jte[k]);
-			double ygen = jtgeny[k];
-			bool gen_goodPt = (gen_jtpt[k]>30.);
-			if (!gen_goodPt) continue;
-		
-    			DR = ( _j1_gen.DeltaR(_j1));
+      double deltaR_one, deltaR_two, deltaR_onethree, deltaR_twothree;
 
-			if (DR < 0.2) _ismatched = true;  	
+      deltaR_one = 10;
+      deltaR_two = 10;
+      deltaR_onethree = 10;
+      deltaR_twothree = 10;
 
-				if (_ismatched){
- 					_ISmatched = true;
-               				break;
-				}	 		
-		}//gen jet
-			
-			// Filling background profile plots..
-			if (fabs(yreco) >= h->etamin && fabs(yreco) < h->etamax) {
-			    
-					assert(h->pbg_vsPt);
-					h->pbg_vsPt->Fill(jtpt[j], _ISmatched ? 0 : 1, _w); // the reason it is reversed (mathced=0 ; unmatched=1) because BACKGROUND = 1-(matched/all)
-   
-    }//matching and filling
-   }//reco jet
-  //BACKGROUND	
-	
-	//ACCEPTANCE
-	for (int j = 0; j != gen_njt; ++j) { 
-  		
-             bool _ISmatched = false;
+      //GEN-LEVEL calculation
+      _j1_gen.SetPtEtaPhiE(gen_jtpt[0], gen_jteta[0], gen_jtphi[0], gen_jte[0]);
+      _j2_gen.SetPtEtaPhiE(gen_jtpt[1], gen_jteta[1], gen_jtphi[1], gen_jte[1]);
 
-             _j2_gen.SetPtEtaPhiE(gen_jtpt[j],gen_jteta[j],gen_jtphi[j],gen_jte[j]);
-             double ygen = jtgeny[j];
-	     bool gen_goodPt = (gen_jtpt[j]>30.);
-	     if (!gen_goodPt) continue; 
-		
-		for (int k = 0; k != njt; ++k) { 
-		
-    			double DR_two;
-    			DR_two=1000;
-  	        	bool _ismatched = false;
-	
-			_j2.SetPtEtaPhiE(jtpt[k],jteta[k],jtphi[k],jte[k]);
-		//	double yreco = jty[k];
-             		bool goodPt = (jtpt[k]>30.);
-	     		bool reco_id  = (_pass && _pass_qcdmet && goodPt && _jetids[k]);
-			if (!reco_id) continue;
-		
-    			DR_two = ( _j2_gen.DeltaR(_j2));
-			if (DR_two < 0.2) _ismatched = true; //		
-                
-				if (_ismatched) {
-		             		_ISmatched = true;
-			     		break;
-				}  	
-                
-     		}//reco jet
+      double gen_djmass = (_j1_gen + _j2_gen).M();
+      double gen_ymaxdj = max(fabs(gen_jty[0]), fabs(gen_jty[1]));
+      bool gen_goodmass = (gen_jtpt[0] > 30. and gen_jtpt[1] > 30.);
 
-			// Filling acceptance profile plots..
-			if (fabs(ygen) >= h->etamin && fabs(ygen) < h->etamax) {
-			    
-					assert(h->paccept_vsPt);
-                                        h->paccept_vsPt->Fill(gen_jtpt[j], _ISmatched ? 1 : 0, _w);
-			}//matching and filling			
-	}//gen jet
- //ACCEPTANCE	
-	
-	// Unfolding studies for dijet mass
-  	// Resolution studies are also added inside of this loop 19/9/2018
-  	// Resolution studies are performed on well matched dijet pairs
-  
-  if (gen_njt>=2 and njt>=2 and jp::doRmatrix) { 
-  
-    double deltaR_one, deltaR_two, deltaR_onethree, deltaR_twothree;
-    
-    deltaR_one=10;
-    deltaR_two=10;
-    deltaR_onethree=10;
-    deltaR_twothree=10;
-    
-    
-	
-    //GEN-LEVEL calculation
-    _j1_gen.SetPtEtaPhiE(gen_jtpt[0],gen_jteta[0],gen_jtphi[0],gen_jte[0]);
-    _j2_gen.SetPtEtaPhiE(gen_jtpt[1],gen_jteta[1],gen_jtphi[1],gen_jte[1]);
-	
-    double gen_djmass = (_j1_gen+_j2_gen).M();
-    double gen_ymaxdj = max(fabs(gen_jty[0]),fabs(gen_jty[1]));
-    bool gen_goodmass = (gen_jtpt[0]>30. and gen_jtpt[1]>30.);
-    
+      //RECO-LEVEL calculation
 
-    //RECO-LEVEL calculation
-
-   /* map<double, int> ptorder;
+      /* map<double, int> ptorder;
     for (int i = 0; i != njt; ++i) {
       double idx = -jtpt[i]; // note minus
       while (ptorder.find(idx) != ptorder.end()) idx += 1e-5*jteta[i];
@@ -2162,34 +2206,39 @@ void HistosFill::FillSingleBasic(HistosBasic *h)
     int i1 = (++ptorder.begin())->second;
    // int i2 = (ptorder.begin(),3)->second;
     */
-    _j1.SetPtEtaPhiE(jtpt[i0],jteta[i0],jtphi[i0],jte[i0]);
-    _j2.SetPtEtaPhiE(jtpt[i1],jteta[i1],jtphi[i1],jte[i1]);
-    _j3.SetPtEtaPhiE(jtpt[i2],jteta[i2],jtphi[i2],jte[i2]);
-    if (njt == 2)_j3.SetPtEtaPhiE(0.,0.,0.,0.);
-	
-	//Small check on ordering one more time....
-	if (jtpt[i0]<=jtpt[i1] or jtpt[i1]<=jtpt[i2] or jtpt[i0]<=jtpt[i2]) cout << "Error!! " << " Leading Pt: " << jtpt[i0] << " Subleading Pt: " << jtpt[i1] << " Third jet Pt: " << jtpt[i2] <<endl;
-    
-			double djmass = (_j1+_j2).M();
-			double ymaxdj = max(fabs(jty[i0]),fabs(jty[i1]));
-			bool goodmass = (jtpt[i0]>30. and jtpt[i1]>30.);
-		        bool reco_id  = (_pass and _pass_qcdmet and goodmass and _jetids[i0] and _jetids[i1]);
-			
-			deltaR_one = min( _j1_gen.DeltaR(_j1), _j1_gen.DeltaR(_j2) );
-			deltaR_two = min( _j2_gen.DeltaR(_j1), _j2_gen.DeltaR(_j2) );
-                        
-			if (njt>2){
-			 	
-				deltaR_onethree = min (min (_j1_gen.DeltaR(_j1), _j1_gen.DeltaR(_j2)), _j1_gen.DeltaR(_j3));
-                        	deltaR_twothree = min (min (_j2_gen.DeltaR(_j1), _j2_gen.DeltaR(_j2)), _j2_gen.DeltaR(_j3));
-			}
-			
-			// Filling response matrix //
-			if ((gen_goodmass and gen_ymaxdj >= h->etamin and gen_ymaxdj < h->etamax and ymaxdj >= h->etamin and ymaxdj < h->etamax) and 
-			    (reco_id) and 
-			    (deltaR_one < 0.2 and deltaR_two < 0.2)) {
-					
-					/*if (_debug_dj){
+      _j1.SetPtEtaPhiE(jtpt[i0], jteta[i0], jtphi[i0], jte[i0]);
+      _j2.SetPtEtaPhiE(jtpt[i1], jteta[i1], jtphi[i1], jte[i1]);
+      _j3.SetPtEtaPhiE(jtpt[i2], jteta[i2], jtphi[i2], jte[i2]);
+      if (njt == 2)
+        _j3.SetPtEtaPhiE(0., 0., 0., 0.);
+
+      //Small check on ordering one more time....
+      if (jtpt[i0] <= jtpt[i1] or jtpt[i1] <= jtpt[i2] or jtpt[i0] <= jtpt[i2])
+        cout << "Error!! "
+             << " Leading Pt: " << jtpt[i0] << " Subleading Pt: " << jtpt[i1] << " Third jet Pt: " << jtpt[i2] << endl;
+
+      double djmass = (_j1 + _j2).M();
+      double ymaxdj = max(fabs(jty[i0]), fabs(jty[i1]));
+      bool goodmass = (jtpt[i0] > 30. and jtpt[i1] > 30.);
+      bool reco_id = (_pass and _pass_qcdmet and goodmass and _jetids[i0] and _jetids[i1]);
+
+      deltaR_one = min(_j1_gen.DeltaR(_j1), _j1_gen.DeltaR(_j2));
+      deltaR_two = min(_j2_gen.DeltaR(_j1), _j2_gen.DeltaR(_j2));
+
+      if (njt > 2)
+      {
+
+        deltaR_onethree = min(min(_j1_gen.DeltaR(_j1), _j1_gen.DeltaR(_j2)), _j1_gen.DeltaR(_j3));
+        deltaR_twothree = min(min(_j2_gen.DeltaR(_j1), _j2_gen.DeltaR(_j2)), _j2_gen.DeltaR(_j3));
+      }
+
+      // Filling response matrix //
+      if ((gen_goodmass and gen_ymaxdj >= h->etamin and gen_ymaxdj < h->etamax and ymaxdj >= h->etamin and ymaxdj < h->etamax) and
+          (reco_id) and
+          (deltaR_one < 0.2 and deltaR_two < 0.2))
+      {
+
+        /*if (_debug_dj){
 					cout << "Recojet investigation"<<endl;
 					cout << "We have " << njt << " reco jets in event " << _entry << endl;
 					cout << "First jet---> " << j << ". jet of the event" << endl;
@@ -2203,64 +2252,66 @@ void HistosFill::FillSingleBasic(HistosBasic *h)
 					cout << endl;
 					cout << endl;
 				        }*/
-					
-					assert(h->matrix_gen_reco);
-					h->matrix_gen_reco->Fill(djmass, gen_djmass, _w);
-					
-					assert(h->djmass_matched);
-					h->djmass_matched->Fill(djmass, _w);
-					
-					assert(h->gen_djmassX0);
-					h->gen_djmassX0->Fill(gen_djmass, _w);
-					
-					/// Filling delta mass (Mjjrec/Mjjgen) vs Mjjgen for resolution studies
-					assert(h->h2jetres);
-					h->h2jetres->Fill(gen_djmass, djmass/gen_djmass, _w);
-					
-					// Filling mass resolutions' mean values to profile plot
-					assert(h->pdjmass_res);
-      					h->pdjmass_res->Fill(gen_djmass, (djmass-gen_djmass)/gen_djmass, _w);
-			
-      			}//matching and filling
-			
-			// Investigation of lost gen jets
-			
-			else if ((gen_goodmass and gen_ymaxdj >= h->etamin && gen_ymaxdj < h->etamax) and (reco_id) and   		
-      				 (deltaR_one < 0.2 and deltaR_two < 0.2)){
-					// CASE 1: No check on reco jet eta bin
-					h->gen_djmassX1->Fill(gen_djmass, _w);
-			}
-      
 
-			else if ((gen_goodmass and gen_ymaxdj >= h->etamin && gen_ymaxdj < h->etamax) and (reco_id) and   		
-      				(deltaR_one < 0.4 and deltaR_two < 0.4)){
-					
-					//CASE 2: Using loose dR cut 
-					h->gen_djmassX2->Fill(gen_djmass, _w);
-			}
+        assert(h->matrix_gen_reco);
+        h->matrix_gen_reco->Fill(djmass, gen_djmass, _w);
 
-			
-			else if ((gen_goodmass and gen_ymaxdj >= h->etamin && gen_ymaxdj < h->etamax) and (reco_id) and   		
-      				(deltaR_onethree < 0.2 and deltaR_twothree < 0.2) and _j3.Pt() > 30. and _jetids[i2]){
-				        
-					// CASE 3: Adding third reco jet into dR calculation 
-					h->gen_djmassX3->Fill(gen_djmass, _w);
-			}
-			
-			else if ((gen_goodmass and gen_ymaxdj >= h->etamin and gen_ymaxdj < h->etamax)) {
-					
-					//CASE 4: Anything else
-					h->gen_djmassX4->Fill(gen_djmass, _w);
-			}
-			
-			else {
-			 	
-			}
-  }// Unfolding studies dijet mass
+        assert(h->djmass_matched);
+        h->djmass_matched->Fill(djmass, _w);
 
-}//ismc
+        assert(h->gen_djmassX0);
+        h->gen_djmassX0->Fill(gen_djmass, _w);
 
-	/*if (dphi > 2.7)
+        /// Filling delta mass (Mjjrec/Mjjgen) vs Mjjgen for resolution studies
+        assert(h->h2jetres);
+        h->h2jetres->Fill(gen_djmass, djmass / gen_djmass, _w);
+
+        // Filling mass resolutions' mean values to profile plot
+        assert(h->pdjmass_res);
+        h->pdjmass_res->Fill(gen_djmass, (djmass - gen_djmass) / gen_djmass, _w);
+
+      } //matching and filling
+
+      // Investigation of lost gen jets
+
+      else if ((gen_goodmass and gen_ymaxdj >= h->etamin && gen_ymaxdj < h->etamax) and (reco_id) and
+               (deltaR_one < 0.2 and deltaR_two < 0.2))
+      {
+        // CASE 1: No check on reco jet eta bin
+        h->gen_djmassX1->Fill(gen_djmass, _w);
+      }
+
+      else if ((gen_goodmass and gen_ymaxdj >= h->etamin && gen_ymaxdj < h->etamax) and (reco_id) and
+               (deltaR_one < 0.4 and deltaR_two < 0.4))
+      {
+
+        //CASE 2: Using loose dR cut
+        h->gen_djmassX2->Fill(gen_djmass, _w);
+      }
+
+      else if ((gen_goodmass and gen_ymaxdj >= h->etamin && gen_ymaxdj < h->etamax) and (reco_id) and
+               (deltaR_onethree < 0.2 and deltaR_twothree < 0.2) and _j3.Pt() > 30. and _jetids[i2])
+      {
+
+        // CASE 3: Adding third reco jet into dR calculation
+        h->gen_djmassX3->Fill(gen_djmass, _w);
+      }
+
+      else if ((gen_goodmass and gen_ymaxdj >= h->etamin and gen_ymaxdj < h->etamax))
+      {
+
+        //CASE 4: Anything else
+        h->gen_djmassX4->Fill(gen_djmass, _w);
+      }
+
+      else
+      {
+      }
+    } // Unfolding studies dijet mass
+
+  } //ismc
+
+  /*if (dphi > 2.7)
         { // Back-to-back condition
           if (alpha < 0.1)
           {
@@ -2310,11 +2361,11 @@ void HistosFill::FillSingleBasic(HistosBasic *h)
       }
       //}*/
 
-      //{ Tag & probe hoods: Tag in barrel and fires trigger, probe in eta bin unbiased
-      if (jp::debug)
-        cout << "Calculate and fill dijet balance" << endl
-             << flush;
-      /*
+  //{ Tag & probe hoods: Tag in barrel and fires trigger, probe in eta bin unbiased
+  if (jp::debug)
+    cout << "Calculate and fill dijet balance" << endl
+         << flush;
+  /*
       if (dphi > 2.7)
       { // Back-to-back condition
         for (auto itag_lead = 0u; itag_lead < 2u; ++itag_lead)
@@ -3033,7 +3084,6 @@ void HistosFill::FillSingleBasic(HistosBasic *h)
       {
         if (jp::debug)
           cout << "genjet " << gjetidx << "/" << gen_njt << " ptg=" << ptgen << " etag=" << etagen << endl;
-
 
         /*h->hpt_g0tw->Fill(ptgen, _w);
         // Ozlem: (gluon vs quark)
