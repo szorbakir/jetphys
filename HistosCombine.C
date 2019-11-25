@@ -297,6 +297,8 @@ void HistosCombine()
   recurseFile(fin, fout, "hdjmass_half", false);
   recurseFile(fin, fout, "hdjmassUp", false);
   recurseFile(fin, fout, "hdjmassDown", false);
+  recurseFile(fin, fout, "hdjmassUp_new", false);
+  recurseFile(fin, fout, "hdjmassDown_new", false);
   recurseFile(fin, fout, "hdjmass0", false);
   recurseFile(fin, fout, "hdjmass_gen", false);
   recurseFile(fin, fout, "hdjmass_half_gen", false);
