@@ -767,13 +767,13 @@ bool HistosFill::PreRun()
       if (!jp::ismc)
       {
         if (std::regex_search(jp::run, regex("^RunA")))
-          HotTag = "B";
+          HotTag = "A";
         else if (std::regex_search(jp::run, regex("^RunB")))
-          HotTag = "C";
+          HotTag = "B";
         else if (std::regex_search(jp::run, regex("^RunC")))
-          HotTag = "D";
+          HotTag = "C";
         else if (std::regex_search(jp::run, regex("^RunD")))
-          HotTag = "E";
+          HotTag = "D";
       }
       else if (jp::ismc)
       {
@@ -845,13 +845,13 @@ bool HistosFill::PreRun()
       if (!jp::ismc)
       {
         if (std::regex_search(jp::run, regex("^RunA")))
-          ColdTag = "B";
+          ColdTag = "A";
         else if (std::regex_search(jp::run, regex("^RunB")))
-          ColdTag = "C";
+          ColdTag = "B";
         else if (std::regex_search(jp::run, regex("^RunC")))
-          ColdTag = "D";
+          ColdTag = "C";
         else if (std::regex_search(jp::run, regex("^RunD")))
-          ColdTag = "E";
+          ColdTag = "D";
       }
       else if (jp::ismc)
       {
