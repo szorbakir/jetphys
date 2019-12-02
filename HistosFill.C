@@ -1944,8 +1944,6 @@ void HistosFill::FillSingleBasic(HistosBasic *h)
       //{ Calculate and fill dijet mass.
       _j1.SetPtEtaPhiE(jtpt[i0], jteta[i0], jtphi[i0], jte[i0]);
       _j2.SetPtEtaPhiE(jtpt[i1], jteta[i1], jtphi[i1], jte[i1]);
-    } //Second leading jet
-  }   // First leading jet
 
   //Small check on jet pt ordering.
   if (jtpt[i0] <= jtpt[i1])
@@ -2041,7 +2039,9 @@ void HistosFill::FillSingleBasic(HistosBasic *h)
     assert(h->hdjmassDown);
     h->hdjmassDown_new->Fill(djmassDown, _w);
   }
-
+ } //Second leading jet
+}   // First leading jet
+  
   // GEN-LEVEL calculation
   if (jp::ismc)
   {
@@ -2050,7 +2050,7 @@ void HistosFill::FillSingleBasic(HistosBasic *h)
 
       _j1_gen.SetPtEtaPhiE(gen_jtpt[0], gen_jteta[0], gen_jtphi[0], gen_jte[0]);
       _j2_gen.SetPtEtaPhiE(gen_jtpt[1], gen_jteta[1], gen_jtphi[1], gen_jte[1]);
-    }
+    
     double djmass_gen = (_j1_gen + _j2_gen).M();
     //double etamaxdj_gen = max(fabs(gen_jteta[0]), fabs(gen_jteta[1]));
     double ymaxdj_gen = max(fabs(gen_jty[0]), fabs(gen_jty[1]));
@@ -2071,6 +2071,8 @@ void HistosFill::FillSingleBasic(HistosBasic *h)
       assert(h->hdjpt_subleading_gen);
       h->hdjpt_subleading_gen->Fill(_j2_gen.Pt(), _w);
     } // gen dijet mass eta range
+   }// gen jet selection
+
 
     // ACCEPTANCE and BACKGROUND
     //First testing with inclusive jets to see everything is working properly.
@@ -2145,7 +2147,7 @@ void HistosFill::FillSingleBasic(HistosBasic *h)
         _j2.SetPtEtaPhiE(jtpt[k], jteta[k], jtphi[k], jte[k]);
         //	double yreco = jty[k];
         bool goodPt = (jtpt[k] > 30.);
-        bool reco_id = (_pass && _pass_qcdmet && goodPt && _jetids[k]);
+        bool reco_id = (_pass && _pass_qcdmet && goodPt); // && _jetids[k] (this condition needs to be discussed more...)
         if (!reco_id)
           continue;
 
