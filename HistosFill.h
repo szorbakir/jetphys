@@ -188,7 +188,7 @@ public:
 
   virtual void Loop();
   virtual bool PreRun();
-  virtual bool AcceptEvent();
+  virtual bool AcceptEvent(JME::JetResolutionScaleFactor resolution_sf, JME::JetResolution resolution);
   virtual void Report();
 
   void FillJetID(vector<bool> &id);

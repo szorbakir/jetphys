@@ -391,6 +391,10 @@ void HistosFill::Loop()
   stop.Start();
   TDatime bgn;
 
+  JME::JetResolutionScaleFactor resolution_sf = JME::JetResolutionScaleFactor("CondFormats/JetMETObjects/data/JME/" + jp::sfFile + ".txt");
+  JME::JetResolution resolution = JME::JetResolution("CondFormats/JetMETObjects/data/JME/" + jp::resolutionFile + ".txt");
+
+
   ///////////////
   // Event loop
   ///////////////
@@ -452,7 +456,7 @@ void HistosFill::Loop()
       stop.Continue();
     }
 
-    if (!AcceptEvent())
+    if (!AcceptEvent(resolution_sf, resolution))
       continue;
 
     if (jp::debug)
@@ -933,7 +937,7 @@ bool HistosFill::PreRun()
 }
 
 // Routines and selections before histograms are filled
-bool HistosFill::AcceptEvent()
+bool HistosFill::AcceptEvent(JME::JetResolutionScaleFactor resolution_sf, JME::JetResolution resolution)
 {
   if (jp::isdt) // For DT fetch true pileup from the json or histogram info
     trpu = _avgpu[run][lbn];
@@ -1190,11 +1194,7 @@ bool HistosFill::AcceptEvent()
 
     if (jp::ismc and jp::doSF)
     {
-
-      JME::JetResolutionScaleFactor resolution_sf = JME::JetResolutionScaleFactor("CondFormats/JetMETObjects/data/JME/" + jp::sfFile + ".txt");
-      JME::JetResolution resolution = JME::JetResolution("CondFormats/JetMETObjects/data/JME/" + jp::resolutionFile + ".txt");
-
-      //Define only one parameter`
+      //Define only one parameter
       JME::JetParameters parameters;
       parameters.setJetPt(p4.Pt());
       parameters.setJetEta(p4.Eta());
@@ -1221,14 +1221,11 @@ bool HistosFill::AcceptEvent()
       for (int k = 0; k < gen_njt; k++)
       {
 
-        float p1 = jtphi[jetidx];
-        float p2 = jtgenphi[k];
-        float e1 = jteta[jetidx]; // https://github.com/cms-sw/cmssw/blob/master/DataFormats/Math/interface/deltaR.h#L11-L30 //
-        float e2 = jtgeneta[k];
-        auto dp = std::abs(p1 - p2);
+        // https://github.com/cms-sw/cmssw/blob/master/DataFormats/Math/interface/deltaR.h#L11-L30 //
+        auto dp = std::abs(jtphi[jetidx] - jtgenphi[k]);
         if (dp > (M_PI))
           dp -= (2 * M_PI);
-        double dR = sqrt((e1 - e2) * (e1 - e2) + dp * dp);
+        double dR = sqrt((jteta[jetidx] - jtgeneta[k]) * (jteta[jetidx] - jtgeneta[k]) + dp * dp);
 
         if (dR > min_dR)
           continue;
@@ -1242,6 +1239,8 @@ bool HistosFill::AcceptEvent()
           min_dR = dR;
           _matched = true;
           index = k;
+          break;
+          //cout << "event number: " << _jentry << " Matched!...reco jet number: " << jetidx << " gen jet number: " << k << " min dr: " << min_dR << endl;  
         }
       }
 
@@ -1262,18 +1261,13 @@ bool HistosFill::AcceptEvent()
 
         //cout << "Smear with distribution..." << endl;
       }
-      else
-      {
-        //std::cout << "Impossible to smear this jet" << std::endl;
-      }
 
       if (p4.E() * smearFactor < MIN_JET_ENERGY)
       {
         // Negative or too small smearFactor. We would change direction of the jet
         // and this is not what we want.
         // Recompute the smearing factor in order to have jet.energy() == MIN_JET_ENERGY
-        double newSmearFactor = MIN_JET_ENERGY / p4.E();
-        smearFactor = newSmearFactor;
+        smearFactor = MIN_JET_ENERGY / p4.E();
       }
 
       // If everything is fine, smear the reco jet in simulation, need to do sorting jets after smearing...
