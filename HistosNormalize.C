@@ -56,7 +56,7 @@ vector<string> hptlike = {
     // "hpt_g0",
     // "hpt_g0tw",
     "hdjmass",
-    "hdjmass_half"
+    "hdjmass_half",
     "hdjmassUp",
     "hdjmassDown",
     "hdjmassUp_new",

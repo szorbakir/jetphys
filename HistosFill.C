@@ -1945,7 +1945,9 @@ void HistosFill::FillSingleBasic(HistosBasic *h)
          << " Event: " << _jentry << " Leading Pt:  " << jtpt[i0] << " Subleading Pt: " << jtpt[i1] << endl;
   //or jtpt[i0] < jp::recopt or jtpt[i1] < jp::recopt
 
-  // Calculate up and down variation of the lorentz vectors
+  // Calculate up and down variation of the lorentz vectors and mass variations
+  double djmassUp = 0.;
+  double djmassDown = 0.;
   if (jp::doUnc)
   {
     _j1Up = _j1 * (1 + unc);
@@ -1953,19 +1955,13 @@ void HistosFill::FillSingleBasic(HistosBasic *h)
 
     _j2Up = _j2 * (1 + unc);
     _j2Down = _j2 * (1 - unc);
-  }
 
-  double djmass = (_j1 + _j2).M();
-  
-  // Calculate up and down mass
-  double djmassUp = 0.;
-  double djmassDown = 0.;
-  if (jp::doUnc)
-  {
     djmassUp = (_j1Up + _j2Up).M();
     djmassDown = (_j1Down + _j2Down).M();
   }
 
+  double djmass = (_j1 + _j2).M();
+  
   //double etamaxdj = max(fabs(jteta[i0]), fabs(jteta[i1]));
   double ymaxdj = max(fabs(jty[i0]), fabs(jty[i1]));
   double ymaxdj_up = max(fabs(_j1Up.Rapidity()), fabs(_j2Up.Rapidity()));
@@ -1984,16 +1980,6 @@ void HistosFill::FillSingleBasic(HistosBasic *h)
     // Half binned mass histo
     assert(h->hdjmass_half);
     h->hdjmass_half->Fill(djmass, _w);
-
-    // Fill djmass histos with JEC unc.
-    if (jp::doUnc)
-    {
-      assert(h->hdjmassUp);
-      h->hdjmassUp->Fill(djmassUp, _w);
-
-      assert(h->hdjmassDown);
-      h->hdjmassDown->Fill(djmassDown, _w);
-    }
 
     // Leading and subleading pt of the dijet system
     assert(h->hdjpt_leading);
@@ -2018,7 +2004,7 @@ void HistosFill::FillSingleBasic(HistosBasic *h)
       cout << "Leading Pt: " << _j1Up.Pt() << " Subleading Pt: " << _j2Up.Pt() << endl;
     }
     assert(h->hdjmassUp);
-    h->hdjmassUp_new->Fill(djmassUp, _w);
+    h->hdjmassUp->Fill(djmassUp, _w);
   }
 
   // Down shifted dijet mass hist
@@ -2031,7 +2017,7 @@ void HistosFill::FillSingleBasic(HistosBasic *h)
     }
 
     assert(h->hdjmassDown);
-    h->hdjmassDown_new->Fill(djmassDown, _w);
+    h->hdjmassDown->Fill(djmassDown, _w);
   }
  } //Second leading jet
 }   // First leading jet
