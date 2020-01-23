@@ -114,6 +114,11 @@ HistosBasic::HistosBasic(TDirectory *dir, string trigname, double etamin, double
   // hpt2 = new TH1D("hpt2", "", nx, &x[0]);
   // hpt3 = new TH1D("hpt3", "", nx, &x[0]);
 
+  
+  //unc plots
+  pupUncChange = new TProfile("pupUncChange", "", nx_mass, &x_mass[0]);
+  pdownUncChange = new TProfile("pdownUncChange", "", nx_mass, &x_mass[0]);
+  
   // leading and non-leading jet pt in dijet system
   hdjpt_leading = new TH1D("hdjpt_leading", "", nx, &x[0]);
   hdjpt_subleading = new TH1D("hdjpt_subleading", "", nx, &x[0]);

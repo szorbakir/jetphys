@@ -293,6 +293,9 @@ void HistosCombine()
   // recurseFile(fin, fout, "hdjresp_probe_a03");
   // recurseFile(fin, fout, "hdjresptp_tag_a03");
 
+  recurseFile(fin, fout, "pupUncChange", false);
+  recurseFile(fin, fout, "pdownUncChange", false);
+  
   recurseFile(fin, fout, "hdjmass", false);
   recurseFile(fin, fout, "hdjmass_half", false);
   recurseFile(fin, fout, "hdjmassUp", false);

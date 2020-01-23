@@ -74,6 +74,10 @@ public:
   TH1D *hdjpt_leading;
   TH1D *hdjpt_subleading;
 
+  //unc plots
+  TProfile *pupUncChange;
+  TProfile *pdownUncChange;
+  
   //Gen Info
   TH1D *hdjmass_gen;
   TH1D *hdjmass_half_gen;
