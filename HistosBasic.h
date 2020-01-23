@@ -60,10 +60,12 @@ public:
   // dijet mass
   TH1D *hdjmass;
   TH1D *hdjmass_half;
+  TH1D *hdjmass_JERup;
+  TH1D *hdjmass_JERdown;
+  // JEC variations
   TH1D *hdjmassUp;
   TH1D *hdjmassDown;
-  TH1D *hdjmassUp_new;
-  TH1D *hdjmassDown_new;
+  
   TH1D *hdjmass0;
   //TH1D *hdjmass_a01;
   //TH1D *hdjmass_a02;
@@ -74,9 +76,13 @@ public:
   TH1D *hdjpt_leading;
   TH1D *hdjpt_subleading;
 
-  //unc plots
+  //JEC unc plots
   TProfile *pupUncChange;
   TProfile *pdownUncChange;
+  
+  //JER unc plots
+  TProfile *puncChangeJERup;
+  TProfile *puncChangeJERdown;
   
   //Gen Info
   TH1D *hdjmass_gen;

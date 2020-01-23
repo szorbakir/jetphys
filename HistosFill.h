@@ -295,7 +295,7 @@ private:
   TFile *fHotExcl;
   TFile *fColdExcl;
 
-  TLorentzVector p4, gp4, genp4, _j1, _j2, _j3, _j1Up, _j1Down, _j2Up, _j2Down, _j1_gen, _j2_gen;
+  TLorentzVector p4, p4_JERup, p4_JERdown, _j1_JERup, _j1_JERdown, _j2_JERup, _j2_JERdown, gp4, genp4, _j1, _j2, _j3, _j1Up, _j1Down, _j2Up, _j2Down, _j1_gen, _j2_gen;
   jec::IOV _iov;
   FactorizedJetCorrector *_JEC, *_L1RC;
   JetCorrectionUncertainty *_jecUnc;
@@ -330,6 +330,8 @@ private:
   //
   Int_t &njt;
   Int_t jt3leads[3];                // The three leading jets
+  Int_t jt3leads_JERup[3];                // The three leading jets with JER up
+  Int_t jt3leads_JERdown[3];                // The three leading jets with JER down
   static const Int_t _maxnjt = 250; //100;//90;//kMaxPFJets_;
   Double_t *jtp4x;                  //[_maxnjt];   //[njt]
   Double_t *jtp4y;                  //[_maxnjt];   //[njt]
@@ -399,6 +401,20 @@ private:
   Float_t gen_jte[_maxnjt];   //[njt]
   Int_t gen_partonflavor[_maxnjt];
 
+  // JER Unc. variables
+  
+  Float_t jtpt_JERup[_maxnjt];  //[njt]
+  Float_t jteta_JERup[_maxnjt]; //[njt]
+  Float_t jtphi_JERup[_maxnjt]; //[njt]
+  Float_t jty_JERup[_maxnjt];   //[njt]
+  Float_t jte_JERup[_maxnjt];   //[njt]
+ 
+  Float_t jtpt_JERdown[_maxnjt];  //[njt]
+  Float_t jteta_JERdown[_maxnjt]; //[njt]
+  Float_t jtphi_JERdown[_maxnjt]; //[njt]
+  Float_t jty_JERdown[_maxnjt];   //[njt]
+  Float_t jte_JERdown[_maxnjt];   //[njt]
+  
   Float_t &rho;
   Float_t &met;
   Float_t &metphi;

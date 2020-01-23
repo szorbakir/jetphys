@@ -114,11 +114,6 @@ HistosBasic::HistosBasic(TDirectory *dir, string trigname, double etamin, double
   // hpt2 = new TH1D("hpt2", "", nx, &x[0]);
   // hpt3 = new TH1D("hpt3", "", nx, &x[0]);
 
-  
-  //unc plots
-  pupUncChange = new TProfile("pupUncChange", "", nx_mass, &x_mass[0]);
-  pdownUncChange = new TProfile("pdownUncChange", "", nx_mass, &x_mass[0]);
-  
   // leading and non-leading jet pt in dijet system
   hdjpt_leading = new TH1D("hdjpt_leading", "", nx, &x[0]);
   hdjpt_subleading = new TH1D("hdjpt_subleading", "", nx, &x[0]);
@@ -127,13 +122,25 @@ HistosBasic::HistosBasic(TDirectory *dir, string trigname, double etamin, double
   hdjmass = new TH1D("hdjmass", "", nx_mass, &x_mass[0]);
   hdjmass_half = new TH1D("hdjmass_half", "", nx_mass_half, &x_mass_half[0]);
 
-  if (jp::doUnc)
+  if (jp::isdt and jp::doUnc)
   {
     hdjmassUp = new TH1D("hdjmassUp", "", nx_mass, &x_mass[0]);
     hdjmassDown = new TH1D("hdjmassDown", "", nx_mass, &x_mass[0]);
 
-    hdjmassUp_new = new TH1D("hdjmassUp_new", "", nx_mass, &x_mass[0]);
-    hdjmassDown_new = new TH1D("hdjmassDown_new", "", nx_mass, &x_mass[0]);
+    //JEC unc plots
+    pupUncChange = new TProfile("pupUncChange", "", nx_mass, &x_mass[0]);
+    pdownUncChange = new TProfile("pdownUncChange", "", nx_mass, &x_mass[0]);
+  }
+
+  if(jp::ismc and jp::doSF){
+  
+    hdjmass_JERup = new TH1D("hdjmass_JERup", "", nx_mass, &x_mass[0]);
+    hdjmass_JERdown = new TH1D("hdjmass_JERdown", "", nx_mass, &x_mass[0]);
+    
+    // JER unc plots
+    puncChangeJERup = new TProfile("puncChangeJERup", "", nx_mass, &x_mass[0]);
+    puncChangeJERdown = new TProfile("puncChangeJERdown", "", nx_mass, &x_mass[0]);
+  
   }
 
   //GEN Info
