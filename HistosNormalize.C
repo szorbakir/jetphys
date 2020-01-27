@@ -60,7 +60,7 @@ vector<string> hptlike = {
     "hdjmassUp",
     "hdjmassDown",
     "hdjmassUp_new",
-    "hdjmassDown_new"
+    "hdjmassDown_new",
     "hdjmass0",
     "hdjpt_leading",
     "hdjpt_subleading"};

@@ -1257,7 +1257,7 @@ bool HistosFill::AcceptEvent(JME::JetResolutionScaleFactor resolution_sf, JME::J
 
       if (_matched)
       {
-        double dPt = abs(jtpt[jetidx] - jtgenpt[index]);
+        double dPt = (jtpt[jetidx] - jtgenpt[index]);
         
         smearFactor = 1 + (sf - 1.) * dPt / jtpt[jetidx];
         smearFactor_up = 1 + (sf_up - 1.) * dPt / jtpt[jetidx];
@@ -1286,7 +1286,13 @@ bool HistosFill::AcceptEvent(JME::JetResolutionScaleFactor resolution_sf, JME::J
           smearFactor_down = 1. + d(gen);
         }
       }
-      
+
+      /*if(_jentry == 50000001 and jetidx <= 1){
+        cout << "Before smearing" << endl;
+        cout << "up: " << p4_JERup.Pt() << " smearFactor up: " << smearFactor_up <<endl;
+        cout << "nom: " << p4.Pt() << " smearFactor: " << smearFactor << endl;
+        cout << "down: " << p4_JERdown.Pt() << " smearFactor down: " << smearFactor_down << endl;
+      }*/
 
       if (p4.E() * smearFactor < MIN_JET_ENERGY)
       {
@@ -2053,11 +2059,11 @@ void HistosFill::FillSingleBasic(HistosBasic *h)
      // JER Unc calculation
      if(jp::ismc and jp::doSF){
      
-     _j1_JERup.SetPtEtaPhiE(jtpt[i0_JERup], jteta[i0_JERup], jtphi[i0_JERup], jte[i0_JERup]);
-     _j1_JERdown.SetPtEtaPhiE(jtpt[i0_JERdown], jteta[i0_JERdown], jtphi[i0_JERdown], jte[i0_JERdown]);
+     _j1_JERup.SetPtEtaPhiE(jtpt_JERup[i0_JERup], jteta_JERup[i0_JERup], jtphi_JERup[i0_JERup], jte_JERup[i0_JERup]);
+     _j1_JERdown.SetPtEtaPhiE(jtpt_JERdown[i0_JERdown], jteta_JERdown[i0_JERdown], jtphi_JERdown[i0_JERdown], jte_JERdown[i0_JERdown]);
 
-     _j2_JERup.SetPtEtaPhiE(jtpt[i1_JERup], jteta[i1_JERup], jtphi[i1_JERup], jte[i1_JERup]);
-     _j2_JERdown.SetPtEtaPhiE(jtpt[i1_JERdown], jteta[i1_JERdown], jtphi[i1_JERdown], jte[i1_JERdown]);
+     _j2_JERup.SetPtEtaPhiE(jtpt_JERup[i1_JERup], jteta_JERup[i1_JERup], jtphi_JERup[i1_JERup], jte_JERup[i1_JERup]);
+     _j2_JERdown.SetPtEtaPhiE(jtpt_JERdown[i1_JERdown], jteta_JERdown[i1_JERdown], jtphi_JERdown[i1_JERdown], jte_JERdown[i1_JERdown]);
      } 
   
     // Get JEC uncertainty
@@ -2113,7 +2119,7 @@ void HistosFill::FillSingleBasic(HistosBasic *h)
   }
 
   double djmass = (_j1 + _j2).M();
-  
+
   //double etamaxdj = max(fabs(jteta[i0]), fabs(jteta[i1]));
   double ymaxdj = max(fabs(jty[i0]), fabs(jty[i1]));
 
