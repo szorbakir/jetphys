@@ -258,6 +258,7 @@ void recurseFile(TDirectory *indir, TDirectory *outdir, double etawid, double et
         bool isgen = TString(obj2->GetName()).Contains("pt_g");
         bool isoth = (TString(obj2->GetName()).Contains("pt_no") ||
                       TString(obj2->GetName()).Contains("djmass") ||
+                      TString(obj2->GetName()).Contains("hdjmass_half") ||
                       TString(obj2->GetName()).Contains("hpt0"));
         bool isjk = (TString(obj2->GetName()).Contains("hpt_jk"));
         bool isjet = (TString(obj2->GetName()).Contains("hpt_jet"));
