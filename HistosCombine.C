@@ -294,14 +294,16 @@ void HistosCombine()
   // recurseFile(fin, fout, "hdjresptp_tag_a03");
 
   recurseFile(fin, fout, "hdjmass", false);
+  recurseFile(fin, fout, "hdjRMmass", false);
   recurseFile(fin, fout, "hdjmass_half", false);
+  recurseFile(fin, fout, "hdjRMmass_half", false);
   recurseFile(fin, fout, "hdjmassUp", false);
   recurseFile(fin, fout, "hdjmassDown", false);
-  recurseFile(fin, fout, "hdjmassUp_new", false);
-  recurseFile(fin, fout, "hdjmassDown_new", false);
   recurseFile(fin, fout, "hdjmass0", false);
   recurseFile(fin, fout, "hdjmass_gen", false);
+  recurseFile(fin, fout, "hdjRMmass_gen", false);
   recurseFile(fin, fout, "hdjmass_half_gen", false);
+  recurseFile(fin, fout, "hdjRMmass_half_gen", false);
   recurseFile(fin, fout, "hdjpt_leading", true);
   recurseFile(fin, fout, "hdjpt_subleading", true);
   recurseFile(fin, fout, "hdjpt_leading_gen", true);
