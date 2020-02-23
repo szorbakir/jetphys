@@ -60,12 +60,12 @@ public:
   // dijet mass
   TH1D *hdjmass;
   TH1D *hdjmass_half;
-  TH1D *hdjmass_JERup;
-  TH1D *hdjmass_JERdown;
+  TH1D *hdjRMmass;
+  TH1D *hdjRMmass_half;
   // JEC variations
   TH1D *hdjmassUp;
   TH1D *hdjmassDown;
-  
+
   TH1D *hdjmass0;
   //TH1D *hdjmass_a01;
   //TH1D *hdjmass_a02;
@@ -79,14 +79,12 @@ public:
   //JEC unc plots
   TProfile *pupUncChange;
   TProfile *pdownUncChange;
-  
-  //JER unc plots
-  TProfile *puncChangeJERup;
-  TProfile *puncChangeJERdown;
-  
+
   //Gen Info
   TH1D *hdjmass_gen;
   TH1D *hdjmass_half_gen;
+  TH1D *hdjRMmass_gen;
+  TH1D *hdjRMmass_half_gen;
   TH1D *hdjpt_leading_gen;
   TH1D *hdjpt_subleading_gen;
 
@@ -96,6 +94,7 @@ public:
 
   // unfolding studies dijet mass
   TH2D *matrix_gen_reco;
+  TH2D *RMmatrix_gen_reco;
   TH2D *h2jetres;        // 2D delta mass vs mass plots for resolution studies
   TProfile *pdjmass_res; // Profile plot to monitor mean value of mass resolution
 

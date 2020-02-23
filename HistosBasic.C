@@ -9,7 +9,6 @@
 #include "TMath.h"
 
 #include <iostream>
-
 using namespace std;
 
 HistosBasic::HistosBasic(TDirectory *dir, string trigname, double etamin, double etamax,
@@ -73,6 +72,32 @@ HistosBasic::HistosBasic(TDirectory *dir, string trigname, double etamin, double
   }
   const int nx_mass_half = x_mass_half.size() - 1;
 
+    // RMmass bins
+  unsigned int ieta_RMmass = int(0.5 * (etamin + etamax) / 0.5);
+  assert(ieta_RMmass < jp::noRMmassranges);
+  vector<double> x_RMmass;
+  // Chose ptrange according to eta
+  for (unsigned int i = 0; i < jp::noRMmass_eta and jp::RMmassrangevseta[ieta_RMmass][i] != 0; ++i)
+  {
+    if (jp::RMmassrangevseta[ieta_RMmass][i] < 0.001)
+      break; // There are zeros in the end of the array when we're out of barrel
+    x_RMmass.push_back(jp::RMmassrangevseta[ieta_RMmass][i]);
+  }
+  const int nx_RMmass = x_RMmass.size() - 1;
+
+  // half RMmass bins
+  unsigned int ieta_RMmass_half = int(0.5 * (etamin + etamax) / 0.5);
+  assert(ieta_RMmass_half < jp::noRMmassranges_half);
+  vector<double> x_RMmass_half;
+  // Chose ptrange according to eta
+  for (unsigned int i = 0; i < jp::noRMmass_eta_half and jp::RMmassrangevseta_half[ieta_RMmass_half][i] != 0; ++i)
+  {
+    if (jp::RMmassrangevseta_half[ieta_RMmass_half][i] < 0.001)
+      break; // There are zeros in the end of the array when we're out of barrel
+    x_RMmass_half.push_back(jp::RMmassrangevseta_half[ieta_RMmass_half][i]);
+  }
+  const int nx_RMmass_half = x_RMmass_half.size() - 1;
+
   vector<double> y(51);
   for (unsigned int i = 0; i != y.size(); ++i)
     y[i] = -5. + 0.2 * i;
@@ -121,6 +146,10 @@ HistosBasic::HistosBasic(TDirectory *dir, string trigname, double etamin, double
   // dijet mass
   hdjmass = new TH1D("hdjmass", "", nx_mass, &x_mass[0]);
   hdjmass_half = new TH1D("hdjmass_half", "", nx_mass_half, &x_mass_half[0]);
+  
+  // dijet mass RM
+  hdjRMmass = new TH1D("hdjRMmass", "", nx_RMmass, &x_RMmass[0]);
+  hdjRMmass_half = new TH1D("hdjRMmass_half", "", nx_RMmass_half, &x_RMmass_half[0]);
 
   if (jp::isdt and jp::doUnc)
   {
@@ -132,20 +161,14 @@ HistosBasic::HistosBasic(TDirectory *dir, string trigname, double etamin, double
     pdownUncChange = new TProfile("pdownUncChange", "", nx_mass, &x_mass[0]);
   }
 
-  if(jp::ismc and jp::doSF){
-  
-    hdjmass_JERup = new TH1D("hdjmass_JERup", "", nx_mass, &x_mass[0]);
-    hdjmass_JERdown = new TH1D("hdjmass_JERdown", "", nx_mass, &x_mass[0]);
-    
-    // JER unc plots
-    puncChangeJERup = new TProfile("puncChangeJERup", "", nx_mass, &x_mass[0]);
-    puncChangeJERdown = new TProfile("puncChangeJERdown", "", nx_mass, &x_mass[0]);
-  
-  }
-
   //GEN Info
   hdjmass_gen = new TH1D("hdjmass_gen", "", nx_mass, &x_mass[0]);
   hdjmass_half_gen = new TH1D("hdjmass_half_gen", "", nx_mass_half, &x_mass_half[0]);
+  
+  //GEN Info RM
+  hdjRMmass_gen = new TH1D("hdjRMmass_gen", "", nx_RMmass, &x_RMmass[0]);
+  hdjRMmass_half_gen = new TH1D("hdjRMmass_half_gen", "", nx_RMmass_half, &x_RMmass_half[0]);
+  
   hdjpt_leading_gen = new TH1D("hdjpt_leading_gen", "", nx, &x[0]);
   hdjpt_subleading_gen = new TH1D("hdjpt_subleading_gen", "", nx, &x[0]);
 
@@ -162,6 +185,7 @@ HistosBasic::HistosBasic(TDirectory *dir, string trigname, double etamin, double
 
   // Unfolding and resolution studies
   matrix_gen_reco = new TH2D("matrix_gen_reco", "Response_Matrix;Mjj_{reco};Mjj_{gen}", nx_mass, &x_mass[0], nx_mass_half, &x_mass_half[0]);
+  RMmatrix_gen_reco = new TH2D("RMmatrix_gen_reco", "Response_Matrix;Mjj_{reco};Mjj_{gen}", nx_RMmass, &x_RMmass[0], nx_RMmass_half, &x_RMmass_half[0]);
   h2jetres = new TH2D("h2jetres", "Resolution;Mjj_{gen};#Deltamass", nx_mass, &x_mass[0], 300, 0., 3.); // Delta mass vs mass plots for resolution studies
   pdjmass_res = new TProfile("pdjmass_res", "", nx_mass, &x_mass[0]);                                   //Profile plot to monitor mean values of mass resolution
 

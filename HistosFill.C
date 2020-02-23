@@ -1089,11 +1089,8 @@ bool HistosFill::AcceptEvent(JME::JetResolutionScaleFactor resolution_sf, JME::J
   // NOTE: Above this we only use the initial corrections. This serves as a good approximation,
   // as the values before reapplying JEC are more like the ones we knew when collecting data.
   for (int i = 0; i < 3; ++i)
-  {
     jt3leads[i] = -1;
-    jt3leads_JERup[i] = -1;
-    jt3leads_JERdown[i] = -1;
-  }
+
   ///////////////
   // Jet loop
   ///////////////
@@ -1167,9 +1164,6 @@ bool HistosFill::AcceptEvent(JME::JetResolutionScaleFactor resolution_sf, JME::J
        //cout << "Enrty: " << _jentry << " Number of jets: " << njt << " "<< jetidx << ". Jet Pt: " << p4.Pt() << " " << jetidx <<". Jet Eta: " << p4.Eta() << " unc: " << unc << endl;
      }*/
 
-    p4_JERup = p4;
-    p4_JERdown = p4;
-
     jte[jetidx] = p4.E();
     jtpt[jetidx] = p4.Pt();
     jteta[jetidx] = p4.Eta();
@@ -1209,14 +1203,12 @@ bool HistosFill::AcceptEvent(JME::JetResolutionScaleFactor resolution_sf, JME::J
       parameters.setRho(rho);
 
       float sf = resolution_sf.getScaleFactor(parameters);
-      float sf_up = resolution_sf.getScaleFactor(parameters, Variation::UP);
-      float sf_down = resolution_sf.getScaleFactor(parameters, Variation::DOWN);
+      //float sf = resolution_sf.getScaleFactor(parameters, Variation::UP);
+      //float sf = resolution_sf.getScaleFactor(parameters, Variation::DOWN);
 
       float r = resolution.getResolution(parameters);
 
       double smearFactor = 1.;
-      double smearFactor_up = 1.;
-      double smearFactor_down = 1.;
       bool _matched = false;
       int index = 0;
 
@@ -1259,39 +1251,19 @@ bool HistosFill::AcceptEvent(JME::JetResolutionScaleFactor resolution_sf, JME::J
         double dPt = (jtpt[jetidx] - jtgenpt[index]);
 
         smearFactor = 1 + (sf - 1.) * dPt / jtpt[jetidx];
-        smearFactor_up = 1 + (sf_up - 1.) * dPt / jtpt[jetidx];
-        smearFactor_down = 1 + (sf_down - 1.) * dPt / jtpt[jetidx];
         //cout << "Smear with matched..." << endl;
+      }
+      else if (sf > 1)
+      {
+        double sigma = r * std::sqrt(sf * sf - 1);
+        std::normal_distribution<double> d{0, sigma};
+        smearFactor = 1. + d(gen);
       }
       else
       {
-        if (sf > 1)
-        {
-          double sigma = r * std::sqrt(sf * sf - 1);
-          std::normal_distribution<double> d{0, sigma};
-          smearFactor = 1. + d(gen);
-        }
-
-        if (sf_up > 1)
-        {
-          double sigma_up = r * std::sqrt(sf_up * sf_up - 1);
-          std::normal_distribution<double> d{0, sigma_up};
-          smearFactor_up = 1. + d(gen);
-        }
-        if (sf_down > 1)
-        {
-          double sigma_down = r * std::sqrt(sf_down * sf_down - 1);
-          std::normal_distribution<double> d{0, sigma_down};
-          smearFactor_down = 1. + d(gen);
-        }
+        // Do not smear the jet
+        smearFactor = 1.;
       }
-
-      /*if(_jentry == 50000001 and jetidx <= 1){
-        cout << "Before smearing" << endl;
-        cout << "up: " << p4_JERup.Pt() << " smearFactor up: " << smearFactor_up <<endl;
-        cout << "nom: " << p4.Pt() << " smearFactor: " << smearFactor << endl;
-        cout << "down: " << p4_JERdown.Pt() << " smearFactor down: " << smearFactor_down << endl;
-      }*/
 
       if (p4.E() * smearFactor < MIN_JET_ENERGY)
       {
@@ -1301,16 +1273,8 @@ bool HistosFill::AcceptEvent(JME::JetResolutionScaleFactor resolution_sf, JME::J
         smearFactor = MIN_JET_ENERGY / p4.E();
       }
 
-      if (p4.E() * smearFactor_up < MIN_JET_ENERGY)
-        smearFactor_up = MIN_JET_ENERGY / p4.E();
-
-      if (p4.E() * smearFactor_down < MIN_JET_ENERGY)
-        smearFactor_down = MIN_JET_ENERGY / p4.E();
-
       // If everything is fine, smear the reco jet in simulation, need to do sorting jets after smearing...
       p4 *= smearFactor;
-      p4_JERup *= smearFactor_up;
-      p4_JERdown *= smearFactor_down;
 
       // Re-setting variables after smearing.
       jte[jetidx] = p4.E();
@@ -1320,18 +1284,6 @@ bool HistosFill::AcceptEvent(JME::JetResolutionScaleFactor resolution_sf, JME::J
       jty[jetidx] = p4.Rapidity();
       if (jp::doMpfHistos)
         jtpt_nol2l3[jetidx] = p4.Pt() / jec_res;
-
-      jte_JERup[jetidx] = p4_JERup.E();
-      jtpt_JERup[jetidx] = p4_JERup.Pt();
-      jteta_JERup[jetidx] = p4_JERup.Eta();
-      jtphi_JERup[jetidx] = p4_JERup.Phi();
-      jty_JERup[jetidx] = p4_JERup.Rapidity();
-
-      jte_JERdown[jetidx] = p4_JERdown.E();
-      jtpt_JERdown[jetidx] = p4_JERdown.Pt();
-      jteta_JERdown[jetidx] = p4_JERdown.Eta();
-      jtphi_JERdown[jetidx] = p4_JERdown.Phi();
-      jty_JERdown[jetidx] = p4_JERdown.Rapidity();
     }
 
     if (jp::debug)
@@ -1391,41 +1343,6 @@ bool HistosFill::AcceptEvent(JME::JetResolutionScaleFactor resolution_sf, JME::J
     {
       jt3leads[2] = jetidx;
     }
-
-    // JER Up variations sorting
-    if (jt3leads_JERup[0] == -1 or jtpt_JERup[jt3leads_JERup[0]] < jtpt_JERup[jetidx])
-    {
-      jt3leads_JERup[2] = jt3leads_JERup[1];
-      jt3leads_JERup[1] = jt3leads_JERup[0];
-      jt3leads_JERup[0] = jetidx;
-    }
-    else if (jt3leads_JERup[1] == -1 or jtpt_JERup[jt3leads_JERup[1]] < jtpt_JERup[jetidx])
-    {
-      jt3leads_JERup[2] = jt3leads_JERup[1];
-      jt3leads_JERup[1] = jetidx;
-    }
-    else if (jt3leads_JERup[2] == -1 or jtpt_JERup[jt3leads_JERup[2]] < jtpt_JERup[jetidx])
-    {
-      jt3leads_JERup[2] = jetidx;
-    }
-
-    // JER Down variation sorting
-    if (jt3leads_JERdown[0] == -1 or jtpt_JERdown[jt3leads[0]] < jtpt_JERdown[jetidx])
-    {
-      jt3leads_JERdown[2] = jt3leads_JERdown[1];
-      jt3leads_JERdown[1] = jt3leads_JERdown[0];
-      jt3leads_JERdown[0] = jetidx;
-    }
-    else if (jt3leads_JERdown[1] == -1 or jtpt_JERdown[jt3leads_JERdown[1]] < jtpt_JERdown[jetidx])
-    {
-      jt3leads_JERdown[2] = jt3leads_JERdown[1];
-      jt3leads_JERdown[1] = jetidx;
-    }
-    else if (jt3leads_JERdown[2] == -1 or jtpt_JERdown[jt3leads[2]] < jtpt_JERdown[jetidx])
-    {
-      jt3leads_JERdown[2] = jetidx;
-    }
-
   } // for jetidx
 
   // Type I MET (this is the best one we've got; works optimally if we keep T0Txy MET as the raw MET and apply here the newest JEC)
@@ -1450,16 +1367,6 @@ bool HistosFill::AcceptEvent(JME::JetResolutionScaleFactor resolution_sf, JME::J
   int i0 = jt3leads[0];
   int i1 = jt3leads[1];
   int i2 = jt3leads[2];
-
-  // The leading indices with JER up variation
-  int u0 = jt3leads_JERup[0];
-  int u1 = jt3leads_JERup[1];
-  int u2 = jt3leads_JERup[2];
-
-  // The leading indices with JER down variation
-  int d0 = jt3leads_JERdown[0];
-  int d1 = jt3leads_JERdown[1];
-  int d2 = jt3leads_JERdown[2];
 
   // Zero jets not sensible
   _pass = _pass and i0 >= 0;
@@ -2010,16 +1917,6 @@ void HistosFill::FillSingleBasic(HistosBasic *h)
   int i1 = jt3leads[1];
   int i2 = jt3leads[2];
 
-  // The leading indices with JER up variation
-  int u0 = jt3leads_JERup[0];
-  int u1 = jt3leads_JERup[1];
-  int u2 = jt3leads_JERup[2];
-
-  // The leading indices with JER down variation
-  int d0 = jt3leads_JERdown[0];
-  int d1 = jt3leads_JERdown[1];
-  int d2 = jt3leads_JERdown[2];
-
   if (i0 < 0.)
     return; // This should not happen, but check just in case
 
@@ -2037,32 +1934,14 @@ void HistosFill::FillSingleBasic(HistosBasic *h)
 
   // RECO-LEVEL calculation
 
-  if (_pass_qcdmet and i0 >= 0 and _jetids[i0] and jtpt[i0] > jp::goodPt)
+  if (_pass_qcdmet and i0 >= 0 and _jetids[i0] and jtpt[i0] > jp::recopt)
   { // First leading jet
-    if (i1 >= 0 and _jetids[i1] and jtpt[i1] > jp::goodPt)
+    if (i1 >= 0 and _jetids[i1] and jtpt[i1] > jp::recopt)
     { // Second leading jet
-
-      /*if(_jentry == 22398){
-    cout << "Entry: " << _jentry << endl;
-    cout << "first jet pt up: " << jtpt_JERup[u0] << " second jet pt up: " << jtpt_JERup[u1] << endl;
-    cout << "first jet pt nom: " << jtpt[i0] << " second jet pt nom: " << jtpt[i1] << endl;
-    cout << "first jet pt down: " << jtpt_JERdown[d0] << " second jet pt down: " << jtpt_JERdown[d1] << endl; 
-    }*/
 
       //{ Calculate and fill dijet mass.
       _j1.SetPtEtaPhiE(jtpt[i0], jteta[i0], jtphi[i0], jte[i0]);
       _j2.SetPtEtaPhiE(jtpt[i1], jteta[i1], jtphi[i1], jte[i1]);
-
-      // JER Unc calculation
-      if (jp::ismc and jp::doSF)
-      {
-
-        _j1_JERup.SetPtEtaPhiE(jtpt_JERup[u0], jteta_JERup[u0], jtphi_JERup[u0], jte_JERup[u0]);
-        _j1_JERdown.SetPtEtaPhiE(jtpt_JERdown[d0], jteta_JERdown[d0], jtphi_JERdown[d0], jte_JERdown[d0]);
-
-        _j2_JERup.SetPtEtaPhiE(jtpt_JERup[u1], jteta_JERup[u1], jtphi_JERup[u1], jte_JERup[u1]);
-        _j2_JERdown.SetPtEtaPhiE(jtpt_JERdown[d1], jteta_JERdown[d1], jtphi_JERdown[d1], jte_JERdown[d1]);
-      }
 
       // Get JEC uncertainty
       if (jp::isdt and _jecUnc and jp::doUnc)
@@ -2070,9 +1949,6 @@ void HistosFill::FillSingleBasic(HistosBasic *h)
         _jecUnc->setJetEta(_j1.Eta());
         _jecUnc->setJetPt(_j1.Pt());
         unc_lead = _jecUnc->getUncertainty(true);
-
-        //cout << "Dijet Loop" << endl;
-        //cout << "Enrty: " << _jentry  << "1. Jet Pt: " << _j1.Pt() <<" 1. Jet Eta: " << _j1.Eta() << " unc: " << unc_lead << endl;
 
         _jecUnc->setJetEta(_j2.Eta());
         _jecUnc->setJetPt(_j2.Pt());
@@ -2082,7 +1958,7 @@ void HistosFill::FillSingleBasic(HistosBasic *h)
       }
 
       //Small check on jet pt ordering.
-      if (jtpt[i0] <= jtpt[i1] or jtpt[i0] < jp::goodPt or jtpt[i1] < jp::goodPt)
+      if (jtpt[i0] <= jtpt[i1] or jtpt[i0] < jp::recopt or jtpt[i1] < jp::recopt)
         cout << "Error!! "
              << " Event: " << _jentry << " Leading Pt:  " << jtpt[i0] << " Subleading Pt: " << jtpt[i1] << endl;
 
@@ -2091,7 +1967,6 @@ void HistosFill::FillSingleBasic(HistosBasic *h)
       double djmassDown = 0.;
       double upUncChange = 0.;
       double downUncChange = 0.;
-
       if (jp::doUnc and jp::isdt)
       {
         _j1Up = _j1 * (1 + unc_lead);
@@ -2104,89 +1979,71 @@ void HistosFill::FillSingleBasic(HistosBasic *h)
         djmassDown = (_j1Down + _j2Down).M();
       }
 
-      double djmass_JERup = 0.;
-      double djmass_JERdown = 0.;
-      double uncChangeJERup = 0.;
-      double uncChangeJERdown = 0.;
-      // Calculate JER up and down variations
-      if (jp::ismc and jp::doSF)
-      {
-
-        djmass_JERup = (_j1_JERup + _j2_JERup).M();
-        djmass_JERdown = (_j1_JERdown + _j2_JERdown).M();
-      }
-
       double djmass = (_j1 + _j2).M();
 
       //double etamaxdj = max(fabs(jteta[i0]), fabs(jteta[i1]));
       double ymaxdj = max(fabs(jty[i0]), fabs(jty[i1]));
+      bool goodMass = (_j1.Pt() > 30. and _j2.Pt() > 30.);
+      bool goodMassRM = (_j1.Pt() > 15. and _j2.Pt() > 15.);
 
       // The eta sectors are filled according to max rapidity
       if (ymaxdj >= h->etamin and ymaxdj < h->etamax)
       {
-        assert(h->hdjmass);
-        h->hdjmass->Fill(djmass, _w);
 
-        // Half binned mass histo
-        assert(h->hdjmass_half);
-        h->hdjmass_half->Fill(djmass, _w);
-
-        // Leading and subleading pt of the dijet system
-        assert(h->hdjpt_leading);
-        h->hdjpt_leading->Fill(_j1.Pt(), _w);
-        assert(h->hdjpt_subleading);
-        h->hdjpt_subleading->Fill(_j2.Pt(), _w);
-
-        assert(h->hdjmass0);
-        h->hdjmass0->Fill(djmass, _w);
-        assert(h->pdjmass_ptratio);
-        h->pdjmass_ptratio->Fill(djmass, _j1.Pt() / _j2.Pt(), _w);
-        assert(h->pdjmass0_ptratio);
-        h->pdjmass0_ptratio->Fill(djmass, _j1.Pt() / _j2.Pt(), _w);
-
-        if (jp::ismc and jp::doSF)
+        if (goodMass)
         {
-          // Up shifted JER dijet mass hist
-          assert(h->hdjmass_JERup);
-          h->hdjmass_JERup->Fill(djmass_JERup, _w);
+          assert(h->hdjmass);
+          h->hdjmass->Fill(djmass, _w);
 
-          uncChangeJERup = (djmass_JERup - djmass) / djmass * 100;
-          //cout << "up unc. change:" << upUncChange << endl;
+          // Half binned mass histo
+          assert(h->hdjmass_half);
+          h->hdjmass_half->Fill(djmass, _w);
 
-          assert(h->puncChangeJERup);
-          h->puncChangeJERup->Fill(djmass, uncChangeJERup, _w);
+          // Leading and subleading pt of the dijet system
+          assert(h->hdjpt_leading);
+          h->hdjpt_leading->Fill(_j1.Pt(), _w);
+          assert(h->hdjpt_subleading);
+          h->hdjpt_subleading->Fill(_j2.Pt(), _w);
 
-          // Down shifted JER dijet mass hist
-          assert(h->hdjmass_JERdown);
-          h->hdjmass_JERdown->Fill(djmass_JERdown, _w);
+          assert(h->hdjmass0);
+          h->hdjmass0->Fill(djmass, _w);
+          assert(h->pdjmass_ptratio);
+          h->pdjmass_ptratio->Fill(djmass, _j1.Pt() / _j2.Pt(), _w);
+          assert(h->pdjmass0_ptratio);
+          h->pdjmass0_ptratio->Fill(djmass, _j1.Pt() / _j2.Pt(), _w);
 
-          uncChangeJERdown = (djmass_JERdown - djmass) / djmass * 100;
+          if (jp::doUnc and jp::isdt)
+          {
+            // Up shifted JEC dijet mass hist
+            assert(h->hdjmassUp);
+            h->hdjmassUp->Fill(djmassUp, _w);
 
-          assert(h->puncChangeJERdown);
-          h->puncChangeJERdown->Fill(djmass, uncChangeJERdown, _w);
+            upUncChange = (djmassUp - djmass) / djmass * 100;
+            //cout << "up unc. change:" << upUncChange << endl;
+
+            assert(h->pupUncChange);
+            h->pupUncChange->Fill(djmass, upUncChange, _w);
+
+            //Down shifted JEC mass hist
+            assert(h->hdjmassDown);
+            h->hdjmassDown->Fill(djmassDown, _w);
+
+            downUncChange = (abs(djmassDown - djmass)) / djmass * 100;
+            //cout << "down unc. change: " << downUncChange << endl;
+
+            assert(h->pdownUncChange);
+            h->pdownUncChange->Fill(djmass, downUncChange, _w);
+          }
         }
 
-        if (jp::doUnc and jp::isdt)
+        if (goodMassRM)
         {
-          // Up shifted JEC dijet mass hist
-          assert(h->hdjmassUp);
-          h->hdjmassUp->Fill(djmassUp, _w);
+          assert(h->hdjRMmass);
+          h->hdjRMmass->Fill(djmass, _w);
 
-          upUncChange = (djmassUp - djmass) / djmass * 100;
-          //cout << "up unc. change:" << upUncChange << endl;
-
-          assert(h->pupUncChange);
-          h->pupUncChange->Fill(djmass, upUncChange, _w);
-
-          //Down shifted JEC mass hist
-          assert(h->hdjmassDown);
-          h->hdjmassDown->Fill(djmassDown, _w);
-
-          downUncChange = (abs(djmassDown - djmass)) / djmass * 100;
-          //cout << "down unc. change: " << downUncChange << endl;
-
-          assert(h->pdownUncChange);
-          h->pdownUncChange->Fill(djmass, downUncChange, _w);
+          // Half binned RM mass histo
+          assert(h->hdjRMmass_half);
+          h->hdjRMmass_half->Fill(djmass, _w);
         }
       }
     } //Second leading jet
@@ -2195,7 +2052,7 @@ void HistosFill::FillSingleBasic(HistosBasic *h)
   // GEN-LEVEL calculation
   if (jp::ismc)
   {
-    if (gen_njt >= 2 and gen_jtpt[0] > jp::goodPt and gen_jtpt[1] > jp::goodPt)
+    if (gen_njt >= 2 and gen_jtpt[0] > jp::recopt and gen_jtpt[1] > jp::recopt)
     {
 
       _j1_gen.SetPtEtaPhiE(gen_jtpt[0], gen_jteta[0], gen_jtphi[0], gen_jte[0]);
@@ -2204,21 +2061,37 @@ void HistosFill::FillSingleBasic(HistosBasic *h)
       double djmass_gen = (_j1_gen + _j2_gen).M();
       //double etamaxdj_gen = max(fabs(gen_jteta[0]), fabs(gen_jteta[1]));
       double ymaxdj_gen = max(fabs(gen_jty[0]), fabs(gen_jty[1]));
+      bool goodMass = (_j1_gen.Pt() > 30. and _j2_gen.Pt() > 30.);
+      bool goodMassRM = (_j1_gen.Pt() > 15. and _j2_gen.Pt() > 15.);
 
       if (ymaxdj_gen >= h->etamin and ymaxdj_gen < h->etamax)
       {
-        assert(h->hdjmass_gen);
-        h->hdjmass_gen->Fill(djmass_gen, _w);
+        if (goodMass)
+        {
+          assert(h->hdjmass_gen);
+          h->hdjmass_gen->Fill(djmass_gen, _w);
 
-        // Fill half binned gen spectrum
-        assert(h->hdjmass_half_gen);
-        h->hdjmass_half_gen->Fill(djmass_gen, _w);
+          // Fill half binned gen spectrum
+          assert(h->hdjmass_half_gen);
+          h->hdjmass_half_gen->Fill(djmass_gen, _w);
 
-        // Leading and subleading pt of generated dijet mass system
-        assert(h->hdjpt_leading_gen);
-        h->hdjpt_leading_gen->Fill(_j1_gen.Pt(), _w);
-        assert(h->hdjpt_subleading_gen);
-        h->hdjpt_subleading_gen->Fill(_j2_gen.Pt(), _w);
+          // Leading and subleading pt of generated dijet mass system
+          assert(h->hdjpt_leading_gen);
+          h->hdjpt_leading_gen->Fill(_j1_gen.Pt(), _w);
+          assert(h->hdjpt_subleading_gen);
+          h->hdjpt_subleading_gen->Fill(_j2_gen.Pt(), _w);
+        }
+
+        if (goodMassRM)
+        {
+          assert(h->hdjRMmass_gen);
+          h->hdjRMmass_gen->Fill(djmass_gen, _w);
+
+          // Fill half binned gen spectrum
+          assert(h->hdjRMmass_half_gen);
+          h->hdjRMmass_half_gen->Fill(djmass_gen, _w);
+        }
+
       } // gen dijet mass eta range
     }   // gen jet selection
 
@@ -2321,7 +2194,7 @@ void HistosFill::FillSingleBasic(HistosBasic *h)
     // Resolution studies are also added inside of this loop 19/9/2018
     // Resolution studies are performed on well matched dijet pairs
 
-    if (gen_njt >= 2 and njt >= 2 and jp::doRmatrix and gen_jtpt[0] > jp::goodPt and gen_jtpt[1] > jp::goodPt and jtpt[i0] > jp::goodPt and jtpt[i1] > jp::goodPt)
+    if (gen_njt >= 2 and njt >= 2 and jp::doRmatrix and gen_jtpt[0] > jp::recopt and gen_jtpt[1] > jp::recopt and jtpt[i0] > jp::recopt and jtpt[i1] > jp::recopt)
     {
 
       double deltaR_one, deltaR_two, deltaR_onethree, deltaR_twothree;
@@ -2337,6 +2210,8 @@ void HistosFill::FillSingleBasic(HistosBasic *h)
 
       double gen_djmass = (_j1_gen + _j2_gen).M();
       double gen_ymaxdj = max(fabs(gen_jty[0]), fabs(gen_jty[1]));
+      bool goodMass = ((_j1_gen.Pt() > 30. and _j2_gen.Pt() > 30.) and (_j1.Pt() > 30. and _j2.Pt() > 30.));
+      bool goodMassRM = ((_j1_gen.Pt() > 15. and _j2_gen.Pt() > 15.) and (_j1.Pt() > 15. and _j2.Pt() > 15.));
 
       //RECO-LEVEL calculation
 
@@ -2349,13 +2224,13 @@ void HistosFill::FillSingleBasic(HistosBasic *h)
     }
     int i0 = (ptorder.begin())->second;
     int i1 = (++ptorder.begin())->second;
-   // int i2 = (ptorder.begin(),3)->second;
+    // int i2 = (ptorder.begin(),3)->second;
     */
       _j1.SetPtEtaPhiE(jtpt[i0], jteta[i0], jtphi[i0], jte[i0]);
       _j2.SetPtEtaPhiE(jtpt[i1], jteta[i1], jtphi[i1], jte[i1]);
-      _j3.SetPtEtaPhiE(jtpt[i2], jteta[i2], jtphi[i2], jte[i2]);
-      if (njt == 2)
-        _j3.SetPtEtaPhiE(0., 0., 0., 0.);
+      // _j3.SetPtEtaPhiE(jtpt[i2], jteta[i2], jtphi[i2], jte[i2]);
+      // if (njt == 2)
+      //   _j3.SetPtEtaPhiE(0., 0., 0., 0.);
 
       //Small check on ordering one more time....
       if (jtpt[i0] <= jtpt[i1] or jtpt[i1] <= jtpt[i2] or jtpt[i0] <= jtpt[i2])
@@ -2369,12 +2244,12 @@ void HistosFill::FillSingleBasic(HistosBasic *h)
       deltaR_one = min(_j1_gen.DeltaR(_j1), _j1_gen.DeltaR(_j2));
       deltaR_two = min(_j2_gen.DeltaR(_j1), _j2_gen.DeltaR(_j2));
 
-      if (njt > 2)
-      {
+      // if (njt > 2)
+      // {
 
-        deltaR_onethree = min(min(_j1_gen.DeltaR(_j1), _j1_gen.DeltaR(_j2)), _j1_gen.DeltaR(_j3));
-        deltaR_twothree = min(min(_j2_gen.DeltaR(_j1), _j2_gen.DeltaR(_j2)), _j2_gen.DeltaR(_j3));
-      }
+      //   deltaR_onethree = min(min(_j1_gen.DeltaR(_j1), _j1_gen.DeltaR(_j2)), _j1_gen.DeltaR(_j3));
+      //   deltaR_twothree = min(min(_j2_gen.DeltaR(_j1), _j2_gen.DeltaR(_j2)), _j2_gen.DeltaR(_j3));
+      // }
 
       // Filling response matrix //
       if ((gen_ymaxdj >= h->etamin and gen_ymaxdj < h->etamax and ymaxdj >= h->etamin and ymaxdj < h->etamax) and
@@ -2397,27 +2272,36 @@ void HistosFill::FillSingleBasic(HistosBasic *h)
 					cout << endl;
 				        }*/
 
-        assert(h->matrix_gen_reco);
-        h->matrix_gen_reco->Fill(djmass, gen_djmass, _w);
+        if (goodMass)
+        {
+          assert(h->matrix_gen_reco);
+          h->matrix_gen_reco->Fill(djmass, gen_djmass, _w);
 
-        assert(h->djmass_matched);
-        h->djmass_matched->Fill(djmass, _w);
+          assert(h->djmass_matched);
+          h->djmass_matched->Fill(djmass, _w);
 
-        assert(h->gen_djmassX0);
-        h->gen_djmassX0->Fill(gen_djmass, _w);
+          assert(h->gen_djmassX0);
+          h->gen_djmassX0->Fill(gen_djmass, _w);
 
-        /// Filling delta mass (Mjjrec/Mjjgen) vs Mjjgen for resolution studies
-        assert(h->h2jetres);
-        h->h2jetres->Fill(gen_djmass, djmass / gen_djmass, _w);
+          /// Filling delta mass (Mjjrec/Mjjgen) vs Mjjgen for resolution studies
+          assert(h->h2jetres);
+          h->h2jetres->Fill(gen_djmass, djmass / gen_djmass, _w);
 
-        // Filling mass resolutions' mean values to profile plot
-        assert(h->pdjmass_res);
-        h->pdjmass_res->Fill(gen_djmass, (djmass - gen_djmass) / gen_djmass, _w);
+          // Filling mass resolutions' mean values to profile plot
+          assert(h->pdjmass_res);
+          h->pdjmass_res->Fill(gen_djmass, (djmass - gen_djmass) / gen_djmass, _w);
+        }
+
+        if (goodMassRM)
+        {
+          assert(h->RMmatrix_gen_reco);
+          h->RMmatrix_gen_reco->Fill(djmass, gen_djmass, _w);
+        }
 
       } //matching and filling
 
       // Investigation of lost gen jets
-
+      /*
       else if ((gen_ymaxdj >= h->etamin && gen_ymaxdj < h->etamax) and (reco_id) and
                (deltaR_one < 0.2 and deltaR_two < 0.2))
       {
@@ -2447,7 +2331,7 @@ void HistosFill::FillSingleBasic(HistosBasic *h)
         //CASE 4: Anything else
         h->gen_djmassX4->Fill(gen_djmass, _w);
       }
-
+      */
     } // Unfolding studies dijet mass
 
   } //ismc
