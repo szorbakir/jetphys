@@ -31,7 +31,7 @@ public:
   bool ismcdir;
 
   // raw spectrum
-  // TH1D *hpt;
+  TH1D *hpt;
   // TH1D *hpt_pre;
   // TH1D *hcopt;
   // TH1D *hpt_noid;
@@ -53,9 +53,9 @@ public:
   // TH1D *hpt0;
 
   // leading and non-leading jets
-  // TH1D *hpt1;
-  // TH1D *hpt2;
-  // TH1D *hpt3;
+  TH1D *hpt1;
+  TH1D *hpt2;
+  TH1D *hpt3;
 
   // dijet mass
   TH1D *hdjmass;

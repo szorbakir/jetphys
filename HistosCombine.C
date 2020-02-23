@@ -81,7 +81,7 @@ void HistosCombine()
 
   // Loop over all the directories recursively
   // List here the histograms that need merging
-  // recurseFile(fin, fout, "hpt");
+  recurseFile(fin, fout, "hpt");
   // recurseFile(fin, fout, "hpt_pre");
   // recurseFile(fin, fout, "hpt_notrigeff");
   // recurseFile(fin, fout, "htrigeff");
@@ -104,9 +104,9 @@ void HistosCombine()
   //   recurseFile(fin, fout, "hpt_g0tw");
 
   // recurseFile(fin, fout, "hpt0");
-  // recurseFile(fin, fout, "hpt1");
-  // recurseFile(fin, fout, "hpt2");
-  // recurseFile(fin, fout, "hpt3");
+  recurseFile(fin, fout, "hpt1");
+  recurseFile(fin, fout, "hpt2");
+  recurseFile(fin, fout, "hpt3");
   // recurseFile(fin, fout, "hpt_noid");
   // recurseFile(fin, fout, "hpt_noevtid");
   // recurseFile(fin, fout, "hpt_nojetid");

@@ -28,14 +28,14 @@ using namespace std;
 
 // A list of pt dependent stuff (affects how we process)
 vector<string> hptlike = {
-    // "hpt",
+     "hpt",
     // "hpt_evt",
     // "hpt_jet",
     // "hpt_pre",
     // "hpt0",
-    // "hpt1",
-    // "hpt2",
-    // "hpt3",
+     "hpt1",
+     "hpt2",
+     "hpt3",
     // "hpt_jk1",
     // "hpt_jk2",
     // "hpt_jk3",

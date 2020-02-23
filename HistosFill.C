@@ -2673,7 +2673,45 @@ void HistosFill::FillSingleBasic(HistosBasic *h)
   if (jp::debug)
     cout << "Entering jet loop" << endl
          << flush;
+  
+  for (int jetidx = 0; jetidx != njt; ++jetidx)
+  {
+    double pt = jtpt[jetidx];
+    bool pass_id = _jetids[jetidx];
+    double eta = jteta[jetidx];
+    bool etarange = fabs(eta) >= h->etamin and fabs(eta) < h->etamax;
+
+    if (pt > jp::recopt)
+    {
+      if (_pass_qcdmet and pass_id and etarange)
+      {
+        
+        // raw spectrum
+        assert(h->hpt);
+        h->hpt->Fill(pt, _w);
+          
+        // leading jets (1,2,3)
+        if (jetidx == i0)
+        {
+           assert(h->hpt1);
+           h->hpt1->Fill(pt, _w);
+        }
+        else if (jetidx == i1)
+        {
+          assert(h->hpt2);
+          h->hpt2->Fill(pt, _w);
+        }
+        else if (jetidx == i2)
+        {
+          assert(h->hpt3);
+          h->hpt3->Fill(pt, _w);
+        }
+      }  
+    }
+  }
+         
   /* 
+  
   for (int jetidx = 0; jetidx != njt; ++jetidx)
   {
     if (jp::debug)

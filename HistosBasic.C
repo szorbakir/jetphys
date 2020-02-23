@@ -104,7 +104,7 @@ HistosBasic::HistosBasic(TDirectory *dir, string trigname, double etamin, double
   const int ny = y.size() - 1;
 
   // raw spectrum
-  // hpt = new TH1D("hpt", "", nx, &x[0]);
+  hpt = new TH1D("hpt", "", nx, &x[0]);
   // hpt_pre = new TH1D("hpt_pre", "", nx, &x[0]); // prescale weighed
   // hpt_gtw = new TH1D("hpt_gtw", "", nx, &x[0]);     // _mc per trigger
   // hpt_g0tw = new TH1D("hpt_g0tw", "", nx, &x[0]);   // _mc per trigger
@@ -135,9 +135,9 @@ HistosBasic::HistosBasic(TDirectory *dir, string trigname, double etamin, double
   // hpt0 = new TH1D("hpt0", "", 6500, 0., 6500.);
 
   // leading and non-leading jets
-  // hpt1 = new TH1D("hpt1", "", nx, &x[0]);
-  // hpt2 = new TH1D("hpt2", "", nx, &x[0]);
-  // hpt3 = new TH1D("hpt3", "", nx, &x[0]);
+  hpt1 = new TH1D("hpt1", "", nx, &x[0]);
+  hpt2 = new TH1D("hpt2", "", nx, &x[0]);
+  hpt3 = new TH1D("hpt3", "", nx, &x[0]);
 
   // leading and non-leading jet pt in dijet system
   hdjpt_leading = new TH1D("hdjpt_leading", "", nx, &x[0]);
