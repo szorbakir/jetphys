@@ -1,7 +1,7 @@
 git.sh
 settings.h
 CondFormats
-*.root
+output*.root
 *.so
 *.d
 *.pcm
