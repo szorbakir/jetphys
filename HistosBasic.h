@@ -66,12 +66,12 @@ public:
   TH1D *hdjmassUp;
   TH1D *hdjmassDown;
 
-  TH1D *hdjmass0;
+  //TH1D *hdjmass0;
   //TH1D *hdjmass_a01;
   //TH1D *hdjmass_a02;
   //TH1D *hdjmass_a03;
   TProfile *pdjmass_ptratio;
-  TProfile *pdjmass0_ptratio;
+  //TProfile *pdjmass0_ptratio;
 
   TH1D *hdjpt_leading;
   TH1D *hdjpt_subleading;

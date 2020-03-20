@@ -172,12 +172,12 @@ HistosBasic::HistosBasic(TDirectory *dir, string trigname, double etamin, double
   hdjpt_leading_gen = new TH1D("hdjpt_leading_gen", "", nx, &x[0]);
   hdjpt_subleading_gen = new TH1D("hdjpt_subleading_gen", "", nx, &x[0]);
 
-  hdjmass0 = new TH1D("hdjmass0", "", static_cast<int>(jp::sqrts), 0., jp::sqrts);
+  //hdjmass0 = new TH1D("hdjmass0", "", static_cast<int>(jp::sqrts), 0., jp::sqrts);
   //hdjmass_a01 = new TH1D("hdjmass_a01", "", nx, &x[0]);
   //hdjmass_a02 = new TH1D("hdjmass_a02", "", nx, &x[0]);
   //hdjmass_a03 = new TH1D("hdjmass_a03", "", nx, &x[0]);
-  pdjmass_ptratio = new TProfile("pdjmass_ptratio", "", nx, &x[0]);
-  pdjmass0_ptratio = new TProfile("pdjmass0_ptratio", "", static_cast<int>(jp::sqrts), 0., jp::sqrts);
+  pdjmass_ptratio = new TProfile("pdjmass_ptratio", "", nx_mass, &x_mass[0]);
+  //pdjmass0_ptratio = new TProfile("pdjmass0_ptratio", "", static_cast<int>(jp::sqrts), 0., jp::sqrts);
 
   // Acceptance and background studies for inclusice jets Pt
   pbg_vsPt = new TProfile("pbg_vspt", "", nx, &x[0]);

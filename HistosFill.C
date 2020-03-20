@@ -2005,12 +2005,15 @@ void HistosFill::FillSingleBasic(HistosBasic *h)
           assert(h->hdjpt_subleading);
           h->hdjpt_subleading->Fill(_j2.Pt(), _w);
 
-          assert(h->hdjmass0);
-          h->hdjmass0->Fill(djmass, _w);
-          assert(h->pdjmass_ptratio);
+	  assert(h->pdjmass_ptratio);
           h->pdjmass_ptratio->Fill(djmass, _j1.Pt() / _j2.Pt(), _w);
-          assert(h->pdjmass0_ptratio);
-          h->pdjmass0_ptratio->Fill(djmass, _j1.Pt() / _j2.Pt(), _w);
+          
+	  // narrow binning histograms.
+	  //assert(h->hdjmass0);
+          //h->hdjmass0->Fill(djmass, _w);
+          
+	  //assert(h->pdjmass0_ptratio);
+          //h->pdjmass0_ptratio->Fill(djmass, _j1.Pt() / _j2.Pt(), _w);
 
           if (jp::doUnc and jp::isdt)
           {
