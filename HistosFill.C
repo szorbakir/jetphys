@@ -2276,13 +2276,16 @@ void HistosFill::FillSingleBasic(HistosBasic *h)
         {
           assert(h->matrix_gen_reco);
           h->matrix_gen_reco->Fill(djmass, gen_djmass, _w);
-
-          assert(h->djmass_matched);
+          
+	  // Removing next two plots that were used for lost gen jets investigation... 20.03.2020  
+          /*
+	  assert(h->djmass_matched);
           h->djmass_matched->Fill(djmass, _w);
 
           assert(h->gen_djmassX0);
           h->gen_djmassX0->Fill(gen_djmass, _w);
-
+	  */	
+          
           /// Filling delta mass (Mjjrec/Mjjgen) vs Mjjgen for resolution studies
           assert(h->h2jetres);
           h->h2jetres->Fill(gen_djmass, djmass / gen_djmass, _w);

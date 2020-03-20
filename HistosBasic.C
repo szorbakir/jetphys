@@ -189,13 +189,13 @@ HistosBasic::HistosBasic(TDirectory *dir, string trigname, double etamin, double
   h2jetres = new TH2D("h2jetres", "Resolution;Mjj_{gen};#Deltamass", nx_mass, &x_mass[0], 300, 0., 3.); // Delta mass vs mass plots for resolution studies
   pdjmass_res = new TProfile("pdjmass_res", "", nx_mass, &x_mass[0]);                                   //Profile plot to monitor mean values of mass resolution
 
-  // Lost gen jets investigation
-  djmass_matched = new TH1D("hdjmass_matched", "", nx_mass, &x_mass[0]); //Reco Mjj spectrum under DR matching and eta range (reco and gen are in same eta bin)
-  gen_djmassX0 = new TH1D("gen_djmassX0", "", nx_mass, &x_mass[0]);      // Gen Mjj spectrum under dR criteria (reco and gen are  in same eta bin)
-  gen_djmassX1 = new TH1D("gen_djmassX1", "", nx_mass, &x_mass[0]);      // Gen Mjj spectrum under dR criteria (only gen eta bin)
-  gen_djmassX2 = new TH1D("gen_djmassX2", "", nx_mass, &x_mass[0]);      // Gen Mjj spectrum under loose dR(0.4) criteria (only gen eta bin)
-  gen_djmassX3 = new TH1D("gen_djmassX3", "", nx_mass, &x_mass[0]);      // Gen Mjj spectrum under dR criteria (Third reco jet included to dR calculation && only gen eta bin)
-  gen_djmassX4 = new TH1D("gen_djmassX4", "", nx_mass, &x_mass[0]);      // Gen Mjj spectrum (Anything else)
+  // Lost gen jets investigation (Looks like we dont need these set of plots since we know that lost jets problem coming from ECAL veto //// 20.03.2020)
+  //djmass_matched = new TH1D("hdjmass_matched", "", nx_mass, &x_mass[0]); //Reco Mjj spectrum under DR matching and eta range (reco and gen are in same eta bin)
+  //gen_djmassX0 = new TH1D("gen_djmassX0", "", nx_mass, &x_mass[0]);      // Gen Mjj spectrum under dR criteria (reco and gen are  in same eta bin)
+  //gen_djmassX1 = new TH1D("gen_djmassX1", "", nx_mass, &x_mass[0]);      // Gen Mjj spectrum under dR criteria (only gen eta bin)
+  //gen_djmassX2 = new TH1D("gen_djmassX2", "", nx_mass, &x_mass[0]);      // Gen Mjj spectrum under loose dR(0.4) criteria (only gen eta bin)
+  //gen_djmassX3 = new TH1D("gen_djmassX3", "", nx_mass, &x_mass[0]);      // Gen Mjj spectrum under dR criteria (Third reco jet included to dR calculation && only gen eta bin)
+  //gen_djmassX4 = new TH1D("gen_djmassX4", "", nx_mass, &x_mass[0]);      // Gen Mjj spectrum (Anything else)
 
   // leading jet mass
   //hjmass = new TH1D("hjmass", "", nx, &x[0]);

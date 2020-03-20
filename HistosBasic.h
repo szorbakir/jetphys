@@ -98,13 +98,13 @@ public:
   TH2D *h2jetres;        // 2D delta mass vs mass plots for resolution studies
   TProfile *pdjmass_res; // Profile plot to monitor mean value of mass resolution
 
-  //Lost gen jets investigation
-  TH1D *djmass_matched; // Reco Mjj spectrum under DR matching and eta range (reco and gen are in same eta bin)
-  TH1D *gen_djmassX0;   // Gen Mjj spectrum under dR criteria (reco and gen are  in same eta bin)
-  TH1D *gen_djmassX1;   // Gen Mjj spectrum under dR criteria (only gen eta bin)
-  TH1D *gen_djmassX2;   // Gen Mjj spectrum under loose dR(0.4) criteria (only gen eta bin)
-  TH1D *gen_djmassX3;   // Gen Mjj spectrum under dR criteria (Third reco jet included to dR calculation && only gen eta bin)
-  TH1D *gen_djmassX4;   // Gen Mjj spectrum (Anything else)
+  //Lost gen jets investigation (Looks like we dont need these set of plots since we know that lost jets problem coming from ECAL veto //// 20.03.2020)
+  //TH1D *djmass_matched; // Reco Mjj spectrum under DR matching and eta range (reco and gen are in same eta bin)
+  //TH1D *gen_djmassX0;   // Gen Mjj spectrum under dR criteria (reco and gen are  in same eta bin)
+  //TH1D *gen_djmassX1;   // Gen Mjj spectrum under dR criteria (only gen eta bin)
+  //TH1D *gen_djmassX2;   // Gen Mjj spectrum under loose dR(0.4) criteria (only gen eta bin)
+  //TH1D *gen_djmassX3;   // Gen Mjj spectrum under dR criteria (Third reco jet included to dR calculation && only gen eta bin)
+  //TH1D *gen_djmassX4;   // Gen Mjj spectrum (Anything else)
 
   // jet mass (for the two leading jets)
   //TH1D *hjmass;
