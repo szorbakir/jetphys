@@ -2715,9 +2715,7 @@ void HistosFill::FillSingleBasic(HistosBasic *h)
       }  
     }
   }
-         
   /* 
-  
   for (int jetidx = 0; jetidx != njt; ++jetidx)
   {
     if (jp::debug)
@@ -3153,6 +3151,8 @@ void HistosFill::FillSingleBasic(HistosBasic *h)
       {
         if (jp::debug)
           cout << "genjet " << gjetidx << "/" << gen_njt << " ptg=" << ptgen << " etag=" << etagen << endl;
+	// Adding gen inclusive spectrum for rivet comparisons.
+	h->hpt_g->Fill(ptgen,_w);
 
         /*h->hpt_g0tw->Fill(ptgen, _w);
         // Ozlem: (gluon vs quark)

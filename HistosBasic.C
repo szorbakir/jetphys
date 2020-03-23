@@ -161,17 +161,23 @@ HistosBasic::HistosBasic(TDirectory *dir, string trigname, double etamin, double
     pdownUncChange = new TProfile("pdownUncChange", "", nx_mass, &x_mass[0]);
   }
 
-  //GEN Info
-  hdjmass_gen = new TH1D("hdjmass_gen", "", nx_mass, &x_mass[0]);
-  hdjmass_half_gen = new TH1D("hdjmass_half_gen", "", nx_mass_half, &x_mass_half[0]);
+  if (jp::ismc)
+  {
+    //GEN Info
+    hdjmass_gen = new TH1D("hdjmass_gen", "", nx_mass, &x_mass[0]);
+    hdjmass_half_gen = new TH1D("hdjmass_half_gen", "", nx_mass_half, &x_mass_half[0]);
   
-  //GEN Info RM
-  hdjRMmass_gen = new TH1D("hdjRMmass_gen", "", nx_RMmass, &x_RMmass[0]);
-  hdjRMmass_half_gen = new TH1D("hdjRMmass_half_gen", "", nx_RMmass_half, &x_RMmass_half[0]);
+    //GEN Info RM
+    hdjRMmass_gen = new TH1D("hdjRMmass_gen", "", nx_RMmass, &x_RMmass[0]);
+    hdjRMmass_half_gen = new TH1D("hdjRMmass_half_gen", "", nx_RMmass_half, &x_RMmass_half[0]);
   
-  hdjpt_leading_gen = new TH1D("hdjpt_leading_gen", "", nx, &x[0]);
-  hdjpt_subleading_gen = new TH1D("hdjpt_subleading_gen", "", nx, &x[0]);
+    hdjpt_leading_gen = new TH1D("hdjpt_leading_gen", "", nx, &x[0]);
+    hdjpt_subleading_gen = new TH1D("hdjpt_subleading_gen", "", nx, &x[0]);
 
+    // Adding gen inclusive spectrum for Rivet comparisons...
+    hpt_g = new TH1D("hpt_g", "", nx, &x[0]);
+
+  }
   //hdjmass0 = new TH1D("hdjmass0", "", static_cast<int>(jp::sqrts), 0., jp::sqrts);
   //hdjmass_a01 = new TH1D("hdjmass_a01", "", nx, &x[0]);
   //hdjmass_a02 = new TH1D("hdjmass_a02", "", nx, &x[0]);

@@ -81,6 +81,7 @@ public:
   TProfile *pdownUncChange;
 
   //Gen Info
+  TH1D *hpt_g;
   TH1D *hdjmass_gen;
   TH1D *hdjmass_half_gen;
   TH1D *hdjRMmass_gen;
