@@ -3142,12 +3142,23 @@ void HistosFill::FillSingleBasic(HistosBasic *h)
   {
     if (jp::debug)
       cout << "Truth loop:" << endl;
+
+    if (gen_njt > 1){
+		double etagen_1 = gen_jteta[0];
+		double etagen_2 = gen_jteta[1];
+		double ptgen_1 = gen_jtpt[0];
+		double ptgen_2 = gen_jtpt[1];
+		
+      if (fabs(etagen_1) >= h->etamin and fabs(etagen_1) < h->etamax and ptgen_1 > jp::recopt)  h->hpt_g1->Fill(ptgen_1,_w);
+      if (fabs(etagen_2) >= h->etamin and fabs(etagen_2) < h->etamax and ptgen_2 > jp::recopt)  h->hpt_g2->Fill(ptgen_2,_w);
+    }
+    
     for (int gjetidx = 0; gjetidx != gen_njt; ++gjetidx)
     { // Unbiased gen spectrum (for each trigger)
       double etagen = gen_jteta[gjetidx];
       double ptgen = gen_jtpt[gjetidx];
 
-      if (fabs(etagen) >= h->etamin and fabs(etagen) < h->etamax)
+      if (fabs(etagen) >= h->etamin and fabs(etagen) < h->etamax and ptgen > jp::recopt)
       {
         if (jp::debug)
           cout << "genjet " << gjetidx << "/" << gen_njt << " ptg=" << ptgen << " etag=" << etagen << endl;
@@ -4488,7 +4499,8 @@ Long64_t HistosFill::LoadTree(Long64_t entry)
         // Normalization with the amount of entries within the current tree
         _pthatweight = jp::pthatsigmas[sliceIdx] / noevts;
         // This is a normalization procedure by the luminosity of the furthest pthat bin. In practice, it does not hurt if the normalevts number is arbitrary.
-        _pthatweight /= (jp::pthatrefsigma / jp::pthatnormalevts); // Normalize
+        _pthatweight /= (jp::pthatsigmas.back() / jp::pthatnormalevts); // Normalize
+	cout << jp::pthatsigmas.back() << endl;
         PrintInfo(Form("The given slice has the pthat range [%f,%f]\nWeight: %f, with a total of %lld events.",
                        jp::pthatranges[sliceIdx], jp::pthatranges[sliceIdx + 1], _pthatweight, noevts),
                   true);

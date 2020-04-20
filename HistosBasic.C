@@ -176,6 +176,8 @@ HistosBasic::HistosBasic(TDirectory *dir, string trigname, double etamin, double
 
     // Adding gen inclusive spectrum for Rivet comparisons...
     hpt_g = new TH1D("hpt_g", "", nx, &x[0]);
+    hpt_g1 = new TH1D("hpt_g1", "", nx, &x[0]);
+    hpt_g2 = new TH1D("hpt_g2", "", nx, &x[0]);
 
   }
   //hdjmass0 = new TH1D("hdjmass0", "", static_cast<int>(jp::sqrts), 0., jp::sqrts);
