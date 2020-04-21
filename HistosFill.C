@@ -187,11 +187,11 @@ bool HistosFill::Init(TChain *tree)
       fChain->SetBranchStatus("EvtHdr_.mPthat", 1); // pthat
     if (jp::ismc)
       fChain->SetBranchStatus("EvtHdr_.mWeight", 1); // weight
-    if (jp::isdt)
+  //  if (jp::isdt)
       fChain->SetBranchStatus("EvtHdr_.mRun", 1); // run
-    if (jp::isdt)
+  //  if (jp::isdt)
       fChain->SetBranchStatus("EvtHdr_.mEvent", 1); // evt
-    if (jp::isdt)
+  //  if (jp::isdt)
       fChain->SetBranchStatus("EvtHdr_.mLumi", 1); // lbn
 
     // Event properties
@@ -4499,8 +4499,9 @@ Long64_t HistosFill::LoadTree(Long64_t entry)
         // Normalization with the amount of entries within the current tree
         _pthatweight = jp::pthatsigmas[sliceIdx] / noevts;
         // This is a normalization procedure by the luminosity of the furthest pthat bin. In practice, it does not hurt if the normalevts number is arbitrary.
-        _pthatweight /= (jp::pthatsigmas.back() / jp::pthatnormalevts); // Normalize
-	cout << jp::pthatsigmas.back() << endl;
+	// Normalization by reference slice 
+	_pthatweight /= (jp::pthatrefsigma / jp::pthatnormalevts); // Normalization of slice by slice run 
+        //_pthatweight /= (jp::pthatsigmas.back() / jp::pthatnormalevts); // Normalization of full mc run
         PrintInfo(Form("The given slice has the pthat range [%f,%f]\nWeight: %f, with a total of %lld events.",
                        jp::pthatranges[sliceIdx], jp::pthatranges[sliceIdx + 1], _pthatweight, noevts),
                   true);
