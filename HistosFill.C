@@ -187,11 +187,11 @@ bool HistosFill::Init(TChain *tree)
       fChain->SetBranchStatus("EvtHdr_.mPthat", 1); // pthat
     if (jp::ismc)
       fChain->SetBranchStatus("EvtHdr_.mWeight", 1); // weight
-    if (jp::isdt)
+    //if (jp::isdt)
       fChain->SetBranchStatus("EvtHdr_.mRun", 1); // run
-    if (jp::isdt)
+    //if (jp::isdt)
       fChain->SetBranchStatus("EvtHdr_.mEvent", 1); // evt
-    if (jp::isdt)
+    //if (jp::isdt)
       fChain->SetBranchStatus("EvtHdr_.mLumi", 1); // lbn
 
     // Event properties
