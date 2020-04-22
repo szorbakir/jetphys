@@ -667,9 +667,18 @@ bool HistosFill::PreRun()
   }
 
   if (jp::ismc)
+  {
     cout << Form("Running on MC produced with %1.3g nb-1 (%lld evts)",
                  1000. * _ntot / jp::xsecMinBias, _ntot)
          << endl;
+    
+    if(jp::doSF and jp::varSF == 0) 
+      cout << "Applying JER Scale Factors with NOMINAL variation..." << endl;
+    if(jp::doSF and jp::varSF == 1) 
+      cout << "Applying JER Scale Factors with UP variation..." << endl;
+    if(jp::doSF and jp::varSF == -1) 
+      cout << "Applying JER Scale Factors with DOWN variation..." << endl;
+  }
   if (jp::isdt)
     cout << Form("Running on %lld events of data", _ntot) << endl;
 
@@ -1202,7 +1211,15 @@ bool HistosFill::AcceptEvent(JME::JetResolutionScaleFactor resolution_sf, JME::J
       parameters.setJetEta(p4.Eta());
       parameters.setRho(rho);
 
-      float sf = resolution_sf.getScaleFactor(parameters);
+      float sf = 0.;
+      if (jp::varSF == 0) 
+        sf = resolution_sf.getScaleFactor(parameters);
+      if (jp::varSF == 1) 
+        sf = resolution_sf.getScaleFactor(parameters, Variation::UP);
+      if (jp::varSF == -1) 
+        sf = resolution_sf.getScaleFactor(parameters, Variation::DOWN);
+      
+      //float sf = resolution_sf.getScaleFactor(parameters);
       //float sf = resolution_sf.getScaleFactor(parameters, Variation::UP);
       //float sf = resolution_sf.getScaleFactor(parameters, Variation::DOWN);
 
