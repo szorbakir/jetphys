@@ -229,9 +229,15 @@ constexpr const unsigned int noRMmassranges_half = sizeof(RMmassrangevseta_half)
     hdjmassUp = new TH1D("hdjmassUp", "", nx_mass, &x_mass[0]);
     hdjmassDown = new TH1D("hdjmassDown", "", nx_mass, &x_mass[0]);
 
+    hdjmassUp_half = new TH1D("hdjmassUp_half", "", nx_mass_half, &x_mass_half[0]);
+    hdjmassDown_half = new TH1D("hdjmassDown_half", "", nx_mass_half, &x_mass_half[0]);
+ 
     hdjRMmassUp = new TH1D("hdjRMmassUp", "", nx_RMmass, &x_RMmass[0]);
     hdjRMmassDown = new TH1D("hdjRMmassDown", "", nx_RMmass, &x_RMmass[0]);
-    
+   
+    hdjRMmassUp_half = new TH1D("hdjRMmassUp_half", "", nx_RMmass_half, &x_RMmass_half[0]);
+    hdjRMmassDown_half = new TH1D("hdjRMmassDown_half", "", nx_RMmass_half, &x_RMmass_half[0]);
+
     //JEC unc plots
     pupUncChange = new TProfile("pupUncChange", "", nx_mass, &x_mass[0]);
     pdownUncChange = new TProfile("pdownUncChange", "", nx_mass, &x_mass[0]);

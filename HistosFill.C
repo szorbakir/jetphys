@@ -187,11 +187,11 @@ bool HistosFill::Init(TChain *tree)
       fChain->SetBranchStatus("EvtHdr_.mPthat", 1); // pthat
     if (jp::ismc)
       fChain->SetBranchStatus("EvtHdr_.mWeight", 1); // weight
-  //  if (jp::isdt)
+    if (jp::isdt)
       fChain->SetBranchStatus("EvtHdr_.mRun", 1); // run
-  //  if (jp::isdt)
+    if (jp::isdt)
       fChain->SetBranchStatus("EvtHdr_.mEvent", 1); // evt
-  //  if (jp::isdt)
+    if (jp::isdt)
       fChain->SetBranchStatus("EvtHdr_.mLumi", 1); // lbn
 
     // Event properties
@@ -2021,6 +2021,9 @@ void HistosFill::FillSingleBasic(HistosBasic *h)
             assert(h->hdjmassUp);
             h->hdjmassUp->Fill(djmassUp, _w);
 
+            assert(h->hdjmassUp_half);
+            h->hdjmassUp_half->Fill(djmassUp, _w);
+
             upUncChange = (djmassUp - djmass) / djmass * 100;
             //cout << "up unc. change:" << upUncChange << endl;
 
@@ -2031,11 +2034,30 @@ void HistosFill::FillSingleBasic(HistosBasic *h)
             assert(h->hdjmassDown);
             h->hdjmassDown->Fill(djmassDown, _w);
 
+            assert(h->hdjmassDown_half);
+            h->hdjmassDown_half->Fill(djmassDown, _w);
+            
             downUncChange = (abs(djmassDown - djmass)) / djmass * 100;
             //cout << "down unc. change: " << downUncChange << endl;
 
             assert(h->pdownUncChange);
             h->pdownUncChange->Fill(djmass, downUncChange, _w);
+            
+            if (goodMassRM)
+            {
+              assert(h->hdjRMmassUp);
+              h->hdjRMmassUp->Fill(djmassUp, _w); 
+                             
+              assert(h->hdjRMmassDown);
+              h->hdjRMmassDown->Fill(djmassDown, _w);
+
+              assert(h->hdjRMmassUp_half);
+              h->hdjRMmassUp_half->Fill(djmassUp, _w); 
+                   
+              assert(h->hdjRMmassDown_half);
+              h->hdjRMmassDown_half->Fill(djmassDown, _w); 
+
+            }
           }
         }
 
@@ -2047,12 +2069,6 @@ void HistosFill::FillSingleBasic(HistosBasic *h)
           // Half binned RM mass histo
           assert(h->hdjRMmass_half);
           h->hdjRMmass_half->Fill(djmass, _w);
-
-          assert(h->hdjRMmassUp);
-          h->hdjRMmassUp->Fill(djmassUp, _w);
-
-          assert(h->hdjRMmassDown);
-          h->hdjRMmassDown->Fill(djmassDown, _w);
         }
       }
     } //Second leading jet
@@ -4506,7 +4522,7 @@ Long64_t HistosFill::LoadTree(Long64_t entry)
         _pthatweight = jp::pthatsigmas[sliceIdx] / noevts;
         // This is a normalization procedure by the luminosity of the furthest pthat bin. In practice, it does not hurt if the normalevts number is arbitrary.
 	// Normalization by reference slice 
-	_pthatweight /= (jp::pthatrefsigma / jp::pthatnormalevts); // Normalization of slice by slice run 
+	_pthatweight /= (jp::pthatrefsigma / jp::pthatnormalevts); // Normalization of slice by slice run
         //_pthatweight /= (jp::pthatsigmas.back() / jp::pthatnormalevts); // Normalization of full mc run
         PrintInfo(Form("The given slice has the pthat range [%f,%f]\nWeight: %f, with a total of %lld events.",
                        jp::pthatranges[sliceIdx], jp::pthatranges[sliceIdx + 1], _pthatweight, noevts),
