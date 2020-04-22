@@ -2047,6 +2047,12 @@ void HistosFill::FillSingleBasic(HistosBasic *h)
           // Half binned RM mass histo
           assert(h->hdjRMmass_half);
           h->hdjRMmass_half->Fill(djmass, _w);
+
+          assert(h->hdjRMmassUp);
+          h->hdjRMmassUp->Fill(djmassUp, _w);
+
+          assert(h->hdjRMmassDown);
+          h->hdjRMmassDown->Fill(djmassDown, _w);
         }
       }
     } //Second leading jet

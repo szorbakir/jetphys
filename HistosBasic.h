@@ -65,6 +65,8 @@ public:
   // JEC variations
   TH1D *hdjmassUp;
   TH1D *hdjmassDown;
+  TH1D *hdjRMmassUp;
+  TH1D *hdjRMmassDown;
 
   //TH1D *hdjmass0;
   //TH1D *hdjmass_a01;
