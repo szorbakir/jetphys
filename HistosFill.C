@@ -4398,6 +4398,8 @@ bool HistosFill::LoadPuProfiles(const char *datafile, const char *mcfile)
 
     for (int bin = 0; bin < lomclim; ++bin) // Set fore-tail to zero
       _pudist[t]->SetBinContent(bin, 0.0);
+    for (int bin = upmclim+1; bin <= nbinsdt; ++bin) // Set aft-tail to zero
+      _pudist[t]->SetBinContent(bin,0.0);
     PrintInfo(Form("Maximum bin: %d for DT trg %s", maxdtbin, t), true);
     PrintInfo(Form("Hazardous pu below & above: %f, %f", _pudist[t]->GetBinLowEdge(lodtlim), _pudist[t]->GetBinLowEdge(updtlim + 1)), true);
     _pudist[t]->Divide(_pumc);
