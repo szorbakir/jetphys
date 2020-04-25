@@ -1649,14 +1649,14 @@ bool HistosFill::AcceptEvent(JME::JetResolutionScaleFactor resolution_sf, JME::J
         _pass = false;
 
       // comment out beacuse Bad MC/DATA ratio and shape. Also impossible to compare with Rivet
-      /*if (_pass)
+      if (_pass)
       {
-        double lim = (pthat < 100) ? 2.0 : 1.5;
+        double lim = (pthat < 100) ? 2.0 : 3.5;
         if (jtpt[i0] < lim * pthat or jp::isnu)
           ++_cnt["10pthatlim"];
         else
           _pass = false;
-      }*/
+      }
     }
     if (_pass and _jetids[i0]) // Non-restrictive
       ++_cnt["11jtid"];
