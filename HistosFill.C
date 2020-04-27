@@ -2009,10 +2009,9 @@ void HistosFill::FillSingleBasic(HistosBasic *h)
       double j2_y = jty[i1];
       
       if (goodMass){
-		
-		h->hdj_j1rap->Fill(j1_y,_w);
-		h->hdj_j2rap->Fill(j2_y,_w);
 
+        h->hdj_j1rap->Fill(j1_y,_w);
+        h->hdj_j2rap->Fill(j2_y,_w);
       }
   
       // The eta sectors are filled according to max rapidity
@@ -2071,22 +2070,6 @@ void HistosFill::FillSingleBasic(HistosBasic *h)
 
             assert(h->pdownUncChange);
             h->pdownUncChange->Fill(djmass, downUncChange, _w);
-            
-            if (goodMassRM)
-            {
-              assert(h->hdjRMmassUp);
-              h->hdjRMmassUp->Fill(djmassUp, _w); 
-                             
-              assert(h->hdjRMmassDown);
-              h->hdjRMmassDown->Fill(djmassDown, _w);
-
-              assert(h->hdjRMmassUp_half);
-              h->hdjRMmassUp_half->Fill(djmassUp, _w); 
-                   
-              assert(h->hdjRMmassDown_half);
-              h->hdjRMmassDown_half->Fill(djmassDown, _w); 
-
-            }
           }
         }
 
@@ -2098,6 +2081,21 @@ void HistosFill::FillSingleBasic(HistosBasic *h)
           // Half binned RM mass histo
           assert(h->hdjRMmass_half);
           h->hdjRMmass_half->Fill(djmass, _w);
+        
+          if (jp::doUnc and jp::isdt)
+          {   
+            assert(h->hdjRMmassUp);
+            h->hdjRMmassUp->Fill(djmassUp, _w); 
+
+            assert(h->hdjRMmassDown);
+            h->hdjRMmassDown->Fill(djmassDown, _w); 
+
+            assert(h->hdjRMmassUp_half);
+            h->hdjRMmassUp_half->Fill(djmassUp, _w); 
+
+            assert(h->hdjRMmassDown_half);
+            h->hdjRMmassDown_half->Fill(djmassDown, _w); 
+          }    
         }
       }
     } //Second leading jet
