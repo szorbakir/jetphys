@@ -1643,15 +1643,16 @@ bool HistosFill::AcceptEvent(JME::JetResolutionScaleFactor resolution_sf, JME::J
     // Check if overweight PU event
     if (jp::ismc and _pass)
     {
-      if (jtpt[i0] < 1.5 * jtgenpt[i0] or jp::isnu)
-        ++_cnt["09ptgenlim"];
-      else
-        _pass = false;
 
-      // comment out beacuse Bad MC/DATA ratio and shape. Also impossible to compare with Rivet
+// We do not need this cut anymore since pthatlim does the job 27.04.2020
+//      if (jtpt[i0] < 1.5 * jtgenpt[i0] or jp::isnu)
+//        ++_cnt["09ptgenlim"];
+//      else
+//        _pass = false;
+
       if (_pass)
       {
-        double lim = (pthat < 100) ? 2.0 : 3.5;
+        double lim = (pthat < 100) ? 4.0 : 3.5;
         if (jtpt[i0] < lim * pthat or jp::isnu)
           ++_cnt["10pthatlim"];
         else
@@ -2003,7 +2004,17 @@ void HistosFill::FillSingleBasic(HistosBasic *h)
       double ymaxdj = max(fabs(jty[i0]), fabs(jty[i1]));
       bool goodMass = (_j1.Pt() > 30. and _j2.Pt() > 30.);
       bool goodMassRM = (_j1.Pt() > 15. and _j2.Pt() > 15.);
+      
+      double j1_y = jty[i0]; 
+      double j2_y = jty[i1];
+      
+      if (goodMass){
+		
+		h->hdj_j1rap->Fill(j1_y,_w);
+		h->hdj_j2rap->Fill(j2_y,_w);
 
+      }
+  
       // The eta sectors are filled according to max rapidity
       if (ymaxdj >= h->etamin and ymaxdj < h->etamax)
       {
@@ -2107,6 +2118,15 @@ void HistosFill::FillSingleBasic(HistosBasic *h)
       bool goodMass = (_j1_gen.Pt() > 30. and _j2_gen.Pt() > 30.);
       bool goodMassRM = (_j1_gen.Pt() > 15. and _j2_gen.Pt() > 15.);
 
+      double j1gen_y = gen_jty[0]; 
+      double j2gen_y = gen_jty[1];
+      
+      if (goodMass){
+		
+		h->hdjgen_j1rap->Fill(j1gen_y,_w);
+		h->hdjgen_j2rap->Fill(j2gen_y,_w);
+
+      }
       if (ymaxdj_gen >= h->etamin and ymaxdj_gen < h->etamax)
       {
         if (goodMass)
@@ -4542,8 +4562,8 @@ Long64_t HistosFill::LoadTree(Long64_t entry)
         _pthatweight = jp::pthatsigmas[sliceIdx] / noevts;
         // This is a normalization procedure by the luminosity of the furthest pthat bin. In practice, it does not hurt if the normalevts number is arbitrary.
 	// Normalization by reference slice 
-	_pthatweight /= (jp::pthatrefsigma / jp::pthatnormalevts); // Normalization of slice by slice run
-        //_pthatweight /= (jp::pthatsigmas.back() / jp::pthatnormalevts); // Normalization of full mc run
+	//_pthatweight /= (jp::pthatrefsigma / jp::pthatnormalevts); // Normalization of slice by slice run
+        _pthatweight /= (jp::pthatsigmas.back() / jp::pthatnormalevts); // Normalization of full mc run
         PrintInfo(Form("The given slice has the pthat range [%f,%f]\nWeight: %f, with a total of %lld events.",
                        jp::pthatranges[sliceIdx], jp::pthatranges[sliceIdx + 1], _pthatweight, noevts),
                   true);

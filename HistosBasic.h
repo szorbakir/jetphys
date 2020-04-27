@@ -81,7 +81,8 @@ public:
 
   TH1D *hdjpt_leading;
   TH1D *hdjpt_subleading;
-
+  TH1D *hdj_j1rap;
+  TH1D *hdj_j2rap;
   //JEC unc plots
   TProfile *pupUncChange;
   TProfile *pdownUncChange;
@@ -96,6 +97,8 @@ public:
   TH1D *hdjRMmass_half_gen;
   TH1D *hdjpt_leading_gen;
   TH1D *hdjpt_subleading_gen;
+  TH1D *hdjgen_j1rap;
+  TH1D *hdjgen_j2rap;
 
   // Acceptance and background studies for inclusive jets
   TProfile *paccept_vsPt;

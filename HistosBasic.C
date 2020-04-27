@@ -213,9 +213,12 @@ constexpr const unsigned int noRMmassranges_half = sizeof(RMmassrangevseta_half)
   hpt3 = new TH1D("hpt3", "", nx, &x[0]);
 
   // leading and non-leading jet pt in dijet system
+  
   hdjpt_leading = new TH1D("hdjpt_leading", "", nx, &x[0]);
   hdjpt_subleading = new TH1D("hdjpt_subleading", "", nx, &x[0]);
-
+  hdj_j1rap = new TH1D("hdj_j1rap", "", 100, -5., 5.);
+  hdj_j2rap = new TH1D("hdj_j2rap", "", 100, -5., 5.);
+  
   // dijet mass
   hdjmass = new TH1D("hdjmass", "", nx_mass, &x_mass[0]);
   hdjmass_half = new TH1D("hdjmass_half", "", nx_mass_half, &x_mass_half[0]);
@@ -255,7 +258,8 @@ constexpr const unsigned int noRMmassranges_half = sizeof(RMmassrangevseta_half)
   
     hdjpt_leading_gen = new TH1D("hdjpt_leading_gen", "", nx, &x[0]);
     hdjpt_subleading_gen = new TH1D("hdjpt_subleading_gen", "", nx, &x[0]);
-
+    hdjgen_j1rap = new TH1D("hdjgen_j1rap", "", 100, -5., 5.);
+    hdjgen_j2rap = new TH1D("hdjgen_j2rap", "", 100, -5., 5.);
     // Adding gen inclusive spectrum for Rivet comparisons...
     hpt_g = new TH1D("hpt_g", "", nx, &x[0]);
     hpt_g1 = new TH1D("hpt_g1", "", nx, &x[0]);
