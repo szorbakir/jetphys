@@ -1953,9 +1953,9 @@ void HistosFill::FillSingleBasic(HistosBasic *h)
 
   // RECO-LEVEL calculation
 
-  if (_pass_qcdmet and i0 >= 0 and _jetids[i0] and jtpt[i0] > jp::recopt)
+  if (_pass_qcdmet and i0 >= 0 and _jetids[i0] and jtpt[i0] > jp::recopt and fabs(jty[i0]) < 3.0)
   { // First leading jet
-    if (i1 >= 0 and _jetids[i1] and jtpt[i1] > jp::recopt)
+    if (i1 >= 0 and _jetids[i1] and jtpt[i1] > jp::recopt and fabs(jty[i1]) < 3.0)
     { // Second leading jet
 
       //{ Calculate and fill dijet mass.
@@ -2009,9 +2009,8 @@ void HistosFill::FillSingleBasic(HistosBasic *h)
       double j2_y = jty[i1];
       
       if (goodMass){
-
         h->hdj_j1rap->Fill(j1_y,_w);
-        h->hdj_j2rap->Fill(j2_y,_w);
+    	h->hdj_j2rap->Fill(j2_y,_w);
       }
   
       // The eta sectors are filled according to max rapidity
@@ -2081,21 +2080,18 @@ void HistosFill::FillSingleBasic(HistosBasic *h)
           // Half binned RM mass histo
           assert(h->hdjRMmass_half);
           h->hdjRMmass_half->Fill(djmass, _w);
-        
-          if (jp::doUnc and jp::isdt)
-          {   
-            assert(h->hdjRMmassUp);
-            h->hdjRMmassUp->Fill(djmassUp, _w); 
+          
+          assert(h->hdjRMmassUp);
+          h->hdjRMmassUp->Fill(djmassUp, _w); 
 
-            assert(h->hdjRMmassDown);
-            h->hdjRMmassDown->Fill(djmassDown, _w); 
+          assert(h->hdjRMmassDown);
+          h->hdjRMmassDown->Fill(djmassDown, _w); 
 
-            assert(h->hdjRMmassUp_half);
-            h->hdjRMmassUp_half->Fill(djmassUp, _w); 
+          assert(h->hdjRMmassUp_half);
+          h->hdjRMmassUp_half->Fill(djmassUp, _w); 
 
-            assert(h->hdjRMmassDown_half);
-            h->hdjRMmassDown_half->Fill(djmassDown, _w); 
-          }    
+          assert(h->hdjRMmassDown_half);
+          h->hdjRMmassDown_half->Fill(djmassDown, _w);                                                                                                                           
         }
       }
     } //Second leading jet
@@ -2104,7 +2100,7 @@ void HistosFill::FillSingleBasic(HistosBasic *h)
   // GEN-LEVEL calculation
   if (jp::ismc)
   {
-    if (gen_njt >= 2 and gen_jtpt[0] > jp::recopt and gen_jtpt[1] > jp::recopt)
+    if (gen_njt >= 2 and gen_jtpt[0] > jp::recopt and gen_jtpt[1] > jp::recopt and fabs(gen_jty[0]) < 3.0 and fabs(gen_jty[1]) < 3.0)
     {
 
       _j1_gen.SetPtEtaPhiE(gen_jtpt[0], gen_jteta[0], gen_jtphi[0], gen_jte[0]);
@@ -2255,7 +2251,8 @@ void HistosFill::FillSingleBasic(HistosBasic *h)
     // Resolution studies are also added inside of this loop 19/9/2018
     // Resolution studies are performed on well matched dijet pairs
 
-    if (gen_njt >= 2 and njt >= 2 and jp::doRmatrix and gen_jtpt[0] > jp::recopt and gen_jtpt[1] > jp::recopt and jtpt[i0] > jp::recopt and jtpt[i1] > jp::recopt)
+    if (jp::ismc and jp::doRmatrix and gen_njt >= 2 and njt >= 2 and gen_jtpt[0] > jp::recopt and gen_jtpt[1] > jp::recopt and jtpt[i0] > jp::recopt and jtpt[i1] > jp::recopt and fabs(gen_jty[0]) < 3.0 and fabs(gen_jty[1]) < 3.0 and fabs(jty[i0]) < 3.0 and fabs(jty[i1]) <  3.0)
+
     {
 
       double deltaR_one, deltaR_two, deltaR_onethree, deltaR_twothree;
