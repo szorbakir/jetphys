@@ -2081,17 +2081,20 @@ void HistosFill::FillSingleBasic(HistosBasic *h)
           assert(h->hdjRMmass_half);
           h->hdjRMmass_half->Fill(djmass, _w);
           
-          assert(h->hdjRMmassUp);
-          h->hdjRMmassUp->Fill(djmassUp, _w); 
+          if (jp::doUnc and jp::isdt)
+          {
+            assert(h->hdjRMmassUp);
+            h->hdjRMmassUp->Fill(djmassUp, _w); 
 
-          assert(h->hdjRMmassDown);
-          h->hdjRMmassDown->Fill(djmassDown, _w); 
+           assert(h->hdjRMmassDown);
+            h->hdjRMmassDown->Fill(djmassDown, _w); 
 
-          assert(h->hdjRMmassUp_half);
-          h->hdjRMmassUp_half->Fill(djmassUp, _w); 
+            assert(h->hdjRMmassUp_half);
+            h->hdjRMmassUp_half->Fill(djmassUp, _w); 
 
-          assert(h->hdjRMmassDown_half);
-          h->hdjRMmassDown_half->Fill(djmassDown, _w);                                                                                                                           
+            assert(h->hdjRMmassDown_half);
+            h->hdjRMmassDown_half->Fill(djmassDown, _w);
+          }            
         }
       }
     } //Second leading jet
