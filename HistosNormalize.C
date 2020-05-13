@@ -283,7 +283,10 @@ void recurseFile(TDirectory *indir, TDirectory *outdir, double etawid, double et
           if (ispre)
             norm0 *= lumiref;
           else if (lumi > 0)
+          {
             norm0 *= lumi / lumiref;
+            if(jp::isdt) norm0 = norm0 * jp::triglumi.back() * 1e-6;
+          }
         }
 
         // Scale normalization for jackknife (but why?)

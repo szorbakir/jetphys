@@ -4561,7 +4561,7 @@ Long64_t HistosFill::LoadTree(Long64_t entry)
         // This is a normalization procedure by the luminosity of the furthest pthat bin. In practice, it does not hurt if the normalevts number is arbitrary.
 	// Normalization by reference slice 
 	//_pthatweight /= (jp::pthatrefsigma / jp::pthatnormalevts); // Normalization of slice by slice run
-        _pthatweight /= (jp::pthatsigmas.back() / jp::pthatnormalevts); // Normalization of full mc run
+        //_pthatweight /= (jp::pthatsigmas.back() / jp::pthatnormalevts); // Normalization of full mc run
         PrintInfo(Form("The given slice has the pthat range [%f,%f]\nWeight: %f, with a total of %lld events.",
                        jp::pthatranges[sliceIdx], jp::pthatranges[sliceIdx + 1], _pthatweight, noevts),
                   true);
