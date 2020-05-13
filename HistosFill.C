@@ -4558,10 +4558,8 @@ Long64_t HistosFill::LoadTree(Long64_t entry)
         }
         // Normalization with the amount of entries within the current tree
         _pthatweight = jp::pthatsigmas[sliceIdx] / noevts;
-        // This is a normalization procedure by the luminosity of the furthest pthat bin. In practice, it does not hurt if the normalevts number is arbitrary.
-	// Normalization by reference slice 
-	//_pthatweight /= (jp::pthatrefsigma / jp::pthatnormalevts); // Normalization of slice by slice run
-        _pthatweight /= (jp::pthatsigmas.back() / jp::pthatnormalevts); // Normalization of full mc run
+        // This is a normalization procedure by the luminosity of the furthest pthat bin. In practice, it does not hurt if the normalevts number is arbitrary. This normalization is removed since its messing up absolute cross section of MC, impossible to keep track of unit of MC!!!
+        //_pthatweight /= (jp::pthatsigmas.back() / jp::pthatnormalevts); // Normalization of full mc run
         PrintInfo(Form("The given slice has the pthat range [%f,%f]\nWeight: %f, with a total of %lld events.",
                        jp::pthatranges[sliceIdx], jp::pthatranges[sliceIdx + 1], _pthatweight, noevts),
                   true);
