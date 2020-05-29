@@ -2038,6 +2038,14 @@ void HistosFill::FillSingleBasic(HistosBasic *h)
           assert(h->hdjmass_half);
           h->hdjmass_half->Fill(djmass, _w);
 
+/*        // Jack knife normal dist.  
+          for (unsigned int i = 0; i != 10; ++i){
+	  	if (_jentry%10!=i){ 
+			h->hdjgen_jk[i]->Fill(djmass_gen, _w);
+			h->hdjgen_jk_half[i]->Fill(djmass_gen, _w);
+          	}
+          }
+*/	  
           // Leading and subleading pt of the dijet system
           assert(h->hdjpt_leading);
           h->hdjpt_leading->Fill(_j1.Pt(), _w);
@@ -2092,13 +2100,23 @@ void HistosFill::FillSingleBasic(HistosBasic *h)
           // Half binned RM mass histo
           assert(h->hdjRMmass_half);
           h->hdjRMmass_half->Fill(djmass, _w);
-          
+/*
+	  // Jack Knife histos with  underflow bins          
+          if (jp::ismc){ 
+          	for (unsigned int i = 0; i != 10; ++i){
+	  		if (_jentry%10!=i){ 
+				h->hdjRM_jk[i]->Fill(djmass, _w);
+				h->hdjRM_jk_half[i]->Fill(djmass, _w);
+          		}
+		  }
+	  }
+*/
           if (jp::doUnc and jp::isdt)
           {
             assert(h->hdjRMmassUp);
             h->hdjRMmassUp->Fill(djmassUp, _w); 
 
-           assert(h->hdjRMmassDown);
+            assert(h->hdjRMmassDown);
             h->hdjRMmassDown->Fill(djmassDown, _w); 
 
             assert(h->hdjRMmassUp_half);
@@ -2147,6 +2165,14 @@ void HistosFill::FillSingleBasic(HistosBasic *h)
           assert(h->hdjmass_half_gen);
           h->hdjmass_half_gen->Fill(djmass_gen, _w);
 
+/*        // Jack knife normal binning
+          for (unsigned int i = 0; i != 10; ++i){
+	  	if (_jentry%10!=i){ 
+			h->hdjgen_jk[i]->Fill(djmass_gen, _w);
+			h->hdjgen_jk_half[i]->Fill(djmass_gen, _w);
+          	}
+          }
+*/	  
           // Leading and subleading pt of generated dijet mass system
           assert(h->hdjpt_leading_gen);
           h->hdjpt_leading_gen->Fill(_j1_gen.Pt(), _w);
@@ -2158,7 +2184,15 @@ void HistosFill::FillSingleBasic(HistosBasic *h)
         {
           assert(h->hdjRMmass_gen);
           h->hdjRMmass_gen->Fill(djmass_gen, _w);
-
+/*	  
+          // Jack knife histos with underflow bins
+          for (unsigned int i = 0; i != 10; ++i){
+	  	if (_jentry%10!=i){ 
+			h->hdjgenRM_jk[i]->Fill(djmass_gen, _w);
+			h->hdjgenRM_jk_half[i]->Fill(djmass_gen, _w);
+          	}
+          }
+*/          
           // Fill half binned gen spectrum
           assert(h->hdjRMmass_half_gen);
           h->hdjRMmass_half_gen->Fill(djmass_gen, _w);
@@ -2372,6 +2406,13 @@ void HistosFill::FillSingleBasic(HistosBasic *h)
         {
           assert(h->RMmatrix_gen_reco);
           h->RMmatrix_gen_reco->Fill(djmass, gen_djmass, _w);
+         
+	  // Jack knife matrix with underflow bins.
+          for (unsigned int i = 0; i != 10; ++i){
+	  	if (_jentry%10!=i){ 
+          	h->RMmatrix_gen_reco_jk[i]->Fill(djmass, gen_djmass, _w);
+		}
+	  }
         }
 
       } //matching and filling
@@ -4569,7 +4610,8 @@ Long64_t HistosFill::LoadTree(Long64_t entry)
           ++_pthatrepeats;
         }
         // Normalization with the amount of entries within the current tree
-        _pthatweight = jp::pthatsigmas[sliceIdx] / noevts;
+        // Converting pb to ab to use in unfolding...
+        _pthatweight = jp::pthatsigmas[sliceIdx]*1e6 / noevts;
         // This is a normalization procedure by the luminosity of the furthest pthat bin. In practice, it does not hurt if the normalevts number is arbitrary.
         // This normalization is removed since its messing up absolute cross section of MC, impossible to keep track of unit of MC!!!
         //_pthatweight /= (jp::pthatsigmas.back() / jp::pthatnormalevts); // Normalization of full mc run

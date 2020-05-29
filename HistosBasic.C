@@ -198,7 +198,29 @@ constexpr const unsigned int noRMmassranges_half = sizeof(RMmassrangevseta_half)
   //for (unsigned int i = 0; i != hpt_jk.size(); ++i)
   //hpt_jk[i] = new TH1D(Form("hpt_jk%d", i + 1), "", nx, &x[0]);
   //h2jk = new TH2D("h2jk", "Check of reshuffling", 10, -0.5, 9.5, 10, -0.5, 9.5);
+  // jack knife dijet mass distributions are commented out. In case we need them they can be activated...
+//  hdj_jk.resize(10);
+//  hdj_jk_half.resize(10);
+//  hdjRM_jk.resize(10);
+//  hdjRM_jk_half.resize(10);
+//  hdjgen_jk.resize(10);
+//  hdjgen_jk_half.resize(10);
+//  hdjgenRM_jk.resize(10);
+//  hdjgenRM_jk_half.resize(10);
+  RMmatrix_gen_reco_jk.resize(10);
 
+  for (unsigned int i = 0; i != RMmatrix_gen_reco_jk.size(); ++i){
+//  hdj_jk[i] = new TH1D(Form("hdj_jk%d", i + 1), "", nx_mass, &x_mass[0]);
+//  hdj_jk_half[i] = new TH1D(Form("hdj_jk_half%d", i + 1), "", nx_mass_half, &x_mass_half[0]);
+//  hdjRM_jk[i] = new TH1D(Form("hdjRM_jk%d", i + 1), "", nx_RMmass, &x_RMmass[0]);
+//  hdjRM_jk_half[i] = new TH1D(Form("hdjRM_jk_half%d", i + 1), "", nx_RMmass_half, &x_RMmass_half[0]);
+//  hdjgen_jk[i] = new TH1D(Form("hdjgen_jk%d", i + 1), "", nx_mass, &x_mass[0]);
+//  hdjgen_jk_half[i] = new TH1D(Form("hdjgen_jk_half%d", i + 1), "", nx_mass_half, &x_mass_half[0]);
+//  hdjgenRM_jk[i] = new TH1D(Form("hdjgenRM_jk%d", i + 1), "", nx_RMmass, &x_RMmass[0]);
+//  hdjgenRM_jk_half[i] = new TH1D(Form("hdjgenRM_jk_half%d", i + 1), "", nx_RMmass_half, &x_RMmass_half[0]);
+  RMmatrix_gen_reco_jk[i] = new TH2D(Form("RMmatrix_gen_reco_jk%d",i+1), "Response_Matrix_jk;Mjj_{reco};Mjj_{gen}", nx_RMmass, &x_RMmass[0], nx_RMmass_half, &x_RMmass_half[0]);
+  //h2jk = new TH2D("h2jk", "Check of reshuffling", 10, -0.5, 9.5, 10, -0.5, 9.5);
+  }
   // hpt_tmp = new TH1D("hpt_tmp", "", nx, &x[0]);
   // hpt_evtcount = new TH1D("hpt_evtcount", "", nx, &x[0]);
   // hpt_evt = new TH1D("hpt_evt", "", nx, &x[0]);

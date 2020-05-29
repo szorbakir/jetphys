@@ -44,6 +44,16 @@ public:
   //std::vector<TH1D *> hpt_jk;
   //TH2D *h2jk;
 
+  //std::vector<TH1D *> hdj_jk;
+  //std::vector<TH1D *> hdj_jk_half;
+  //std::vector<TH1D *> hdjRM_jk;
+  //std::vector<TH1D *> hdjRM_jk_half;
+  //std::vector<TH1D *> hdjgen_jk;
+  //std::vector<TH1D *> hdjgen_jk_half;
+  //std::vector<TH1D *> hdjgenRM_jk;
+  //std::vector<TH1D *> hdjgenRM_jk_half;
+  std::vector<TH2D *> RMmatrix_gen_reco_jk;
+  
   // TH1D *hpt_tmp;
   // TH1D *hpt_evtcount;
   // TH1D *hpt_evt;
