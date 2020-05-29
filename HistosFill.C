@@ -2039,7 +2039,7 @@ void HistosFill::FillSingleBasic(HistosBasic *h)
           h->hdjmass_half->Fill(djmass, _w);
 
 /*        // Jack knife normal dist.  
-          for (unsigned int i = 0; i != 10; ++i){
+          for (unsigned int i = 0; i < 10; ++i){
 	  	if (_jentry%10!=i){ 
 			h->hdjgen_jk[i]->Fill(djmass_gen, _w);
 			h->hdjgen_jk_half[i]->Fill(djmass_gen, _w);
@@ -2103,7 +2103,7 @@ void HistosFill::FillSingleBasic(HistosBasic *h)
 /*
 	  // Jack Knife histos with  underflow bins          
           if (jp::ismc){ 
-          	for (unsigned int i = 0; i != 10; ++i){
+          	for (unsigned int i = 0; i < 10; ++i){
 	  		if (_jentry%10!=i){ 
 				h->hdjRM_jk[i]->Fill(djmass, _w);
 				h->hdjRM_jk_half[i]->Fill(djmass, _w);
@@ -2166,7 +2166,7 @@ void HistosFill::FillSingleBasic(HistosBasic *h)
           h->hdjmass_half_gen->Fill(djmass_gen, _w);
 
 /*        // Jack knife normal binning
-          for (unsigned int i = 0; i != 10; ++i){
+          for (unsigned int i = 0; i < 10; ++i){
 	  	if (_jentry%10!=i){ 
 			h->hdjgen_jk[i]->Fill(djmass_gen, _w);
 			h->hdjgen_jk_half[i]->Fill(djmass_gen, _w);
@@ -2186,7 +2186,7 @@ void HistosFill::FillSingleBasic(HistosBasic *h)
           h->hdjRMmass_gen->Fill(djmass_gen, _w);
 /*	  
           // Jack knife histos with underflow bins
-          for (unsigned int i = 0; i != 10; ++i){
+          for (unsigned int i = 0; i < 10; ++i){
 	  	if (_jentry%10!=i){ 
 			h->hdjgenRM_jk[i]->Fill(djmass_gen, _w);
 			h->hdjgenRM_jk_half[i]->Fill(djmass_gen, _w);
@@ -2408,7 +2408,7 @@ void HistosFill::FillSingleBasic(HistosBasic *h)
           h->RMmatrix_gen_reco->Fill(djmass, gen_djmass, _w);
          
 	  // Jack knife matrix with underflow bins.
-          for (unsigned int i = 0; i != 10; ++i){
+          for (unsigned int i = 0; i < 10; ++i){
 	  	if (_jentry%10!=i){ 
           	h->RMmatrix_gen_reco_jk[i]->Fill(djmass, gen_djmass, _w);
 		}
