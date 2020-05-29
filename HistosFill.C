@@ -6,8 +6,9 @@
 // Further updates: see git log
 
 #define HistosFill_cxx
-#include "HistosFill.h"
-
+#include "HistosFill.h" 
+#include "ptresolution.h" 
+ 
 // Set the shortcuts for variables
 HistosFill::HistosFill(TChain *tree) : pthat(EvtHdr__mPthat),
                                        weight(EvtHdr__mWeight),
@@ -1600,6 +1601,7 @@ bool HistosFill::AcceptEvent(JME::JetResolutionScaleFactor resolution_sf, JME::J
       _w0 *= _pthatweight;
     assert(_w0 > 0);
   }
+ 
   _w = _w0;
 
   // TODO: implement reweighing for k-factor (NLO*NP/LOMC)
@@ -1861,7 +1863,6 @@ void HistosFill::FillSingleBasic(HistosBasic *h)
   //   assert(h->hpt_g0_tmp);
   //   h->hpt_g0_tmp->Reset();
   // }
-
   _w = _w0 * _wt[h->trigname];
   if (_w <= 0)
     return;
@@ -1935,10 +1936,10 @@ void HistosFill::FillSingleBasic(HistosBasic *h)
   int i0 = jt3leads[0];
   int i1 = jt3leads[1];
   int i2 = jt3leads[2];
-
+   
   if (i0 < 0.)
     return; // This should not happen, but check just in case
-
+  
   double ptave = (i1 >= 0 ? 0.5 * (jtpt[i0] + jtpt[i1]) : jtpt[i0]);
   double dphi = (i1 >= 0 ? DPhi(jtphi[i0], jtphi[i1]) : 0.);
   double dpt = (i1 >= 0 ? fabs(jtpt[i0] - jtpt[i1]) / (2 * ptave) : 0.999);
@@ -1957,6 +1958,17 @@ void HistosFill::FillSingleBasic(HistosBasic *h)
   { // First leading jet
     if (i1 >= 0 and _jetids[i1] and jtpt[i1] > jp::recopt and fabs(jty[i1]) < 3.0)
     { // Second leading jet
+
+      //Prefire fix
+      double prefire1 = 0;
+      double prefire2 = 0;
+      if(jp::isdt)
+      {
+        if (jtpt[i0] > 30.) prefire1 = ecalprefire(jtpt[i0],jteta[i0], jp::run);
+        if (jtpt[i1] > 30.) prefire2 = ecalprefire(jtpt[i1],jteta[i1], jp::run);
+        //Calculate new weight considering leading and subleading prefire weights 
+        _w /= (1 - prefire1) * (1 - prefire2);
+      }
 
       //{ Calculate and fill dijet mass.
       _j1.SetPtEtaPhiE(jtpt[i0], jteta[i0], jtphi[i0], jte[i0]);
@@ -4558,7 +4570,8 @@ Long64_t HistosFill::LoadTree(Long64_t entry)
         }
         // Normalization with the amount of entries within the current tree
         _pthatweight = jp::pthatsigmas[sliceIdx] / noevts;
-        // This is a normalization procedure by the luminosity of the furthest pthat bin. In practice, it does not hurt if the normalevts number is arbitrary. This normalization is removed since its messing up absolute cross section of MC, impossible to keep track of unit of MC!!!
+        // This is a normalization procedure by the luminosity of the furthest pthat bin. In practice, it does not hurt if the normalevts number is arbitrary.
+        // This normalization is removed since its messing up absolute cross section of MC, impossible to keep track of unit of MC!!!
         //_pthatweight /= (jp::pthatsigmas.back() / jp::pthatnormalevts); // Normalization of full mc run
         PrintInfo(Form("The given slice has the pthat range [%f,%f]\nWeight: %f, with a total of %lld events.",
                        jp::pthatranges[sliceIdx], jp::pthatranges[sliceIdx + 1], _pthatweight, noevts),

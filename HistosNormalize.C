@@ -283,7 +283,10 @@ void recurseFile(TDirectory *indir, TDirectory *outdir, double etawid, double et
           if (ispre)
             norm0 *= lumiref;
           else if (lumi > 0)
-            norm0 *= lumi / lumiref;
+            //norm0 *= lumi / lumiref;
+            // this gives ab unit. Reason for that to fix error bars in unfolding.
+            // After unfolding scale the results with 1e-6 to go pb again.
+            norm0 *= (lumi / lumiref) * jp::triglumi.back() * 1e-12; 
         }
 
         // Scale normalization for jackknife (but why?)
@@ -513,9 +516,12 @@ void recurseFile(TDirectory *indir, TDirectory *outdir, double etawid, double et
           if (ktime > 0.0)
             norm *= ktime;
 
-          assert(norm != 0);
-          hpt->SetBinContent(binidx, hpt->GetBinContent(binidx) / norm);
-          hpt->SetBinError(binidx, hpt->GetBinError(binidx) / norm);
+          // Now we are using norm0 instead of norm. Basically we remove bin width normalization.
+          // Because there is a inconsistency if we unfold the histograms with bin width normalization.
+          // After unfolding we are normalise our results with bin width too. 
+          assert(norm0 != 0);
+          hpt->SetBinContent(binidx, hpt->GetBinContent(binidx) / norm0);
+          hpt->SetBinError(binidx, hpt->GetBinError(binidx) / norm0);
 
           if (hpt_notrigeff)
           {
