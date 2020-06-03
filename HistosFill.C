@@ -2300,16 +2300,19 @@ void HistosFill::FillSingleBasic(HistosBasic *h)
     // Resolution studies are also added inside of this loop 19/9/2018
     // Resolution studies are performed on well matched dijet pairs
 
-    if (jp::ismc and jp::doRmatrix and gen_njt >= 2 and njt >= 2 and gen_jtpt[0] > jp::recopt and gen_jtpt[1] > jp::recopt and jtpt[i0] > jp::recopt and jtpt[i1] > jp::recopt and fabs(gen_jty[0]) < 3.0 and fabs(gen_jty[1]) < 3.0 and fabs(jty[i0]) < 3.0 and fabs(jty[i1]) <  3.0)
+    if (jp::ismc and jp::doRmatrix and gen_njt >= 2 and njt >= 2 and 						      // Event checks
+        gen_jtpt[0] > jp::recopt and gen_jtpt[1] > jp::recopt and jtpt[i0] > jp::recopt and jtpt[i1] > jp::recopt and //Pt checks
+        fabs(gen_jty[0]) < 3.0 and fabs(gen_jty[1]) < 3.0 and fabs(jty[i0]) < 3.0 and fabs(jty[i1]) <  3.0)           //Rapidity checks
 
     {
 
-      double deltaR_one, deltaR_two, deltaR_onethree, deltaR_twothree;
-
+      double deltaR_one, deltaR_two;
+      //double deltaR_onethree, deltaR_twothree;
+ 
       deltaR_one = 10;
       deltaR_two = 10;
-      deltaR_onethree = 10;
-      deltaR_twothree = 10;
+      //deltaR_onethree = 10;
+      //deltaR_twothree = 10;
 
       //GEN-LEVEL calculation
       _j1_gen.SetPtEtaPhiE(gen_jtpt[0], gen_jteta[0], gen_jtphi[0], gen_jte[0]);
@@ -2317,8 +2320,6 @@ void HistosFill::FillSingleBasic(HistosBasic *h)
 
       double gen_djmass = (_j1_gen + _j2_gen).M();
       double gen_ymaxdj = max(fabs(gen_jty[0]), fabs(gen_jty[1]));
-      bool goodMass = ((_j1_gen.Pt() > 30. and _j2_gen.Pt() > 30.) and (_j1.Pt() > 30. and _j2.Pt() > 30.));
-      bool goodMassRM = ((_j1_gen.Pt() > 15. and _j2_gen.Pt() > 15.) and (_j1.Pt() > 15. and _j2.Pt() > 15.));
 
       //RECO-LEVEL calculation
 
@@ -2351,6 +2352,8 @@ void HistosFill::FillSingleBasic(HistosBasic *h)
       deltaR_one = min(_j1_gen.DeltaR(_j1), _j1_gen.DeltaR(_j2));
       deltaR_two = min(_j2_gen.DeltaR(_j1), _j2_gen.DeltaR(_j2));
 
+      bool goodMass = ((_j1_gen.Pt() > 30. and _j2_gen.Pt() > 30.) and (_j1.Pt() > 30. and _j2.Pt() > 30.));
+      bool goodMassRM = ((_j1_gen.Pt() > 15. and _j2_gen.Pt() > 15.) and (_j1.Pt() > 15. and _j2.Pt() > 15.));
       // if (njt > 2)
       // {
 
