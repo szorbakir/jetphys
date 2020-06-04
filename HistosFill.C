@@ -1954,9 +1954,9 @@ void HistosFill::FillSingleBasic(HistosBasic *h)
 
   // RECO-LEVEL calculation
 
-  if (_pass_qcdmet and i0 >= 0 and _jetids[i0] and jtpt[i0] > jp::recopt and fabs(jty[i0]) < 3.0)
+  if (_pass_qcdmet and i0 >= 0 and _jetids[i0] and jtpt[i0] > jp::recopt and fabs(jty[i0]) <= 3.0)
   { // First leading jet
-    if (i1 >= 0 and _jetids[i1] and jtpt[i1] > jp::recopt and fabs(jty[i1]) < 3.0)
+    if (i1 >= 0 and _jetids[i1] and jtpt[i1] > jp::recopt and fabs(jty[i1]) <= 3.0)
     { // Second leading jet
 
       //Prefire fix
@@ -2133,7 +2133,7 @@ void HistosFill::FillSingleBasic(HistosBasic *h)
   // GEN-LEVEL calculation
   if (jp::ismc)
   {
-    if (gen_njt >= 2 and gen_jtpt[0] > jp::recopt and gen_jtpt[1] > jp::recopt and fabs(gen_jty[0]) < 3.0 and fabs(gen_jty[1]) < 3.0)
+    if (gen_njt >= 2 and gen_jtpt[0] > jp::recopt and gen_jtpt[1] > jp::recopt and fabs(gen_jty[0]) <= 3.0 and fabs(gen_jty[1]) <= 3.0)
     {
 
       _j1_gen.SetPtEtaPhiE(gen_jtpt[0], gen_jteta[0], gen_jtphi[0], gen_jte[0]);
@@ -2300,9 +2300,9 @@ void HistosFill::FillSingleBasic(HistosBasic *h)
     // Resolution studies are also added inside of this loop 19/9/2018
     // Resolution studies are performed on well matched dijet pairs
 
-    if (jp::ismc and jp::doRmatrix and gen_njt >= 2 and njt >= 2 and 						      // Event checks
-        gen_jtpt[0] > jp::recopt and gen_jtpt[1] > jp::recopt and jtpt[i0] > jp::recopt and jtpt[i1] > jp::recopt and //Pt checks
-        fabs(gen_jty[0]) < 3.0 and fabs(gen_jty[1]) < 3.0 and fabs(jty[i0]) < 3.0 and fabs(jty[i1]) <  3.0)           //Rapidity checks
+    if (jp::doRmatrix and gen_njt >= 2 and njt >= 2 and _pass_qcdmet and _pass and			               // Event checks
+        gen_jtpt[0] > jp::recopt and gen_jtpt[1] > jp::recopt and jtpt[i0] > jp::recopt and jtpt[i1] > jp::recopt and  //Pt checks
+        fabs(gen_jty[0]) <= 3.0 and fabs(gen_jty[1]) <= 3.0 and fabs(jty[i0]) <= 3.0 and fabs(jty[i1]) <= 3.0)         //Rapidity checks
 
     {
 
@@ -2347,7 +2347,7 @@ void HistosFill::FillSingleBasic(HistosBasic *h)
 
       double djmass = (_j1 + _j2).M();
       double ymaxdj = max(fabs(jty[i0]), fabs(jty[i1]));
-      bool reco_id = (_pass and _pass_qcdmet and _jetids[i0] and _jetids[i1]);
+      bool reco_id = (_jetids[i0] and _jetids[i1]);
 
       deltaR_one = min(_j1_gen.DeltaR(_j1), _j1_gen.DeltaR(_j2));
       deltaR_two = min(_j2_gen.DeltaR(_j1), _j2_gen.DeltaR(_j2));
