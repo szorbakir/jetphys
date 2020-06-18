@@ -798,10 +798,13 @@ bool HistosFill::PreRun()
     assert(HotTag != "");
     fHotExcl = new TFile(Form("rootfiles/hotjets/hotjets-%srun%s.root", YearTag.c_str(), HotTag.c_str()), "READ");
     assert(fHotExcl and !fHotExcl->IsZombie() and Form("file rootfiles/hotjets/hotjets-%srun%s.root missing", YearTag.c_str(), HotTag.c_str()));
-    h2HotExcl = (TH2D *)fHotExcl->Get("h2hot");
+    if(jp::ismc) h2HotExcl = (TH2D *)fHotExcl->Get("h2jet");
+    else h2HotExcl = (TH2D *)fHotExcl->Get("h2hotfilter");
     assert(h2HotExcl and "erroneous eta-phi exclusion type");
-    PrintInfo(Form("Loading hot zone corrections rootfiles/hotjets/hotjets-%srun%s.root with h2hot %s", YearTag.c_str(), HotTag.c_str(), jp::HotType));
-    cout << "Loading hot zone corrections rootfiles/hotjets/hotjets-" + YearTag + "run" + HotTag + ".root with h2hot " << endl;
+    //if (jp::ismc) PrintInfo(Form("Loading hot zone corrections rootfiles/hotjets/hotjets-%srun%s.root with h2jet %s", YearTag.c_str(), HotTag.c_str(), jp::HotType));
+    //else PrintInfo(Form("Loading hot zone corrections rootfiles/hotjets/hotjets-%srun%s.root with h2hotfilter %s", YearTag.c_str(), HotTag.c_str(), jp::HotType));
+    if (jp::ismc)cout << "Loading hot zone corrections rootfiles/hotjets/hotjets-" + YearTag + "run" + HotTag + ".root with h2jet " << endl;
+    else cout << "Loading hot zone corrections rootfiles/hotjets/hotjets-" + YearTag + "run" + HotTag + ".root with h2hotfilter " << endl;
   }
 
   if (jp::doVetoCold)
