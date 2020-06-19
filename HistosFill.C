@@ -1957,9 +1957,9 @@ void HistosFill::FillSingleBasic(HistosBasic *h)
 
   // RECO-LEVEL calculation
 
-  if (_pass_qcdmet and i0 >= 0 and _jetids[i0] and jtpt[i0] > jp::goodPt and fabs(jty[i0]) <= 3.0)
+  if (_pass_qcdmet and i0 >= 0 and _jetids[i0] and jtpt[i0] >= jp::goodPt and fabs(jty[i0]) <= 3.0)
   { // First leading jet
-    if (i1 >= 0 and _jetids[i1] and jtpt[i1] > jp::goodPt and fabs(jty[i1]) <= 3.0)
+    if (i1 >= 0 and _jetids[i1] and jtpt[i1] >= jp::goodPt and fabs(jty[i1]) <= 3.0)
     { // Second leading jet
 
       //Prefire fix
@@ -1967,8 +1967,8 @@ void HistosFill::FillSingleBasic(HistosBasic *h)
       double prefire2 = 0;
       if(jp::isdt)
       {
-        if (jtpt[i0] > 100.) prefire1 = ecalprefire(jtpt[i0],jteta[i0], jp::run);
-        if (jtpt[i1] > 50.) prefire2 = ecalprefire(jtpt[i1],jteta[i1], jp::run);
+        if (jtpt[i0] >= 100.) prefire1 = ecalprefire(jtpt[i0],jteta[i0], jp::run);
+        if (jtpt[i1] >= 50.) prefire2 = ecalprefire(jtpt[i1],jteta[i1], jp::run);
         //Calculate new weight considering leading and subleading prefire weights 
         _w /= (1 - prefire1) * (1 - prefire2);
       }
@@ -2017,8 +2017,8 @@ void HistosFill::FillSingleBasic(HistosBasic *h)
 
       //double etamaxdj = max(fabs(jteta[i0]), fabs(jteta[i1]));
       double ymaxdj = max(fabs(jty[i0]), fabs(jty[i1]));
-      bool goodMass = (_j1.Pt() > 100. and _j2.Pt() > 50.);
-      bool goodMassRM = (_j1.Pt() > 30. and _j2.Pt() > 30.);
+      bool goodMass = (_j1.Pt() >= 100. and _j2.Pt() >= 50.);
+      bool goodMassRM = (_j1.Pt() >= 30. and _j2.Pt() >= 30.);
       
       double j1_y = jty[i0]; 
       double j2_y = jty[i1];
@@ -2136,7 +2136,7 @@ void HistosFill::FillSingleBasic(HistosBasic *h)
   // GEN-LEVEL calculation
   if (jp::ismc)
   {
-    if (gen_njt >= 2 and gen_jtpt[0] > jp::goodPt and gen_jtpt[1] > jp::goodPt and fabs(gen_jty[0]) <= 3.0 and fabs(gen_jty[1]) <= 3.0)
+    if (gen_njt >= 2 and gen_jtpt[0] >= jp::goodPt and gen_jtpt[1] >= jp::goodPt and fabs(gen_jty[0]) <= 3.0 and fabs(gen_jty[1]) <= 3.0)
     {
 
       _j1_gen.SetPtEtaPhiE(gen_jtpt[0], gen_jteta[0], gen_jtphi[0], gen_jte[0]);
@@ -2145,8 +2145,8 @@ void HistosFill::FillSingleBasic(HistosBasic *h)
       double djmass_gen = (_j1_gen + _j2_gen).M();
       //double etamaxdj_gen = max(fabs(gen_jteta[0]), fabs(gen_jteta[1]));
       double ymaxdj_gen = max(fabs(gen_jty[0]), fabs(gen_jty[1]));
-      bool goodMass = (_j1_gen.Pt() > 100. and _j2_gen.Pt() > 50.);
-      bool goodMassRM = (_j1_gen.Pt() > 30. and _j2_gen.Pt() > 30.);
+      bool goodMass = (_j1_gen.Pt() >= 100. and _j2_gen.Pt() >= 50.);
+      bool goodMassRM = (_j1_gen.Pt() >= 30. and _j2_gen.Pt() >= 30.);
 
       double j1gen_y = gen_jty[0]; 
       double j2gen_y = gen_jty[1];
@@ -2214,7 +2214,7 @@ void HistosFill::FillSingleBasic(HistosBasic *h)
 
       _j1.SetPtEtaPhiE(jtpt[j], jteta[j], jtphi[j], jte[j]);
       double yreco = jty[j];
-      bool reco_id = (_pass && _pass_qcdmet && jtpt[j] > jp::goodPt && _jetids[j]);
+      bool reco_id = (_pass && _pass_qcdmet && jtpt[j] >= jp::goodPt && _jetids[j]);
       if (!reco_id)
         continue;
 
@@ -2227,7 +2227,7 @@ void HistosFill::FillSingleBasic(HistosBasic *h)
 
         _j1_gen.SetPtEtaPhiE(gen_jtpt[k], gen_jteta[k], gen_jtphi[k], gen_jte[k]);
         double ygen = jtgeny[k];
-        if (!(gen_jtpt[k] > jp::goodPt))
+        if (!(gen_jtpt[k] >= jp::goodPt))
           continue;
 
         DR = (_j1_gen.DeltaR(_j1));
@@ -2304,7 +2304,7 @@ void HistosFill::FillSingleBasic(HistosBasic *h)
     // Resolution studies are performed on well matched dijet pairs
 
     if (jp::doRmatrix and gen_njt >= 2 and njt >= 2 and _pass_qcdmet and _pass and			               // Event checks
-        gen_jtpt[0] > jp::goodPt and gen_jtpt[1] > jp::goodPt and jtpt[i0] > jp::goodPt and jtpt[i1] > jp::goodPt and  //Pt checks
+        gen_jtpt[0] >= jp::goodPt and gen_jtpt[1] >= jp::goodPt and jtpt[i0] >= jp::goodPt and jtpt[i1] >= jp::goodPt and  //Pt checks
         fabs(gen_jty[0]) <= 3.0 and fabs(gen_jty[1]) <= 3.0 and fabs(jty[i0]) <= 3.0 and fabs(jty[i1]) <= 3.0)         //Rapidity checks
 
     {
@@ -2355,8 +2355,8 @@ void HistosFill::FillSingleBasic(HistosBasic *h)
       deltaR_one = min(_j1_gen.DeltaR(_j1), _j1_gen.DeltaR(_j2));
       deltaR_two = min(_j2_gen.DeltaR(_j1), _j2_gen.DeltaR(_j2));
 
-      bool goodMass = ((_j1_gen.Pt() > 100. and _j2_gen.Pt() > 50.) and (_j1.Pt() > 100. and _j2.Pt() > 50.));
-      bool goodMassRM = ((_j1_gen.Pt() > 30. and _j2_gen.Pt() > 30.) and (_j1.Pt() > 30. and _j2.Pt() > 30.));
+      bool goodMass = ((_j1_gen.Pt() >= 100. and _j2_gen.Pt() >= 50.) and (_j1.Pt() >= 100. and _j2.Pt() >= 50.));
+      bool goodMassRM = ((_j1_gen.Pt() >= 30. and _j2_gen.Pt() >= 30.) and (_j1.Pt() >= 30. and _j2.Pt() >= 30.));
       // if (njt > 2)
       // {
 
