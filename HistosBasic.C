@@ -33,88 +33,82 @@ HistosBasic::HistosBasic(TDirectory *dir, string trigname, double etamin, double
   // Once and for all (even if few too many with Sumw2)
   TH1::SetDefaultSumw2(kTRUE);
 
-// Optimized binning created by optimizeBins.C ("MC"; lumi 1000/pb, eff 1e+10%)
-// Using NLOxNP theory fit as input when available
-constexpr const unsigned int nopts_eta = 65;
-constexpr const double ptrangevseta[][nopts_eta] = {
-    {10, 12, 15, 18, 21, 24, 28, 32, 37, 43, 49, 56, 64, 74, 84, 97, 114, 133, 153, 174, 196, 220, 245, 272, 300, 330, 362, 395, 430, 468, 507, 548, 592, 638, 686, 737, 790, 846, 905, 967, 1032, 1101, 1172, 1248, 1327, 1410, 1497, 1588, 1684, 1784, 1890, 2000, 2116, 2238, 2366, 2500, 2640, 2787, 2941, 3103, 3273, 3450, 3832, 6076, 6389}, // Eta_0.0-0.5
-    {10, 12, 15, 18, 21, 24, 28, 32, 37, 43, 49, 56, 64, 74, 84, 97, 114, 133, 153, 174, 196, 220, 245, 272, 300, 330, 362, 395, 430, 468, 507, 548, 592, 638, 686, 737, 790, 846, 905, 967, 1032, 1101, 1172, 1248, 1327, 1410, 1497, 1588, 1684, 1784, 1890, 2000, 2116, 2238, 2366, 2500, 2640, 2787, 2941, 3103, 3273, 3637, 5220, 5492},       // Eta_0.5-1.0
-    {10, 12, 15, 18, 21, 24, 28, 32, 37, 43, 49, 56, 64, 74, 84, 97, 114, 133, 153, 174, 196, 220, 245, 272, 300, 330, 362, 395, 430, 468, 507, 548, 592, 638, 686, 737, 790, 846, 905, 967, 1032, 1101, 1172, 1248, 1327, 1410, 1497, 1588, 1684, 1784, 1890, 2000, 2116, 2238, 2366, 2500, 2640, 2941, 3832},                                     // Eta_1.0-1.5
-    {10, 12, 15, 18, 21, 24, 28, 32, 37, 43, 49, 56, 64, 74, 84, 97, 114, 133, 153, 174, 196, 220, 245, 272, 300, 330, 362, 395, 430, 468, 507, 548, 592, 638, 686, 737, 790, 846, 905, 967, 1032, 1101, 1172, 1248, 1327, 1410, 1497, 1588, 1684, 1784, 1890, 2000, 2116, 2500, 2640},                                                             // Eta_1.5-2.0
-    {10, 12, 15, 18, 21, 24, 28, 32, 37, 43, 49, 56, 64, 74, 84, 97, 114, 133, 153, 174, 196, 220, 245, 272, 300, 330, 362, 395, 430, 468, 507, 548, 592, 638, 686, 737, 790, 846, 905, 967, 1032, 1101, 1172, 1248, 1327, 1410, 1497, 1588, 1684},                                                                                                 // Eta_2.0-2.5
-    {10, 12, 15, 18, 21, 24, 28, 32, 37, 43, 49, 56, 64, 74, 84, 97, 114, 133, 153, 174, 196, 220, 245, 272, 300, 330, 362, 395, 430, 468, 507, 548, 592, 638, 686, 737, 790, 846, 905, 967, 1032},                                                                                                                                                 // Eta_2.5-3.0
-    {10, 12, 15, 18, 21, 24, 28, 32, 37, 43, 49, 56, 64, 74, 84, 97, 114, 133, 153, 174, 196, 220, 245, 272, 300, 330, 362, 395, 430, 468, 507, 548, 592, 638, 686, 737, 790, 846, 905, 967, 1032},                                                                                                                                                 // Eta_3.0-3.5
-    {10, 12, 15, 18, 21, 24, 28, 32, 37, 43, 49, 56, 64, 74, 84, 97, 114, 133, 153, 174, 196, 220, 245, 272, 300, 330, 362, 395, 430, 468, 507, 548, 592, 638, 686, 737, 790, 846, 905, 967, 1032}                                                                                                                                                  // Eta_3.5-4.0
-};
-constexpr const unsigned int noptranges = sizeof(ptrangevseta) / sizeof(ptrangevseta[0]);
+  // Optimized binning created by optimizeBins.C ("MC"; lumi 1000/pb, eff 1e+10%)
+  // Using NLOxNP theory fit as input when available
+  constexpr const unsigned int nopts_eta = 65;
+  constexpr const double ptrangevseta[][nopts_eta] = {
+      {10, 12, 15, 18, 21, 24, 28, 32, 37, 43, 49, 56, 64, 74, 84, 97, 114, 133, 153, 174, 196, 220, 245, 272, 300, 330, 362, 395, 430, 468, 507, 548, 592, 638, 686, 737, 790, 846, 905, 967, 1032, 1101, 1172, 1248, 1327, 1410, 1497, 1588, 1684, 1784, 1890, 2000, 2116, 2238, 2366, 2500, 2640, 2787, 2941, 3103, 3273, 3450, 3832, 6076, 6389}, // Eta_0.0-0.5
+      {10, 12, 15, 18, 21, 24, 28, 32, 37, 43, 49, 56, 64, 74, 84, 97, 114, 133, 153, 174, 196, 220, 245, 272, 300, 330, 362, 395, 430, 468, 507, 548, 592, 638, 686, 737, 790, 846, 905, 967, 1032, 1101, 1172, 1248, 1327, 1410, 1497, 1588, 1684, 1784, 1890, 2000, 2116, 2238, 2366, 2500, 2640, 2787, 2941, 3103, 3273, 3637, 5220, 5492},       // Eta_0.5-1.0
+      {10, 12, 15, 18, 21, 24, 28, 32, 37, 43, 49, 56, 64, 74, 84, 97, 114, 133, 153, 174, 196, 220, 245, 272, 300, 330, 362, 395, 430, 468, 507, 548, 592, 638, 686, 737, 790, 846, 905, 967, 1032, 1101, 1172, 1248, 1327, 1410, 1497, 1588, 1684, 1784, 1890, 2000, 2116, 2238, 2366, 2500, 2640, 2941, 3832},                                     // Eta_1.0-1.5
+      {10, 12, 15, 18, 21, 24, 28, 32, 37, 43, 49, 56, 64, 74, 84, 97, 114, 133, 153, 174, 196, 220, 245, 272, 300, 330, 362, 395, 430, 468, 507, 548, 592, 638, 686, 737, 790, 846, 905, 967, 1032, 1101, 1172, 1248, 1327, 1410, 1497, 1588, 1684, 1784, 1890, 2000, 2116, 2500, 2640},                                                             // Eta_1.5-2.0
+      {10, 12, 15, 18, 21, 24, 28, 32, 37, 43, 49, 56, 64, 74, 84, 97, 114, 133, 153, 174, 196, 220, 245, 272, 300, 330, 362, 395, 430, 468, 507, 548, 592, 638, 686, 737, 790, 846, 905, 967, 1032, 1101, 1172, 1248, 1327, 1410, 1497, 1588, 1684},                                                                                                 // Eta_2.0-2.5
+      {10, 12, 15, 18, 21, 24, 28, 32, 37, 43, 49, 56, 64, 74, 84, 97, 114, 133, 153, 174, 196, 220, 245, 272, 300, 330, 362, 395, 430, 468, 507, 548, 592, 638, 686, 737, 790, 846, 905, 967, 1032},                                                                                                                                                 // Eta_2.5-3.0
+      {10, 12, 15, 18, 21, 24, 28, 32, 37, 43, 49, 56, 64, 74, 84, 97, 114, 133, 153, 174, 196, 220, 245, 272, 300, 330, 362, 395, 430, 468, 507, 548, 592, 638, 686, 737, 790, 846, 905, 967, 1032},                                                                                                                                                 // Eta_3.0-3.5
+      {10, 12, 15, 18, 21, 24, 28, 32, 37, 43, 49, 56, 64, 74, 84, 97, 114, 133, 153, 174, 196, 220, 245, 272, 300, 330, 362, 395, 430, 468, 507, 548, 592, 638, 686, 737, 790, 846, 905, 967, 1032}                                                                                                                                                  // Eta_3.5-4.0
+  };
+  constexpr const unsigned int noptranges = sizeof(ptrangevseta) / sizeof(ptrangevseta[0]);
 
   //Dijet mass binning
-constexpr const unsigned int nomass_eta = 40;
-constexpr const double massrangevseta[][nomass_eta] = {
-  {156, 197, 244, 296, 354, 419, 489, 565, 649, 740, 838, 944, 1058, 1181, 1313, 1455, 1607, 1770, 1945, 2132, 2332, 2546, 2775, 3019, 3279, 3558, 3854, 4171, 4509, 4869, 5253, 5663, 6099, 6564, 7060, 7589, 8152, 8752, 9391, 10072},
-  {156, 197, 244, 296, 354, 419, 489, 565, 649, 740, 838, 944, 1058, 1181, 1313, 1455, 1607, 1770, 1945, 2132, 2332, 2546, 2775, 3019, 3279, 3558, 3854, 4171, 4509, 4869, 5253, 5663, 6099, 6564, 7060, 7589, 8152, 8752, 9391, 10072},
-  {220, 270, 325, 386, 453, 526, 606, 693, 788, 890, 1000, 1118, 1246, 1383, 1530, 1687, 1856, 2037, 2231, 2438, 2659, 2895, 3147, 3416, 3704, 4010, 4337, 4686, 5058, 5455, 5877, 6328, 6808, 7320, 7866, 8447, 9067, 9726},
-  {325, 386, 453, 526, 606, 693, 788, 890, 1000, 1118, 1246, 1383, 1530, 1687, 1856, 2037, 2231, 2438, 2659, 2895, 3147, 3416, 3704, 4010, 4337, 4686, 5058, 5455, 5877, 6328, 6808, 7320, 7866, 8447, 9067, 9726},
-  {565, 649, 740, 838, 944, 1058, 1181, 1313, 1455, 1607, 1770, 1945, 2132, 2332, 2546, 2775, 3019, 3279, 3558, 3854, 4171, 4509, 4869, 5253, 5663, 6099, 6564, 7060, 7589, 8152, 8752, 9391, 10072, 10798},  
-  {419, 489, 565, 649, 740, 838, 944, 1058, 1181, 1313, 1455, 1607, 1770, 1945, 2132, 2332, 2546, 2775, 3019, 3279, 3558, 3854, 4171, 4509, 4869, 5253, 5663, 6099, 6564, 7060, 7589, 8152, 8752, 9391, 10072}, // dummy bin
-    {419, 489, 565, 649, 740, 838, 944, 1058, 1181, 1313, 1455, 1607, 1770, 1945, 2132, 2332, 2546, 2775, 3019, 3279, 3558, 3854, 4171, 4509, 4869, 5253, 5663, 6099, 6564, 7060, 7589, 8152, 8752, 9391, 10072}, // dummy bin
-    {419, 489, 565, 649, 740, 838, 944, 1058, 1181, 1313, 1455, 1607, 1770, 1945, 2132, 2332, 2546, 2775, 3019, 3279, 3558, 3854, 4171, 4509, 4869, 5253, 5663, 6099, 6564, 7060, 7589, 8152, 8752, 9391, 10072}  // dummy bin
-};
-constexpr const unsigned int nomassranges = sizeof(massrangevseta) / sizeof(massrangevseta[0]);
+  constexpr const unsigned int nomass_eta = 47;
+  constexpr const double massrangevseta[][nomass_eta] = {
+      {249, 306, 372, 449, 539, 641, 756, 887, 1029, 1187, 1361, 1556, 1769, 2008, 2273, 2572, 2915, 3306, 3754, 4244, 4805, 5374, 6094},
+      {249, 306, 372, 449, 539, 641, 756, 887, 1029, 1187, 1361, 1556, 1769, 2008, 2273, 2572, 2915, 3306, 3754, 4244, 4805, 5374, 6094},
+      {306, 372, 449, 539, 641, 756, 887, 1029, 1187, 1361, 1556, 1769, 2008, 2273, 2572, 2915, 3306, 3754, 4244, 4805, 5374, 6094, 6908},
+      {372, 449, 539, 641, 756, 887, 1029, 1187, 1361, 1556, 1769, 2008, 2273, 2572, 2915, 3306, 3754, 4244, 4805, 5374, 6094, 6908},
+      {372, 449, 539, 641, 756, 887, 1029, 1187, 1361, 1556, 1769, 2008, 2273, 2572, 2915, 3306, 3754, 4244, 4805, 5374, 6094, 6908, 7861},
 
-//Half Dijet mass binning
-constexpr const unsigned int nomass_eta_half = 20;
-constexpr const double massrangevseta_half[][nomass_eta_half] = {
-  {156, 244, 354, 489, 649, 838, 1058, 1313, 1607, 1945, 2332, 2775, 3279, 3854, 4509, 5253, 6099, 7060, 8152, 9391},
-  {156, 244, 354, 489, 649, 838, 1058, 1313, 1607, 1945, 2332, 2775, 3279, 3854, 4509, 5253, 6099, 7060, 8152, 9391},
-  {220, 325, 453, 606, 788, 1000, 1246, 1530, 1856, 2231, 2659, 3147, 3704, 4337, 5058, 5877, 6808, 7866, 9067},
-  {325, 453, 606, 788, 1000, 1246, 1530, 1856, 2231, 2659, 3147, 3704, 4337, 5058, 5877, 6808, 7866, 9067},
-  {565, 740, 944, 1181, 1455, 1770, 2132, 2546, 3019, 3558, 4171, 4869, 5663, 6564, 7589, 8752, 10072},  
+      {419, 565, 740, 944, 1181, 1455, 1770, 2132, 2546, 3019, 3558, 4171, 4869, 5663, 6564, 7589, 8752, 10072}, // dummy
+      {419, 565, 740, 944, 1181, 1455, 1770, 2132, 2546, 3019, 3558, 4171, 4869, 5663, 6564, 7589, 8752, 10072}, // dummy
+      {419, 565, 740, 944, 1181, 1455, 1770, 2132, 2546, 3019, 3558, 4171, 4869, 5663, 6564, 7589, 8752, 10072}, // dummy
+  };
+  constexpr const unsigned int nomassranges = sizeof(massrangevseta) / sizeof(massrangevseta[0]);
+/*
+  //Half Dijet mass binning
+  constexpr const unsigned int nomass_eta_half = 24;
+  constexpr const double massrangevseta_half[][nomass_eta_half] = {
+      {249, 306, 372, 449, 539, 641, 756, 887, 1029, 1187, 1361, 1556, 1769, 2008, 2273, 2572, 2915, 3306, 3754, 4244, 4805, 5374, 6094},
+      {249, 306, 372, 449, 539, 641, 756, 887, 1029, 1187, 1361, 1556, 1769, 2008, 2273, 2572, 2915, 3306, 3754, 4244, 4805, 5374, 6094},
+      {306, 372, 449, 539, 641, 756, 887, 1029, 1187, 1361, 1556, 1769, 2008, 2273, 2572, 2915, 3306, 3754, 4244, 4805, 5374, 6094, 6908},
+      {372, 449, 539, 641, 756, 887, 1029, 1187, 1361, 1556, 1769, 2008, 2273, 2572, 2915, 3306, 3754, 4244, 4805, 5374, 6094, 6908},
+      {372, 449, 539, 641, 756, 887, 1029, 1187, 1361, 1556, 1769, 2008, 2273, 2572, 2915, 3306, 3754, 4244, 4805, 5374, 6094, 6908, 7861},
 
-    {419, 565, 740, 944, 1181, 1455, 1770, 2132, 2546, 3019, 3558, 4171, 4869, 5663, 6564, 7589, 8752, 10072}, // dummy
-    {419, 565, 740, 944, 1181, 1455, 1770, 2132, 2546, 3019, 3558, 4171, 4869, 5663, 6564, 7589, 8752, 10072}, // dummy
-    {419, 565, 740, 944, 1181, 1455, 1770, 2132, 2546, 3019, 3558, 4171, 4869, 5663, 6564, 7589, 8752, 10072}, // dummy
+      {419, 565, 740, 944, 1181, 1455, 1770, 2132, 2546, 3019, 3558, 4171, 4869, 5663, 6564, 7589, 8752, 10072}, // dummy
+      {419, 565, 740, 944, 1181, 1455, 1770, 2132, 2546, 3019, 3558, 4171, 4869, 5663, 6564, 7589, 8752, 10072}, // dummy
+      {419, 565, 740, 944, 1181, 1455, 1770, 2132, 2546, 3019, 3558, 4171, 4869, 5663, 6564, 7589, 8752, 10072}, // dummy
 
-};
-constexpr const unsigned int nomassranges_half = sizeof(massrangevseta_half) / sizeof(massrangevseta_half[0]);
+  };
+  constexpr const unsigned int nomassranges_half = sizeof(massrangevseta_half) / sizeof(massrangevseta_half[0]);
 
-//Dijet mass binning RM
-constexpr const unsigned int noRMmass_eta = 43;
-constexpr const double RMmassrangevseta[][noRMmass_eta] = {
-  {61, 88, 119, 156, 197, 244, 296, 354, 419, 489, 565, 649, 740, 838, 944, 1058, 1181, 1313, 1455, 1607, 1770, 1945, 2132, 2332, 2546, 2775, 3019, 3279, 3558, 3854, 4171, 4509, 4869, 5253, 5663, 6099, 6564, 7060, 7589, 8152, 8752, 9391, 10072}, 
-  {61, 88, 119, 156, 197, 244, 296, 354, 419, 489, 565, 649, 740, 838, 944, 1058, 1181, 1313, 1455, 1607, 1770, 1945, 2132, 2332, 2546, 2775, 3019, 3279, 3558, 3854, 4171, 4509, 4869, 5253, 5663, 6099, 6564, 7060, 7589, 8152, 8752, 9391, 10072}, 
-  {103, 137, 176, 220, 270, 325, 386, 453, 526, 606, 693, 788, 890, 1000, 1118, 1246, 1383, 1530, 1687, 1856, 2037, 2231, 2438, 2659, 2895, 3147, 3416, 3704, 4010, 4337, 4686, 5058, 5455, 5877, 6328, 6808, 7320, 7866, 8447, 9067, 9726},
-  {176, 220, 270, 325, 386, 453, 526, 606, 693, 788, 890, 1000, 1118, 1246, 1383, 1530, 1687, 1856, 2037, 2231, 2438, 2659, 2895, 3147, 3416, 3704, 4010, 4337, 4686, 5058, 5455, 5877, 6328, 6808, 7320, 7866, 8447, 9067, 9726},
-  {354, 419, 489, 565, 649, 740, 838, 944, 1058, 1181, 1313, 1455, 1607, 1770, 1945, 2132, 2332, 2546, 2775, 3019, 3279, 3558, 3854, 4171, 4509, 4869, 5253, 5663, 6099, 6564, 7060, 7589, 8152, 8752, 9391, 10072, 10798},
+  //Dijet mass binning RM
+  constexpr const unsigned int noRMmass_eta = 49;
+  constexpr const double RMmassrangevseta[][noRMmass_eta] = {
+      {88, 156, 197, 249, 306, 372, 449, 539, 641, 756, 887, 1029, 1187, 1361, 1556, 1769, 2008, 2273, 2572, 2915, 3306, 3754, 4244, 4805, 5374, 6094},
+      {88, 156, 197, 249, 306, 372, 449, 539, 641, 756, 887, 1029, 1187, 1361, 1556, 1769, 2008, 2273, 2572, 2915, 3306, 3754, 4244, 4805, 5374, 6094},
+      {156, 197, 249, 306, 372, 449, 539, 641, 756, 887, 1029, 1187, 1361, 1556, 1769, 2008, 2273, 2572, 2915, 3306, 3754, 4244, 4805, 5374, 6094, 6908},
+      {197, 249, 306, 372, 449, 539, 641, 756, 887, 1029, 1187, 1361, 1556, 1769, 2008, 2273, 2572, 2915, 3306, 3754, 4244, 4805, 5374, 6094, 6908},
+      {197, 249, 306, 372, 449, 539, 641, 756, 887, 1029, 1187, 1361, 1556, 1769, 2008, 2273, 2572, 2915, 3306, 3754, 4244, 4805, 5374, 6094, 6908, 7861},
 
-  {244, 296, 354, 419, 489, 565, 649, 740, 838, 944, 1058, 1181, 1313, 1455, 1607, 1770, 1945, 2132, 2332, 2546, 2775, 3019, 3279, 3558, 3854, 4171, 4509, 4869, 5253, 5663, 6099, 6564, 7060, 7589, 8152},
-  {244, 296, 354, 419, 489, 565, 649, 740, 838, 944, 1058, 1181, 1313, 1455, 1607, 1770, 1945, 2132, 2332, 2546, 2775, 3019, 3279, 3558, 3854, 4171, 4509, 4869, 5253, 5663, 6099, 6564, 7060, 7589, 8152},
-  {244, 296, 354, 419, 489, 565, 649, 740, 838, 944, 1058, 1181, 1313, 1455, 1607, 1770, 1945, 2132, 2332, 2546, 2775, 3019, 3279, 3558, 3854, 4171, 4509, 4869, 5253, 5663, 6099, 6564, 7060, 7589, 8152}
-};
-constexpr const unsigned int noRMmassranges = sizeof(RMmassrangevseta) / sizeof(RMmassrangevseta[0]);
+      {244, 296, 354, 419, 489, 565, 649, 740, 838, 944, 1058, 1181, 1313, 1455, 1607, 1770, 1945, 2132, 2332, 2546, 2775, 3019, 3279, 3558, 3854, 4171, 4509, 4869, 5253, 5663, 6099, 6564, 7060, 7589, 8152},
+      {244, 296, 354, 419, 489, 565, 649, 740, 838, 944, 1058, 1181, 1313, 1455, 1607, 1770, 1945, 2132, 2332, 2546, 2775, 3019, 3279, 3558, 3854, 4171, 4509, 4869, 5253, 5663, 6099, 6564, 7060, 7589, 8152},
+      {244, 296, 354, 419, 489, 565, 649, 740, 838, 944, 1058, 1181, 1313, 1455, 1607, 1770, 1945, 2132, 2332, 2546, 2775, 3019, 3279, 3558, 3854, 4171, 4509, 4869, 5253, 5663, 6099, 6564, 7060, 7589, 8152}};
+  constexpr const unsigned int noRMmassranges = sizeof(RMmassrangevseta) / sizeof(RMmassrangevseta[0]);
 
-//Half Dijet mass binning RM
-constexpr const unsigned int noRMmass_eta_half = 22;
-constexpr const double RMmassrangevseta_half[][noRMmass_eta_half] = {
-  {61, 119, 197, 296, 419, 565, 740, 944, 1181, 1455, 1770, 2132, 2546, 3019, 3558, 4171, 4869, 5663, 6564, 7589, 8752, 10072},
-  {61, 119, 197, 296, 419, 565, 740, 944, 1181, 1455, 1770, 2132, 2546, 3019, 3558, 4171, 4869, 5663, 6564, 7589, 8752, 10072}, 
-  {103, 176, 270, 386, 526, 693, 890, 1118, 1383, 1687, 2037, 2438, 2895, 3416, 4010, 4686, 5455, 6328, 7320, 8447, 9726},
-  {176, 270, 386, 526, 693, 890, 1118, 1383, 1687, 2037, 2438, 2895, 3416, 4010, 4686, 5455, 6328, 7320, 8447, 9726},
-  {354, 489, 649, 838, 1058, 1313, 1607, 1945, 2332, 2775, 3279, 3854, 4509, 5253, 6099, 7060, 8152, 9391, 10798},
+  //Half Dijet mass binning RM
+  constexpr const unsigned int noRMmass_eta_half = 49;
+  constexpr const double RMmassrangevseta_half[][noRMmass_eta_half] = {
+      {88, 156, 197, 249, 306, 372, 449, 539, 641, 756, 887, 1029, 1187, 1361, 1556, 1769, 2008, 2273, 2572, 2915, 3306, 3754, 4244, 4805, 5374, 6094},
+      {88, 156, 197, 249, 306, 372, 449, 539, 641, 756, 887, 1029, 1187, 1361, 1556, 1769, 2008, 2273, 2572, 2915, 3306, 3754, 4244, 4805, 5374, 6094},
+      {156, 197, 249, 306, 372, 449, 539, 641, 756, 887, 1029, 1187, 1361, 1556, 1769, 2008, 2273, 2572, 2915, 3306, 3754, 4244, 4805, 5374, 6094, 6908},
+      {197, 249, 306, 372, 449, 539, 641, 756, 887, 1029, 1187, 1361, 1556, 1769, 2008, 2273, 2572, 2915, 3306, 3754, 4244, 4805, 5374, 6094, 6908},
+      {197, 249, 306, 372, 449, 539, 641, 756, 887, 1029, 1187, 1361, 1556, 1769, 2008, 2273, 2572, 2915, 3306, 3754, 4244, 4805, 5374, 6094, 6908, 7861},
+      
+      {244, 354, 489, 649, 838, 1058, 1313, 1607, 1945, 2332, 2775, 3279, 3854, 4509, 5253, 6099, 7060, 8152}, //dummy
+      {244, 354, 489, 649, 838, 1058, 1313, 1607, 1945, 2332, 2775, 3279, 3854, 4509, 5253, 6099, 7060, 8152}, //dummy
+      {244, 354, 489, 649, 838, 1058, 1313, 1607, 1945, 2332, 2775, 3279, 3854, 4509, 5253, 6099, 7060, 8152}  //dummy
 
-    {244, 354, 489, 649, 838, 1058, 1313, 1607, 1945, 2332, 2775, 3279, 3854, 4509, 5253, 6099, 7060, 8152}, //dummy
-    {244, 354, 489, 649, 838, 1058, 1313, 1607, 1945, 2332, 2775, 3279, 3854, 4509, 5253, 6099, 7060, 8152}, //dummy
-    {244, 354, 489, 649, 838, 1058, 1313, 1607, 1945, 2332, 2775, 3279, 3854, 4509, 5253, 6099, 7060, 8152}  //dummy
-
-/*   {40, 88, 156, 244, 354, 489, 649, 838, 1058, 1313, 1607, 1945, 2332, 2775, 3279, 3854, 4509, 5253, 6099, 7060},
-    {40, 88, 156, 244, 354, 489, 649, 838, 1058, 1313, 1607, 1945, 2332, 2775, 3279, 3854, 4509, 5253, 6099, 7060},
-    {74, 137, 220, 325, 453, 606, 788, 1000, 1246, 1530, 1856, 2231, 2659, 3147, 3704, 4337, 5058, 5877, 6808},
-    {137, 220, 325, 453, 606, 788, 1000, 1246, 1530, 1856, 2231, 2659, 3147, 3704, 4337, 5058, 5877, 6808, 7866},
-    {244, 354, 489, 649, 838, 1058, 1313, 1607, 1945, 2332, 2775, 3279, 3854, 4509, 5253, 6099, 7060, 8152},
-*/    
-};
-constexpr const unsigned int noRMmassranges_half = sizeof(RMmassrangevseta_half) / sizeof(RMmassrangevseta_half[0]);
-
+  };
+  constexpr const unsigned int noRMmassranges_half = sizeof(RMmassrangevseta_half) / sizeof(RMmassrangevseta_half[0]);
+*/  
   // pt bins
   unsigned int ieta = int(0.5 * (etamin + etamax) / 0.5);
   assert(ieta < noptranges);
@@ -140,7 +134,7 @@ constexpr const unsigned int noRMmassranges_half = sizeof(RMmassrangevseta_half)
     x_mass.push_back(massrangevseta[ieta_mass][i]);
   }
   const int nx_mass = x_mass.size() - 1;
-
+/*
   // half mass bins
   unsigned int ieta_mass_half = int(0.5 * (etamin + etamax) / 0.5);
   assert(ieta_mass_half < nomassranges_half);
@@ -154,7 +148,7 @@ constexpr const unsigned int noRMmassranges_half = sizeof(RMmassrangevseta_half)
   }
   const int nx_mass_half = x_mass_half.size() - 1;
 
-    // RMmass bins
+  // RMmass bins
   unsigned int ieta_RMmass = int(0.5 * (etamin + etamax) / 0.5);
   assert(ieta_RMmass < noRMmassranges);
   vector<double> x_RMmass;
@@ -179,7 +173,7 @@ constexpr const unsigned int noRMmassranges_half = sizeof(RMmassrangevseta_half)
     x_RMmass_half.push_back(RMmassrangevseta_half[ieta_RMmass_half][i]);
   }
   const int nx_RMmass_half = x_RMmass_half.size() - 1;
-
+*/
   vector<double> y(51);
   for (unsigned int i = 0; i != y.size(); ++i)
     y[i] = -5. + 0.2 * i;
@@ -208,27 +202,28 @@ constexpr const unsigned int noRMmassranges_half = sizeof(RMmassrangevseta_half)
   //hpt_jk[i] = new TH1D(Form("hpt_jk%d", i + 1), "", nx, &x[0]);
   //h2jk = new TH2D("h2jk", "Check of reshuffling", 10, -0.5, 9.5, 10, -0.5, 9.5);
   // jack knife dijet mass distributions are commented out. In case we need them they can be activated...
-//  hdj_jk.resize(10);
-//  hdj_jk_half.resize(10);
-//  hdjRM_jk.resize(10);
-//  hdjRM_jk_half.resize(10);
-//  hdjgen_jk.resize(10);
-//  hdjgen_jk_half.resize(10);
-//  hdjgenRM_jk.resize(10);
-//  hdjgenRM_jk_half.resize(10);
+  //  hdj_jk.resize(10);
+  //  hdj_jk_half.resize(10);
+  //  hdjRM_jk.resize(10);
+  //  hdjRM_jk_half.resize(10);
+  //  hdjgen_jk.resize(10);
+  //  hdjgen_jk_half.resize(10);
+  //  hdjgenRM_jk.resize(10);
+  //  hdjgenRM_jk_half.resize(10);
   RMmatrix_gen_reco_jk.resize(10);
 
-  for (unsigned int i = 0; i != RMmatrix_gen_reco_jk.size(); ++i){
-//  hdj_jk[i] = new TH1D(Form("hdj_jk%d", i + 1), "", nx_mass, &x_mass[0]);
-//  hdj_jk_half[i] = new TH1D(Form("hdj_jk_half%d", i + 1), "", nx_mass_half, &x_mass_half[0]);
-//  hdjRM_jk[i] = new TH1D(Form("hdjRM_jk%d", i + 1), "", nx_RMmass, &x_RMmass[0]);
-//  hdjRM_jk_half[i] = new TH1D(Form("hdjRM_jk_half%d", i + 1), "", nx_RMmass_half, &x_RMmass_half[0]);
-//  hdjgen_jk[i] = new TH1D(Form("hdjgen_jk%d", i + 1), "", nx_mass, &x_mass[0]);
-//  hdjgen_jk_half[i] = new TH1D(Form("hdjgen_jk_half%d", i + 1), "", nx_mass_half, &x_mass_half[0]);
-//  hdjgenRM_jk[i] = new TH1D(Form("hdjgenRM_jk%d", i + 1), "", nx_RMmass, &x_RMmass[0]);
-//  hdjgenRM_jk_half[i] = new TH1D(Form("hdjgenRM_jk_half%d", i + 1), "", nx_RMmass_half, &x_RMmass_half[0]);
-  RMmatrix_gen_reco_jk[i] = new TH2D(Form("RMmatrix_gen_reco_jk%d",i+1), "Response_Matrix_jk;Mjj_{reco};Mjj_{gen}", nx_RMmass, &x_RMmass[0], nx_RMmass_half, &x_RMmass_half[0]);
-  //h2jk = new TH2D("h2jk", "Check of reshuffling", 10, -0.5, 9.5, 10, -0.5, 9.5);
+  for (unsigned int i = 0; i != RMmatrix_gen_reco_jk.size(); ++i)
+  {
+    //  hdj_jk[i] = new TH1D(Form("hdj_jk%d", i + 1), "", nx_mass, &x_mass[0]);
+    //  hdj_jk_half[i] = new TH1D(Form("hdj_jk_half%d", i + 1), "", nx_mass_half, &x_mass_half[0]);
+    //  hdjRM_jk[i] = new TH1D(Form("hdjRM_jk%d", i + 1), "", nx_RMmass, &x_RMmass[0]);
+    //  hdjRM_jk_half[i] = new TH1D(Form("hdjRM_jk_half%d", i + 1), "", nx_RMmass_half, &x_RMmass_half[0]);
+    //  hdjgen_jk[i] = new TH1D(Form("hdjgen_jk%d", i + 1), "", nx_mass, &x_mass[0]);
+    //  hdjgen_jk_half[i] = new TH1D(Form("hdjgen_jk_half%d", i + 1), "", nx_mass_half, &x_mass_half[0]);
+    //  hdjgenRM_jk[i] = new TH1D(Form("hdjgenRM_jk%d", i + 1), "", nx_RMmass, &x_RMmass[0]);
+    //  hdjgenRM_jk_half[i] = new TH1D(Form("hdjgenRM_jk_half%d", i + 1), "", nx_RMmass_half, &x_RMmass_half[0]);
+    RMmatrix_gen_reco_jk[i] = new TH2D(Form("RMmatrix_gen_reco_jk%d", i + 1), "Response_Matrix_jk;Mjj_{reco};Mjj_{gen}", nx_mass, &x_mass[0], nx_mass, &x_mass[0]);
+    //h2jk = new TH2D("h2jk", "Check of reshuffling", 10, -0.5, 9.5, 10, -0.5, 9.5);
   }
   // hpt_tmp = new TH1D("hpt_tmp", "", nx, &x[0]);
   // hpt_evtcount = new TH1D("hpt_evtcount", "", nx, &x[0]);
@@ -244,33 +239,33 @@ constexpr const unsigned int noRMmassranges_half = sizeof(RMmassrangevseta_half)
   hpt3 = new TH1D("hpt3", "", nx, &x[0]);
 
   // leading and non-leading jet pt in dijet system
-  
+
   hdjpt_leading = new TH1D("hdjpt_leading", "", nx, &x[0]);
   hdjpt_subleading = new TH1D("hdjpt_subleading", "", nx, &x[0]);
   hdj_j1rap = new TH1D("hdj_j1rap", "", 100, -5., 5.);
   hdj_j2rap = new TH1D("hdj_j2rap", "", 100, -5., 5.);
-  
+
   // dijet mass
   hdjmass = new TH1D("hdjmass", "", nx_mass, &x_mass[0]);
-  hdjmass_half = new TH1D("hdjmass_half", "", nx_mass_half, &x_mass_half[0]);
-  
+  //hdjmass_half = new TH1D("hdjmass_half", "", nx_mass_half, &x_mass_half[0]);
+
   // dijet mass RM
-  hdjRMmass = new TH1D("hdjRMmass", "", nx_RMmass, &x_RMmass[0]);
-  hdjRMmass_half = new TH1D("hdjRMmass_half", "", nx_RMmass_half, &x_RMmass_half[0]);
+  //hdjRMmass = new TH1D("hdjRMmass", "", nx_RMmass, &x_RMmass[0]);
+  //hdjRMmass_half = new TH1D("hdjRMmass_half", "", nx_RMmass_half, &x_RMmass_half[0]);
 
   if (jp::isdt and jp::doUnc)
   {
     hdjmassUp = new TH1D("hdjmassUp", "", nx_mass, &x_mass[0]);
     hdjmassDown = new TH1D("hdjmassDown", "", nx_mass, &x_mass[0]);
 
-    hdjmassUp_half = new TH1D("hdjmassUp_half", "", nx_mass_half, &x_mass_half[0]);
-    hdjmassDown_half = new TH1D("hdjmassDown_half", "", nx_mass_half, &x_mass_half[0]);
- 
-    hdjRMmassUp = new TH1D("hdjRMmassUp", "", nx_RMmass, &x_RMmass[0]);
-    hdjRMmassDown = new TH1D("hdjRMmassDown", "", nx_RMmass, &x_RMmass[0]);
-   
-    hdjRMmassUp_half = new TH1D("hdjRMmassUp_half", "", nx_RMmass_half, &x_RMmass_half[0]);
-    hdjRMmassDown_half = new TH1D("hdjRMmassDown_half", "", nx_RMmass_half, &x_RMmass_half[0]);
+    //hdjmassUp_half = new TH1D("hdjmassUp_half", "", nx_mass_half, &x_mass_half[0]);
+    //hdjmassDown_half = new TH1D("hdjmassDown_half", "", nx_mass_half, &x_mass_half[0]);
+
+    //hdjRMmassUp = new TH1D("hdjRMmassUp", "", nx_RMmass, &x_RMmass[0]);
+    //hdjRMmassDown = new TH1D("hdjRMmassDown", "", nx_RMmass, &x_RMmass[0]);
+
+    //hdjRMmassUp_half = new TH1D("hdjRMmassUp_half", "", nx_RMmass_half, &x_RMmass_half[0]);
+    //hdjRMmassDown_half = new TH1D("hdjRMmassDown_half", "", nx_RMmass_half, &x_RMmass_half[0]);
 
     //JEC unc plots
     pupUncChange = new TProfile("pupUncChange", "", nx_mass, &x_mass[0]);
@@ -281,12 +276,17 @@ constexpr const unsigned int noRMmassranges_half = sizeof(RMmassrangevseta_half)
   {
     //GEN Info
     hdjmass_gen = new TH1D("hdjmass_gen", "", nx_mass, &x_mass[0]);
-    hdjmass_half_gen = new TH1D("hdjmass_half_gen", "", nx_mass_half, &x_mass_half[0]);
-  
+    //hdjmass_half_gen = new TH1D("hdjmass_half_gen", "", nx_mass_half, &x_mass_half[0]);
+
     //GEN Info RM
-    hdjRMmass_gen = new TH1D("hdjRMmass_gen", "", nx_RMmass, &x_RMmass[0]);
-    hdjRMmass_half_gen = new TH1D("hdjRMmass_half_gen", "", nx_RMmass_half, &x_RMmass_half[0]);
-  
+    //hdjRMmass_gen = new TH1D("hdjRMmass_gen", "", nx_RMmass, &x_RMmass[0]);
+    //hdjRMmass_half_gen = new TH1D("hdjRMmass_half_gen", "", nx_RMmass_half, &x_RMmass_half[0]);
+
+    // Fakes and losses...
+    marginal_gen = new TH1D("marginal_gen", "", nx_mass, &x_mass[0]);
+    marginal_reco = new TH1D("marginal_reco", "", nx_mass, &x_mass[0]);
+
+
     hdjpt_leading_gen = new TH1D("hdjpt_leading_gen", "", nx, &x[0]);
     hdjpt_subleading_gen = new TH1D("hdjpt_subleading_gen", "", nx, &x[0]);
     hdjgen_j1rap = new TH1D("hdjgen_j1rap", "", 100, -5., 5.);
@@ -295,7 +295,6 @@ constexpr const unsigned int noRMmassranges_half = sizeof(RMmassrangevseta_half)
     hpt_g = new TH1D("hpt_g", "", nx, &x[0]);
     hpt_g1 = new TH1D("hpt_g1", "", nx, &x[0]);
     hpt_g2 = new TH1D("hpt_g2", "", nx, &x[0]);
-
   }
   //hdjmass0 = new TH1D("hdjmass0", "", static_cast<int>(jp::sqrts), 0., jp::sqrts);
   //hdjmass_a01 = new TH1D("hdjmass_a01", "", nx, &x[0]);
@@ -309,8 +308,8 @@ constexpr const unsigned int noRMmassranges_half = sizeof(RMmassrangevseta_half)
   paccept_vsPt = new TProfile("paccept_vspt", "", nx, &x[0]);
 
   // Unfolding and resolution studies
-  matrix_gen_reco = new TH2D("matrix_gen_reco", "Response_Matrix;Mjj_{reco};Mjj_{gen}", nx_mass, &x_mass[0], nx_mass_half, &x_mass_half[0]);
-  RMmatrix_gen_reco = new TH2D("RMmatrix_gen_reco", "Response_Matrix;Mjj_{reco};Mjj_{gen}", nx_RMmass, &x_RMmass[0], nx_RMmass_half, &x_RMmass_half[0]);
+  matrix_gen_reco = new TH2D("matrix_gen_reco", "Response_Matrix;Mjj_{reco};Mjj_{gen}", nx_mass, &x_mass[0], nx_mass, &x_mass[0]);
+  //RMmatrix_gen_reco = new TH2D("RMmatrix_gen_reco", "Response_Matrix;Mjj_{reco};Mjj_{gen}", nx_RMmass, &x_RMmass[0], nx_RMmass_half, &x_RMmass_half[0]);
   h2jetres = new TH2D("h2jetres", "Resolution;Mjj_{gen};#Deltamass", nx_mass, &x_mass[0], 300, 0., 3.); // Delta mass vs mass plots for resolution studies
   pdjmass_res = new TProfile("pdjmass_res", "", nx_mass, &x_mass[0]);                                   //Profile plot to monitor mean values of mass resolution
 

@@ -52,7 +52,7 @@ public:
   //std::vector<TH1D *> hdjgen_jk_half;
   //std::vector<TH1D *> hdjgenRM_jk;
   //std::vector<TH1D *> hdjgenRM_jk_half;
-  std::vector<TH2D *> RMmatrix_gen_reco_jk;
+  //std::vector<TH2D *> RMmatrix_gen_reco_jk;
   
   // TH1D *hpt_tmp;
   // TH1D *hpt_evtcount;
@@ -69,19 +69,19 @@ public:
 
   // dijet mass
   TH1D *hdjmass;
-  TH1D *hdjmass_half;
-  TH1D *hdjRMmass;
-  TH1D *hdjRMmass_half;
+  //TH1D *hdjmass_half;
+  //TH1D *hdjRMmass;
+  //TH1D *hdjRMmass_half;
   // JEC variations
   TH1D *hdjmassUp;
   TH1D *hdjmassDown;
-  TH1D *hdjmassUp_half;
-  TH1D *hdjmassDown_half;
+  //TH1D *hdjmassUp_half;
+  //TH1D *hdjmassDown_half;
   
-  TH1D *hdjRMmassUp;
-  TH1D *hdjRMmassDown;
-  TH1D *hdjRMmassUp_half;
-  TH1D *hdjRMmassDown_half;
+  //TH1D *hdjRMmassUp;
+  //TH1D *hdjRMmassDown;
+  //TH1D *hdjRMmassUp_half;
+  //TH1D *hdjRMmassDown_half;
   //TH1D *hdjmass0;
   //TH1D *hdjmass_a01;
   //TH1D *hdjmass_a02;
@@ -102,9 +102,9 @@ public:
   TH1D *hpt_g1;
   TH1D *hpt_g2;
   TH1D *hdjmass_gen;
-  TH1D *hdjmass_half_gen;
-  TH1D *hdjRMmass_gen;
-  TH1D *hdjRMmass_half_gen;
+  //TH1D *hdjmass_half_gen;
+  //TH1D *hdjRMmass_gen;
+  //TH1D *hdjRMmass_half_gen;
   TH1D *hdjpt_leading_gen;
   TH1D *hdjpt_subleading_gen;
   TH1D *hdjgen_j1rap;
@@ -116,10 +116,12 @@ public:
 
   // unfolding studies dijet mass
   TH2D *matrix_gen_reco;
-  TH2D *RMmatrix_gen_reco;
+  //TH2D *RMmatrix_gen_reco;
+  std::vector<TH2D *> RMmatrix_gen_reco_jk;
   TH2D *h2jetres;        // 2D delta mass vs mass plots for resolution studies
   TProfile *pdjmass_res; // Profile plot to monitor mean value of mass resolution
-
+  TH1D *marginal_gen;    // Loss
+  TH1D *marginal_reco;   // Fake
   //Lost gen jets investigation (Looks like we dont need these set of plots since we know that lost jets problem coming from ECAL veto //// 20.03.2020)
   //TH1D *djmass_matched; // Reco Mjj spectrum under DR matching and eta range (reco and gen are in same eta bin)
   //TH1D *gen_djmassX0;   // Gen Mjj spectrum under dR criteria (reco and gen are  in same eta bin)
