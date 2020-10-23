@@ -210,21 +210,6 @@ HistosBasic::HistosBasic(TDirectory *dir, string trigname, double etamin, double
   //  hdjgen_jk_half.resize(10);
   //  hdjgenRM_jk.resize(10);
   //  hdjgenRM_jk_half.resize(10);
-  RMmatrix_gen_reco_jk.resize(10);
-
-  for (unsigned int i = 0; i != RMmatrix_gen_reco_jk.size(); ++i)
-  {
-    //  hdj_jk[i] = new TH1D(Form("hdj_jk%d", i + 1), "", nx_mass, &x_mass[0]);
-    //  hdj_jk_half[i] = new TH1D(Form("hdj_jk_half%d", i + 1), "", nx_mass_half, &x_mass_half[0]);
-    //  hdjRM_jk[i] = new TH1D(Form("hdjRM_jk%d", i + 1), "", nx_RMmass, &x_RMmass[0]);
-    //  hdjRM_jk_half[i] = new TH1D(Form("hdjRM_jk_half%d", i + 1), "", nx_RMmass_half, &x_RMmass_half[0]);
-    //  hdjgen_jk[i] = new TH1D(Form("hdjgen_jk%d", i + 1), "", nx_mass, &x_mass[0]);
-    //  hdjgen_jk_half[i] = new TH1D(Form("hdjgen_jk_half%d", i + 1), "", nx_mass_half, &x_mass_half[0]);
-    //  hdjgenRM_jk[i] = new TH1D(Form("hdjgenRM_jk%d", i + 1), "", nx_RMmass, &x_RMmass[0]);
-    //  hdjgenRM_jk_half[i] = new TH1D(Form("hdjgenRM_jk_half%d", i + 1), "", nx_RMmass_half, &x_RMmass_half[0]);
-    RMmatrix_gen_reco_jk[i] = new TH2D(Form("RMmatrix_gen_reco_jk%d", i + 1), "Response_Matrix_jk;Mjj_{reco};Mjj_{gen}", nx_mass, &x_mass[0], nx_mass, &x_mass[0]);
-    //h2jk = new TH2D("h2jk", "Check of reshuffling", 10, -0.5, 9.5, 10, -0.5, 9.5);
-  }
   // hpt_tmp = new TH1D("hpt_tmp", "", nx, &x[0]);
   // hpt_evtcount = new TH1D("hpt_evtcount", "", nx, &x[0]);
   // hpt_evt = new TH1D("hpt_evt", "", nx, &x[0]);
@@ -286,6 +271,21 @@ HistosBasic::HistosBasic(TDirectory *dir, string trigname, double etamin, double
     marginal_gen = new TH1D("marginal_gen", "", nx_mass, &x_mass[0]);
     marginal_reco = new TH1D("marginal_reco", "", nx_mass, &x_mass[0]);
 
+    RMmatrix_gen_reco_jk.resize(10);
+
+    for (unsigned int i = 0; i != RMmatrix_gen_reco_jk.size(); ++i)
+    {
+    //  hdj_jk[i] = new TH1D(Form("hdj_jk%d", i + 1), "", nx_mass, &x_mass[0]);
+    //  hdj_jk_half[i] = new TH1D(Form("hdj_jk_half%d", i + 1), "", nx_mass_half, &x_mass_half[0]);
+    //  hdjRM_jk[i] = new TH1D(Form("hdjRM_jk%d", i + 1), "", nx_RMmass, &x_RMmass[0]);
+    //  hdjRM_jk_half[i] = new TH1D(Form("hdjRM_jk_half%d", i + 1), "", nx_RMmass_half, &x_RMmass_half[0]);
+    //  hdjgen_jk[i] = new TH1D(Form("hdjgen_jk%d", i + 1), "", nx_mass, &x_mass[0]);
+    //  hdjgen_jk_half[i] = new TH1D(Form("hdjgen_jk_half%d", i + 1), "", nx_mass_half, &x_mass_half[0]);
+    //  hdjgenRM_jk[i] = new TH1D(Form("hdjgenRM_jk%d", i + 1), "", nx_RMmass, &x_RMmass[0]);
+    //  hdjgenRM_jk_half[i] = new TH1D(Form("hdjgenRM_jk_half%d", i + 1), "", nx_RMmass_half, &x_RMmass_half[0]);
+    RMmatrix_gen_reco_jk[i] = new TH2D(Form("RMmatrix_gen_reco_jk%d", i + 1), "Response_Matrix_jk;Mjj_{reco};Mjj_{gen}", nx_mass, &x_mass[0], nx_mass, &x_mass[0]);
+    //h2jk = new TH2D("h2jk", "Check of reshuffling", 10, -0.5, 9.5, 10, -0.5, 9.5);
+    }
 
     hdjpt_leading_gen = new TH1D("hdjpt_leading_gen", "", nx, &x[0]);
     hdjpt_subleading_gen = new TH1D("hdjpt_subleading_gen", "", nx, &x[0]);
@@ -295,23 +295,24 @@ HistosBasic::HistosBasic(TDirectory *dir, string trigname, double etamin, double
     hpt_g = new TH1D("hpt_g", "", nx, &x[0]);
     hpt_g1 = new TH1D("hpt_g1", "", nx, &x[0]);
     hpt_g2 = new TH1D("hpt_g2", "", nx, &x[0]);
+  
+    // Acceptance and background studies for inclusice jets Pt
+    pbg_vsPt = new TProfile("pbg_vspt", "", nx, &x[0]);
+    paccept_vsPt = new TProfile("paccept_vspt", "", nx, &x[0]);
+
+    // Unfolding and resolution studies
+    matrix_gen_reco = new TH2D("matrix_gen_reco", "Response_Matrix;Mjj_{reco};Mjj_{gen}", nx_mass, &x_mass[0], nx_mass, &x_mass[0]);
+    //RMmatrix_gen_reco = new TH2D("RMmatrix_gen_reco", "Response_Matrix;Mjj_{reco};Mjj_{gen}", nx_RMmass, &x_RMmass[0], nx_RMmass_half, &x_RMmass_half[0]);
+    h2jetres = new TH2D("h2jetres", "Resolution;Mjj_{gen};#Deltamass", nx_mass, &x_mass[0], 300, 0., 3.); // Delta mass vs mass plots for resolution studies
+    pdjmass_res = new TProfile("pdjmass_res", "", nx_mass, &x_mass[0]);                                   //Profile plot to monitor mean values of mass resolution
   }
-  //hdjmass0 = new TH1D("hdjmass0", "", static_cast<int>(jp::sqrts), 0., jp::sqrts);
+  
+   //hdjmass0 = new TH1D("hdjmass0", "", static_cast<int>(jp::sqrts), 0., jp::sqrts);
   //hdjmass_a01 = new TH1D("hdjmass_a01", "", nx, &x[0]);
   //hdjmass_a02 = new TH1D("hdjmass_a02", "", nx, &x[0]);
   //hdjmass_a03 = new TH1D("hdjmass_a03", "", nx, &x[0]);
   pdjmass_ptratio = new TProfile("pdjmass_ptratio", "", nx_mass, &x_mass[0]);
   //pdjmass0_ptratio = new TProfile("pdjmass0_ptratio", "", static_cast<int>(jp::sqrts), 0., jp::sqrts);
-
-  // Acceptance and background studies for inclusice jets Pt
-  pbg_vsPt = new TProfile("pbg_vspt", "", nx, &x[0]);
-  paccept_vsPt = new TProfile("paccept_vspt", "", nx, &x[0]);
-
-  // Unfolding and resolution studies
-  matrix_gen_reco = new TH2D("matrix_gen_reco", "Response_Matrix;Mjj_{reco};Mjj_{gen}", nx_mass, &x_mass[0], nx_mass, &x_mass[0]);
-  //RMmatrix_gen_reco = new TH2D("RMmatrix_gen_reco", "Response_Matrix;Mjj_{reco};Mjj_{gen}", nx_RMmass, &x_RMmass[0], nx_RMmass_half, &x_RMmass_half[0]);
-  h2jetres = new TH2D("h2jetres", "Resolution;Mjj_{gen};#Deltamass", nx_mass, &x_mass[0], 300, 0., 3.); // Delta mass vs mass plots for resolution studies
-  pdjmass_res = new TProfile("pdjmass_res", "", nx_mass, &x_mass[0]);                                   //Profile plot to monitor mean values of mass resolution
 
   // Lost gen jets investigation (Looks like we dont need these set of plots since we know that lost jets problem coming from ECAL veto //// 20.03.2020)
   //djmass_matched = new TH1D("hdjmass_matched", "", nx_mass, &x_mass[0]); //Reco Mjj spectrum under DR matching and eta range (reco and gen are in same eta bin)
