@@ -2328,14 +2328,19 @@ void HistosFill::FillSingleBasic(HistosBasic *h)
       // Filling response matrix //
       if ((ymaxdj >= h->etamin and ymaxdj < h->etamax) and (gen_ymaxdj >= h->etamin and gen_ymaxdj < h->etamax) and // gen-reco same rap. bin 
           (reco_id) and                                                                                             // reco jet id
-          (deltaR_one < 0.2 and deltaR_two < 0.2) and goodMass)                                                     // Acceptable mass and dr matching  
+          (deltaR_one < 0.2 and deltaR_two < 0.2) and goodMass)                                                     					// Acceptable mass and dr matching..   
       {
 
         
           assert(h->matrix_gen_reco);
           h->matrix_gen_reco->Fill(djmass, gen_djmass, _w);
           
+          assert(h->hdjmass_matched);
+          h->hdjmass_matched->Fill(djmass, _w);
           
+	  assert(h->hdjmass_gen_matched);
+          h->hdjmass_gen_matched->Fill(gen_djmass, _w);
+
           /// Filling delta mass (Mjjrec/Mjjgen) vs Mjjgen for resolution studies
           assert(h->h2jetres);
           h->h2jetres->Fill(gen_djmass, djmass / gen_djmass, _w);
@@ -2343,22 +2348,22 @@ void HistosFill::FillSingleBasic(HistosBasic *h)
           // Filling mass resolutions' mean values to profile plot
           assert(h->pdjmass_res);
           h->pdjmass_res->Fill(gen_djmass, (djmass - gen_djmass) / gen_djmass, _w);
-          
+         /* 
           // Jack knife matrix for stat unc of unfolding.
           for (unsigned int i = 0; i < 10; ++i){
 	  	if (_jentry%10!=i){ 
           	h->RMmatrix_gen_reco_jk[i]->Fill(djmass, gen_djmass, _w);
 		}
 	  }
-        
+        */
       } //matching and filling
       
       // Investigating fakes and losses...
-      else if ((gen_ymaxdj >= h->etamin and gen_ymaxdj < h->etamax) and goodMass_gen and !(deltaR_one < 0.2 and deltaR_two < 0.2)){
+      else if ((gen_ymaxdj >= h->etamin and gen_ymaxdj < h->etamax) and goodMass_gen ) { //and !(deltaR_one < 0.2 and deltaR_two < 0.2)
           assert(h->marginal_gen);
           h->marginal_gen->Fill(gen_djmass, _w);
       }
-      else if ((ymaxdj >= h->etamin and ymaxdj < h->etamax) and goodMass_reco and reco_id and !(deltaR_one < 0.2 and deltaR_two < 0.2)){
+      else if ((ymaxdj >= h->etamin and ymaxdj < h->etamax) and goodMass_reco and reco_id ) { // and !(deltaR_one < 0.2 and deltaR_two < 0.2)
           assert(h->marginal_reco);
           h->marginal_reco->Fill(djmass, _w);
       }

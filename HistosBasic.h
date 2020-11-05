@@ -122,6 +122,8 @@ public:
   TProfile *pdjmass_res; // Profile plot to monitor mean value of mass resolution
   TH1D *marginal_gen;    // Loss
   TH1D *marginal_reco;   // Fake
+  TH1D	*hdjmass_matched;
+  TH1D	*hdjmass_gen_matched;
   //Lost gen jets investigation (Looks like we dont need these set of plots since we know that lost jets problem coming from ECAL veto //// 20.03.2020)
   //TH1D *djmass_matched; // Reco Mjj spectrum under DR matching and eta range (reco and gen are in same eta bin)
   //TH1D *gen_djmassX0;   // Gen Mjj spectrum under dR criteria (reco and gen are  in same eta bin)

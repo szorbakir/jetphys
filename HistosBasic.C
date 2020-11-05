@@ -270,6 +270,8 @@ HistosBasic::HistosBasic(TDirectory *dir, string trigname, double etamin, double
     // Fakes and losses...
     marginal_gen = new TH1D("marginal_gen", "", nx_mass, &x_mass[0]);
     marginal_reco = new TH1D("marginal_reco", "", nx_mass, &x_mass[0]);
+    hdjmass_gen_matched = new TH1D("hdjmass_gen_matched", "", nx_mass, &x_mass[0]);
+    hdjmass_matched = new TH1D("hdjmass_matched", "", nx_mass, &x_mass[0]);
 
     RMmatrix_gen_reco_jk.resize(10);
 
