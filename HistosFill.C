@@ -1956,29 +1956,30 @@ void HistosFill::FillSingleBasic(HistosBasic *h)
   ////////////////////////////////////////////////////////////////////
 
   // RECO-LEVEL calculation
+  if(jp::isdt){
+     
+     //Prefire fix
+     double prefire[njt];        
+     for (int i = 0; i != njt; ++i)
+     {
+      
+          prefire[i] = 0;
+          prefire[i] = ecalprefire(jtpt[i],jteta[i], jp::run);
+         //Calculate new weights 
+         _w *= (1 - prefire[i]);
+     }
+  }
 
   if (_pass_qcdmet and i0 >= 0 and _jetids[i0] and jtpt[i0] >= jp::goodPt and fabs(jty[i0]) <= 3.0)
   { // First leading jet
     if (i1 >= 0 and _jetids[i1] and jtpt[i1] >= jp::goodPt and fabs(jty[i1]) <= 3.0)
     { // Second leading jet
 
-      if(jp::isdt)
-      {
-	
-      //Prefire fix
-      double prefire1 = 0;
-      double prefire2 = 0;
-        
-        if (jtpt[i0] >= 100.) prefire1 = ecalprefire(jtpt[i0],jteta[i0], jp::run);
-        if (jtpt[i1] >= 50.) prefire2 = ecalprefire(jtpt[i1],jteta[i1], jp::run);
-        //Calculate new weight considering leading and subleading prefire weights 
-        _w /= (1 - prefire1) * (1 - prefire2);
-      }
 
       //{ Calculate and fill dijet mass.
       _j1.SetPtEtaPhiE(jtpt[i0], jteta[i0], jtphi[i0], jte[i0]);
       _j2.SetPtEtaPhiE(jtpt[i1], jteta[i1], jtphi[i1], jte[i1]);
-
+      
       // Get JEC uncertainty
       if (jp::isdt and _jecUnc and jp::doUnc)
       {
@@ -2019,13 +2020,14 @@ void HistosFill::FillSingleBasic(HistosBasic *h)
 
       //double etamaxdj = max(fabs(jteta[i0]), fabs(jteta[i1]));
       double ymaxdj = max(fabs(jty[i0]), fabs(jty[i1]));
-      bool goodMass = (_j1.Pt() >= 100. and _j2.Pt() >= 50.);
+      bool goodPt = (_j1.Pt() >= 100. and _j2.Pt() >= 50.);
+      bool GoodMass_reco = (djmass > 160. and djmass < 7861.);
       //bool goodMassRM = (_j1.Pt() >= 30. and _j2.Pt() >= 30.);
       
       double j1_y = jty[i0]; 
       double j2_y = jty[i1];
       
-      if (goodMass){
+      if (GoodMass_reco and goodPt){
         h->hdj_j1rap->Fill(j1_y,_w);
     	h->hdj_j2rap->Fill(j2_y,_w);
       }
@@ -2034,7 +2036,7 @@ void HistosFill::FillSingleBasic(HistosBasic *h)
       if (ymaxdj >= h->etamin and ymaxdj < h->etamax)
       {
 
-        if (goodMass)
+        if (GoodMass_reco and goodPt)
         {
           assert(h->hdjmass);
           h->hdjmass->Fill(djmass, _w);
@@ -2140,13 +2142,14 @@ void HistosFill::FillSingleBasic(HistosBasic *h)
       double djmass_gen = (_j1_gen + _j2_gen).M();
       //double etamaxdj_gen = max(fabs(gen_jteta[0]), fabs(gen_jteta[1]));
       double ymaxdj_gen = max(fabs(gen_jty[0]), fabs(gen_jty[1]));
-      bool goodMass = (_j1_gen.Pt() >= 100. and _j2_gen.Pt() >= 50.);
+      bool goodPt = (_j1_gen.Pt() >= 100. and _j2_gen.Pt() >= 50.);
+      bool GoodMass_gen = (djmass_gen > 160. and djmass_gen < 7861.);
       //bool goodMassRM = (_j1_gen.Pt() >= 30. and _j2_gen.Pt() >= 30.);
 
       double j1gen_y = gen_jty[0]; 
       double j2gen_y = gen_jty[1];
       
-      if (goodMass){
+      if (GoodMass_gen and goodPt){
 		
 		h->hdjgen_j1rap->Fill(j1gen_y,_w);
 		h->hdjgen_j2rap->Fill(j2gen_y,_w);
@@ -2154,7 +2157,7 @@ void HistosFill::FillSingleBasic(HistosBasic *h)
       }
       if (ymaxdj_gen >= h->etamin and ymaxdj_gen < h->etamax)
       {
-        if (goodMass)
+        if (GoodMass_gen and goodPt)
         {
           assert(h->hdjmass_gen);
           h->hdjmass_gen->Fill(djmass_gen, _w);
@@ -2290,52 +2293,69 @@ void HistosFill::FillSingleBasic(HistosBasic *h)
     // Unfolding studies for dijet mass
     // Resolution studies are also added inside of this loop 19/9/2018
     // Resolution studies are performed on well matched dijet pairs
-    if (jp::doRmatrix and gen_njt >= 2 and njt >= 2 and _pass_qcdmet and		                                    // Event checks
-        gen_jtpt[0] >= jp::goodPt and gen_jtpt[1] >= jp::goodPt and jtpt[i0] >= jp::goodPt and jtpt[i1] >= jp::goodPt and  //Pt checks
-        fabs(gen_jty[0]) <= 3.0 and fabs(gen_jty[1]) <= 3.0 and fabs(jty[i0]) <= 3.0 and fabs(jty[i1]) <= 3.0)            //Rapidity checks
+    if (jp::doRmatrix)
 
     {
 
-      double deltaR_one, deltaR_two;
+      double deltaR11, deltaR22, deltaR12, deltaR21;
  
-      deltaR_one = 10;
-      deltaR_two = 10;
-
-      //GEN-LEVEL calculation
-      _j1_gen.SetPtEtaPhiE(gen_jtpt[0], gen_jteta[0], gen_jtphi[0], gen_jte[0]);
-      _j2_gen.SetPtEtaPhiE(gen_jtpt[1], gen_jteta[1], gen_jtphi[1], gen_jte[1]);
-
+      deltaR11 = 10;
+      deltaR22 = 10;
+      deltaR12 = 10;
+      deltaR21 = 10;
+      
+      if (gen_njt >= 2 and gen_jtpt[0] >= jp::goodPt and gen_jtpt[1] >= jp::goodPt and fabs(gen_jty[0]) <= 3.0 and fabs(gen_jty[1]) <= 3.0){
+      		_j1_gen.SetPtEtaPhiE(gen_jtpt[0], gen_jteta[0], gen_jtphi[0], gen_jte[0]);
+      		_j2_gen.SetPtEtaPhiE(gen_jtpt[1], gen_jteta[1], gen_jtphi[1], gen_jte[1]);
+      }
+      else {
+      		_j1_gen.SetPtEtaPhiE(0., 0., 0., 0.);
+      		_j2_gen.SetPtEtaPhiE(0., 0., 0., 0.);
+      }
+      
       double gen_djmass = (_j1_gen + _j2_gen).M();
       double gen_ymaxdj = max(fabs(gen_jty[0]), fabs(gen_jty[1]));
-
-      _j1.SetPtEtaPhiE(jtpt[i0], jteta[i0], jtphi[i0], jte[i0]);
-      _j2.SetPtEtaPhiE(jtpt[i1], jteta[i1], jtphi[i1], jte[i1]);
-
-
+      
+      if(njt >= 2 and jtpt[i0] >= jp::goodPt and jtpt[i1] >= jp::goodPt and fabs(jty[i0]) <= 3.0 and fabs(jty[i1]) <= 3.0){ 
+      		_j1.SetPtEtaPhiE(jtpt[i0], jteta[i0], jtphi[i0], jte[i0]);
+      		_j2.SetPtEtaPhiE(jtpt[i1], jteta[i1], jtphi[i1], jte[i1]);
+      }
+      else {
+      		_j1.SetPtEtaPhiE(0., 0., 0., 0.);
+      		_j2.SetPtEtaPhiE(0., 0., 0., 0.);
+      }
+      
       double djmass = (_j1 + _j2).M();
       double ymaxdj = max(fabs(jty[i0]), fabs(jty[i1]));
-      bool reco_id = (_jetids[i0] and _jetids[i1]);
+      
 
-      deltaR_one = min(_j1_gen.DeltaR(_j1), _j1_gen.DeltaR(_j2));
-      deltaR_two = min(_j2_gen.DeltaR(_j1), _j2_gen.DeltaR(_j2));
-
+      deltaR11 = _j1_gen.DeltaR(_j1);
+      deltaR22 = _j2_gen.DeltaR(_j2);
+      deltaR12 = _j1_gen.DeltaR(_j2);
+      deltaR21 = _j2_gen.DeltaR(_j1);
+      bool Matched =  (deltaR11 < 0.2 and deltaR22 < 0.2) or (deltaR12 < 0.2 and deltaR21 < 0.2); 
       
-      bool goodMass = ((_j1_gen.Pt() >= 100. and _j2_gen.Pt() >= 50.) and (_j1.Pt() >= 100. and _j2.Pt() >= 50.));
-      bool goodMass_reco = (_j1.Pt() >= 100. and _j2.Pt() >= 50.);
-      bool goodMass_gen =  (_j1_gen.Pt() >= 100. and _j2_gen.Pt() >= 50.); 
-      
-      
+      bool GoodRap_reco =  (ymaxdj >= h->etamin and ymaxdj < h->etamax); 
+      bool GoodPt_reco = (_j1.Pt() >= 100. and _j2.Pt() >= 50.);
+      bool Reco_id = (_jetids[i0] and _jetids[i1]);
+      bool GoodMass_reco = (djmass > 160. and djmass < 7861.);
+            
+      bool GoodRap_gen =  (gen_ymaxdj >= h->etamin and gen_ymaxdj < h->etamax);
+      bool GoodPt_gen =  (_j1_gen.Pt() >= 100. and _j2_gen.Pt() >= 50.);  
+      bool GoodMass_gen = (gen_djmass > 160. and gen_djmass < 7861.);
+            
+      bool GoodGenPS = (GoodRap_gen and GoodPt_gen and GoodMass_gen);
+      bool GoodRecPS = (GoodRap_reco and GoodPt_reco and GoodMass_reco and Reco_id and _pass_qcdmet);
+ 
       // Filling response matrix //
-      if ((ymaxdj >= h->etamin and ymaxdj < h->etamax) and (gen_ymaxdj >= h->etamin and gen_ymaxdj < h->etamax) and // gen-reco same rap. bin 
-          (reco_id) and                                                                                             // reco jet id
-          (deltaR_one < 0.2 and deltaR_two < 0.2) and goodMass)                                                     					// Acceptable mass and dr matching..   
+      if (Matched and GoodRecPS and GoodGenPS)                                                     					   
       {
 
         
           assert(h->matrix_gen_reco);
-          h->matrix_gen_reco->Fill(djmass, gen_djmass, _w);
+          h->matrix_gen_reco->Fill(gen_djmass, djmass, _w);
           
-          assert(h->hdjmass_matched);
+	  assert(h->hdjmass_matched);
           h->hdjmass_matched->Fill(djmass, _w);
           
 	  assert(h->hdjmass_gen_matched);
@@ -2359,16 +2379,97 @@ void HistosFill::FillSingleBasic(HistosBasic *h)
       } //matching and filling
       
       // Investigating fakes and losses...
-      else if ((gen_ymaxdj >= h->etamin and gen_ymaxdj < h->etamax) and goodMass_gen ) { //and !(deltaR_one < 0.2 and deltaR_two < 0.2)
-          assert(h->marginal_gen);
-          h->marginal_gen->Fill(gen_djmass, _w);
-      }
-      else if ((ymaxdj >= h->etamin and ymaxdj < h->etamax) and goodMass_reco and reco_id ) { // and !(deltaR_one < 0.2 and deltaR_two < 0.2)
-          assert(h->marginal_reco);
-          h->marginal_reco->Fill(djmass, _w);
-      }
-        
+      
+    else if (!Matched and GoodRecPS and GoodGenPS) {
+            
+	  assert(h->miss);
+          h->miss->Fill(gen_djmass, _w);
+          
+	  assert(h->fake);
+          h->fake->Fill(djmass, _w);
+    }	
 
+    else if (!GoodRecPS and GoodGenPS) h->miss->Fill(gen_djmass,_w);    
+    else if (GoodRecPS and !GoodGenPS) h->fake->Fill(djmass,_w);
+    
+    
+
+
+/*
+      // Fake and miss scenario X0... No DR matching
+      else if (!Matched and GoodRap_reco and Reco_id and GoodMass_reco and GoodPt_reco and GoodRap_gen and GoodPt_gen and GoodMass_gen ){            
+          
+	  assert(h->marginal_gen_X0);
+          h->marginal_gen_X0->Fill(gen_djmass, _w);
+          
+	  assert(h->marginal_reco_X0);
+          h->marginal_reco_X0->Fill(djmass, _w);
+          
+      }
+      
+      // Miss scenario X1... Reco jet outside of rapidty range(Low edge).
+      else if (Matched and LowRap_reco and Reco_id and GoodMass_reco and GoodPt_reco and GoodRap_gen and GoodPt_gen and GoodMass_gen ){  
+                
+          assert(h->marginal_gen_X1);
+          h->marginal_gen_X1->Fill(gen_djmass, _w);
+      }
+
+      // Miss scenario X2... Reco jet outside of rapidty range(High edge).
+      else if (Matched and HighRap_reco and Reco_id and GoodMass_reco and GoodPt_reco and GoodRap_gen and GoodPt_gen and GoodMass_gen){  
+                
+          assert(h->marginal_gen_X2);
+          h->marginal_gen_X2->Fill(gen_djmass, _w);
+      }
+
+      // Miss scenario X3... Reco jet without jetid.
+      else if (Matched and GoodRap_reco and !Reco_id and GoodMass_reco and GoodPt_reco and GoodRap_gen and GoodPt_gen and GoodMass_gen) {  
+                
+          assert(h->marginal_gen_X3);
+          h->marginal_gen_X3->Fill(gen_djmass, _w);
+      }
+
+      // Miss scenario X4... Mjj phase space is not satisfied by reco pair.
+      else if (Matched and GoodRap_reco and Reco_id and !GoodMass_reco and GoodPt_reco and GoodRap_gen and GoodPt_gen and GoodMass_gen) {  
+                
+          assert(h->marginal_gen_X4);
+          h->marginal_gen_X4->Fill(gen_djmass, _w);
+      }
+
+      // Miss scenario X5... Pt cuts are not satisfied by reco pair.
+      else if (Matched and GoodRap_reco and Reco_id and GoodMass_reco and !GoodPt_reco and GoodRap_gen and GoodPt_gen and GoodMass_gen) {  
+                
+          assert(h->marginal_gen_X5);
+          h->marginal_gen_X5->Fill(gen_djmass, _w);
+      }
+      
+      // Fake scenario X1... Gen jet outside of rapidty range(Low edge).
+      else if (Matched and GoodRap_reco and Reco_id and GoodMass_reco and GoodPt_reco and LowRap_gen and GoodPt_gen and GoodMass_gen){  
+                
+          assert(h->marginal_reco_X1);
+          h->marginal_reco_X1->Fill(djmass, _w);
+      }
+
+      // Fake scenario X2... Gen jet outside of rapidty range(High edge).
+      else if (Matched and GoodRap_reco and Reco_id and GoodMass_reco and GoodPt_reco and HighRap_gen and GoodPt_gen and GoodMass_gen){  
+                
+          assert(h->marginal_reco_X2);
+          h->marginal_reco_X2->Fill(djmass, _w);
+      }
+
+      // Fake scenario X3... Pt cuts are not satisfied by gen pair.
+      else if (Matched and GoodRap_reco and Reco_id and GoodMass_reco and GoodPt_reco and GoodRap_gen and !GoodPt_gen and GoodMass_gen){  
+                
+          assert(h->marginal_reco_X3);
+          h->marginal_reco_X3->Fill(djmass, _w);
+      }
+       
+      // Fake scenario X4... Mjj phase space is not satisfied by gen pair.
+      else if (Matched and GoodRap_reco and Reco_id and GoodMass_reco and GoodPt_reco and GoodRap_gen and GoodPt_gen and !GoodMass_gen){  
+                
+          assert(h->marginal_reco_X4);
+          h->marginal_reco_X4->Fill(djmass, _w);
+      }
+*/
     } // Unfolding studies dijet mass
 
   } //ismc

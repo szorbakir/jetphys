@@ -120,8 +120,21 @@ public:
   std::vector<TH2D *> RMmatrix_gen_reco_jk;
   TH2D *h2jetres;        // 2D delta mass vs mass plots for resolution studies
   TProfile *pdjmass_res; // Profile plot to monitor mean value of mass resolution
-  TH1D *marginal_gen;    // Loss
-  TH1D *marginal_reco;   // Fake
+  /*
+  TH1D *marginal_gen_X0;    // Loss
+  TH1D *marginal_gen_X1;
+  TH1D *marginal_gen_X2;
+  TH1D *marginal_gen_X3;
+  TH1D *marginal_gen_X4;
+  TH1D *marginal_gen_X5;
+  TH1D *marginal_reco_X0;   // Fake
+  TH1D *marginal_reco_X1;
+  TH1D *marginal_reco_X2;
+  TH1D *marginal_reco_X3;
+  TH1D *marginal_reco_X4;
+  */
+  TH1D *miss;   
+  TH1D *fake;
   TH1D	*hdjmass_matched;
   TH1D	*hdjmass_gen_matched;
   //Lost gen jets investigation (Looks like we dont need these set of plots since we know that lost jets problem coming from ECAL veto //// 20.03.2020)

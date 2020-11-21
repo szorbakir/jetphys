@@ -51,12 +51,11 @@ HistosBasic::HistosBasic(TDirectory *dir, string trigname, double etamin, double
   //Dijet mass binning
   constexpr const unsigned int nomass_eta = 47;
   constexpr const double massrangevseta[][nomass_eta] = {
-      {249, 306, 372, 449, 539, 641, 756, 887, 1029, 1187, 1361, 1556, 1769, 2008, 2273, 2572, 2915, 3306, 3754, 4244, 4805, 5374, 6094},
-      {249, 306, 372, 449, 539, 641, 756, 887, 1029, 1187, 1361, 1556, 1769, 2008, 2273, 2572, 2915, 3306, 3754, 4244, 4805, 5374, 6094},
-      {306, 372, 449, 539, 641, 756, 887, 1029, 1187, 1361, 1556, 1769, 2008, 2273, 2572, 2915, 3306, 3754, 4244, 4805, 5374, 6094, 6908},
-      {372, 449, 539, 641, 756, 887, 1029, 1187, 1361, 1556, 1769, 2008, 2273, 2572, 2915, 3306, 3754, 4244, 4805, 5374, 6094, 6908},
-      {372, 449, 539, 641, 756, 887, 1029, 1187, 1361, 1556, 1769, 2008, 2273, 2572, 2915, 3306, 3754, 4244, 4805, 5374, 6094, 6908, 7861},
-
+{160,  200,  249,  306,  372,  449,  539, 641,  756,  887, 1029, 1187, 1361, 1556, 1769, 2008, 2273, 2572, 2915, 3306, 3754, 4244, 4805, 5374, 6094, 6908, 7861, 8929, 10050},
+{160,  200,  249,  306,  372,  449,  539, 641,  756,  887, 1029, 1187, 1361, 1556, 1769, 2008, 2273, 2572, 2915, 3306, 3754, 4244, 4805, 5374, 6094, 6908, 7861, 8929, 10050},
+{160,  200,  249,  306,  372,  449,  539, 641,  756,  887, 1029, 1187, 1361, 1556, 1769, 2008, 2273, 2572, 2915, 3306, 3754, 4244, 4805, 5374, 6094, 6908, 7861, 8929, 10050},
+{160,  200,  249,  306,  372,  449,  539, 641,  756,  887, 1029, 1187, 1361, 1556, 1769, 2008, 2273, 2572, 2915, 3306, 3754, 4244, 4805, 5374, 6094, 6908, 7861, 8929, 10050},
+{160,  200,  249,  306,  372,  449,  539, 641,  756,  887, 1029, 1187, 1361, 1556, 1769, 2008, 2273, 2572, 2915, 3306, 3754, 4244, 4805, 5374, 6094, 6908, 7861, 8929, 10050},
       {419, 565, 740, 944, 1181, 1455, 1770, 2132, 2546, 3019, 3558, 4171, 4869, 5663, 6564, 7589, 8752, 10072}, // dummy
       {419, 565, 740, 944, 1181, 1455, 1770, 2132, 2546, 3019, 3558, 4171, 4869, 5663, 6564, 7589, 8752, 10072}, // dummy
       {419, 565, 740, 944, 1181, 1455, 1770, 2132, 2546, 3019, 3558, 4171, 4869, 5663, 6564, 7589, 8752, 10072}, // dummy
@@ -268,8 +267,21 @@ HistosBasic::HistosBasic(TDirectory *dir, string trigname, double etamin, double
     //hdjRMmass_half_gen = new TH1D("hdjRMmass_half_gen", "", nx_RMmass_half, &x_RMmass_half[0]);
 
     // Fakes and losses...
-    marginal_gen = new TH1D("marginal_gen", "", nx_mass, &x_mass[0]);
-    marginal_reco = new TH1D("marginal_reco", "", nx_mass, &x_mass[0]);
+    /*
+    marginal_gen_X0 = new TH1D("marginal_gen_X0", "", nx_mass, &x_mass[0]);
+    marginal_gen_X1 = new TH1D("marginal_gen_X1", "", nx_mass, &x_mass[0]);
+    marginal_gen_X2 = new TH1D("marginal_gen_X2", "", nx_mass, &x_mass[0]);
+    marginal_gen_X3 = new TH1D("marginal_gen_X3", "", nx_mass, &x_mass[0]);
+    marginal_gen_X4 = new TH1D("marginal_gen_X4", "", nx_mass, &x_mass[0]);
+    marginal_gen_X5 = new TH1D("marginal_gen_X5", "", nx_mass, &x_mass[0]);
+    marginal_reco_X0 = new TH1D("marginal_reco_X0", "", nx_mass, &x_mass[0]);
+    marginal_reco_X1 = new TH1D("marginal_reco_X1", "", nx_mass, &x_mass[0]);
+    marginal_reco_X2 = new TH1D("marginal_reco_X2", "", nx_mass, &x_mass[0]);
+    marginal_reco_X3 = new TH1D("marginal_reco_X3", "", nx_mass, &x_mass[0]);
+    marginal_reco_X4 = new TH1D("marginal_reco_X4", "", nx_mass, &x_mass[0]);
+    */
+    miss = new TH1D("miss", "", nx_mass, &x_mass[0]);
+    fake = new TH1D("fake", "", nx_mass, &x_mass[0]);
     hdjmass_gen_matched = new TH1D("hdjmass_gen_matched", "", nx_mass, &x_mass[0]);
     hdjmass_matched = new TH1D("hdjmass_matched", "", nx_mass, &x_mass[0]);
 
@@ -303,7 +315,7 @@ HistosBasic::HistosBasic(TDirectory *dir, string trigname, double etamin, double
     paccept_vsPt = new TProfile("paccept_vspt", "", nx, &x[0]);
 
     // Unfolding and resolution studies
-    matrix_gen_reco = new TH2D("matrix_gen_reco", "Response_Matrix;Mjj_{reco};Mjj_{gen}", nx_mass, &x_mass[0], nx_mass, &x_mass[0]);
+    matrix_gen_reco = new TH2D("matrix_gen_reco", "Response_Matrix;Mjj_{gen};Mjj_{reco}", nx_mass, &x_mass[0], nx_mass, &x_mass[0]);
     //RMmatrix_gen_reco = new TH2D("RMmatrix_gen_reco", "Response_Matrix;Mjj_{reco};Mjj_{gen}", nx_RMmass, &x_RMmass[0], nx_RMmass_half, &x_RMmass_half[0]);
     h2jetres = new TH2D("h2jetres", "Resolution;Mjj_{gen};#Deltamass", nx_mass, &x_mass[0], 300, 0., 3.); // Delta mass vs mass plots for resolution studies
     pdjmass_res = new TProfile("pdjmass_res", "", nx_mass, &x_mass[0]);                                   //Profile plot to monitor mean values of mass resolution
