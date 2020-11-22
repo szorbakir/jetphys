@@ -2293,59 +2293,76 @@ void HistosFill::FillSingleBasic(HistosBasic *h)
     // Unfolding studies for dijet mass
     // Resolution studies are also added inside of this loop 19/9/2018
     // Resolution studies are performed on well matched dijet pairs
-    if (jp::doRmatrix)
+    if (jp::doRmatrix )
 
     {
 
+
+      bool global_reco = (njt >= 2 and jtpt[i0] >= jp::goodPt and jtpt[i1] >= jp::goodPt and fabs(jty[i0]) <= 3.0 and fabs(jty[i1]) <= 3.0);
+      bool global_gen =  (gen_njt >= 2 and gen_jtpt[0] >= jp::goodPt and gen_jtpt[1] >= jp::goodPt and fabs(gen_jty[0]) <= 3.0 and fabs(gen_jty[1]) <= 3.0);
+      
       double deltaR11, deltaR22, deltaR12, deltaR21;
- 
       deltaR11 = 10;
       deltaR22 = 10;
       deltaR12 = 10;
       deltaR21 = 10;
       
-      if (gen_njt >= 2 and gen_jtpt[0] >= jp::goodPt and gen_jtpt[1] >= jp::goodPt and fabs(gen_jty[0]) <= 3.0 and fabs(gen_jty[1]) <= 3.0){
+      double djmass, gen_djmass, ymaxdj, gen_ymaxdj;
+      djmass = -999;
+      gen_djmass = -999;
+      ymaxdj = 5.0;
+      gen_ymaxdj = 5.0;
+ 
+      bool GoodPt_gen =  false;  
+      bool GoodMass_gen = false;
+      bool GoodRap_gen = false;
+      
+      bool Reco_id = false;
+      bool GoodMass_reco = false;
+      bool GoodPt_reco = false;
+      bool GoodRap_reco = false;
+      
+      bool Matched = false; 
+      bool GoodGenPS = false;
+      bool GoodRecPS = false;
+     
+      _j1_gen.SetPtEtaPhiE(-9999,-9999,-9999,-9999);
+      _j2_gen.SetPtEtaPhiE(-9999,-9999,-9999,-9999);
+      _j1.SetPtEtaPhiE(-9999,-9999,-9999,-9999);
+      _j2.SetPtEtaPhiE(-9999,-9999,-9999,-9999);
+     
+     if (global_gen){
       		_j1_gen.SetPtEtaPhiE(gen_jtpt[0], gen_jteta[0], gen_jtphi[0], gen_jte[0]);
       		_j2_gen.SetPtEtaPhiE(gen_jtpt[1], gen_jteta[1], gen_jtphi[1], gen_jte[1]);
-      }
-      else {
-      		_j1_gen.SetPtEtaPhiE(0., 0., 0., 0.);
-      		_j2_gen.SetPtEtaPhiE(0., 0., 0., 0.);
+      		gen_djmass = (_j1_gen + _j2_gen).M();
+      		gen_ymaxdj = max(fabs(gen_jty[0]), fabs(gen_jty[1]));
+      		GoodRap_gen =  (gen_ymaxdj >= h->etamin and gen_ymaxdj < h->etamax);
+      		GoodPt_gen =  (_j1_gen.Pt() >= 100. and _j2_gen.Pt() >= 50.);  
+      		GoodMass_gen = (gen_djmass > 160. and gen_djmass < 7861.);
+      		GoodGenPS = (GoodRap_gen and GoodPt_gen and GoodMass_gen);
       }
       
-      double gen_djmass = (_j1_gen + _j2_gen).M();
-      double gen_ymaxdj = max(fabs(gen_jty[0]), fabs(gen_jty[1]));
-      
-      if(njt >= 2 and jtpt[i0] >= jp::goodPt and jtpt[i1] >= jp::goodPt and fabs(jty[i0]) <= 3.0 and fabs(jty[i1]) <= 3.0){ 
+      if(global_reco){ 
       		_j1.SetPtEtaPhiE(jtpt[i0], jteta[i0], jtphi[i0], jte[i0]);
       		_j2.SetPtEtaPhiE(jtpt[i1], jteta[i1], jtphi[i1], jte[i1]);
+      		djmass = (_j1 + _j2).M();
+      		ymaxdj = max(fabs(jty[i0]), fabs(jty[i1]));
+      		GoodRap_reco =  (ymaxdj >= h->etamin and ymaxdj < h->etamax); 
+      		GoodPt_reco = (_j1.Pt() >= 100. and _j2.Pt() >= 50.);
+      		Reco_id = (_jetids[i0] and _jetids[i1]);
+      		GoodMass_reco = (djmass > 160. and djmass < 7861.);
+      		GoodRecPS = (GoodRap_reco and GoodPt_reco and GoodMass_reco and Reco_id and _pass_qcdmet);
       }
-      else {
-      		_j1.SetPtEtaPhiE(0., 0., 0., 0.);
-      		_j2.SetPtEtaPhiE(0., 0., 0., 0.);
-      }
-      
-      double djmass = (_j1 + _j2).M();
-      double ymaxdj = max(fabs(jty[i0]), fabs(jty[i1]));
-      
+      		
+      if (global_reco and global_gen){
 
-      deltaR11 = _j1_gen.DeltaR(_j1);
-      deltaR22 = _j2_gen.DeltaR(_j2);
-      deltaR12 = _j1_gen.DeltaR(_j2);
-      deltaR21 = _j2_gen.DeltaR(_j1);
-      bool Matched =  (deltaR11 < 0.2 and deltaR22 < 0.2) or (deltaR12 < 0.2 and deltaR21 < 0.2); 
+      		deltaR11 = _j1_gen.DeltaR(_j1);
+      		deltaR22 = _j2_gen.DeltaR(_j2);
+      		deltaR12 = _j1_gen.DeltaR(_j2);
+      		deltaR21 = _j2_gen.DeltaR(_j1);
+      		Matched =  (deltaR11 < 0.2 and deltaR22 < 0.2) or (deltaR12 < 0.2 and deltaR21 < 0.2); 
+      }      
       
-      bool GoodRap_reco =  (ymaxdj >= h->etamin and ymaxdj < h->etamax); 
-      bool GoodPt_reco = (_j1.Pt() >= 100. and _j2.Pt() >= 50.);
-      bool Reco_id = (_jetids[i0] and _jetids[i1]);
-      bool GoodMass_reco = (djmass > 160. and djmass < 7861.);
-            
-      bool GoodRap_gen =  (gen_ymaxdj >= h->etamin and gen_ymaxdj < h->etamax);
-      bool GoodPt_gen =  (_j1_gen.Pt() >= 100. and _j2_gen.Pt() >= 50.);  
-      bool GoodMass_gen = (gen_djmass > 160. and gen_djmass < 7861.);
-            
-      bool GoodGenPS = (GoodRap_gen and GoodPt_gen and GoodMass_gen);
-      bool GoodRecPS = (GoodRap_reco and GoodPt_reco and GoodMass_reco and Reco_id and _pass_qcdmet);
  
       // Filling response matrix //
       if (Matched and GoodRecPS and GoodGenPS)                                                     					   
@@ -2380,17 +2397,17 @@ void HistosFill::FillSingleBasic(HistosBasic *h)
       
       // Investigating fakes and losses...
       
-    else if (!Matched and GoodRecPS and GoodGenPS) {
+      else if (!Matched and GoodRecPS and GoodGenPS) {
             
 	  assert(h->miss);
           h->miss->Fill(gen_djmass, _w);
           
 	  assert(h->fake);
           h->fake->Fill(djmass, _w);
-    }	
+      }	
 
-    else if (!GoodRecPS and GoodGenPS) h->miss->Fill(gen_djmass,_w);    
-    else if (GoodRecPS and !GoodGenPS) h->fake->Fill(djmass,_w);
+      else if (!GoodRecPS and GoodGenPS) h->miss->Fill(gen_djmass,_w);    
+      else if (GoodRecPS and !GoodGenPS) h->fake->Fill(djmass,_w);
     
     
 
