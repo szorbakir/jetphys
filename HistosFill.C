@@ -1963,7 +1963,6 @@ void HistosFill::FillSingleBasic(HistosBasic *h)
      for (int i = 0; i != njt; ++i)
      {
       
-          prefire[i] = 0;
           prefire[i] = ecalprefire(jtpt[i],jteta[i], jp::run);
          //Calculate new weights 
          _w *= (1 - prefire[i]);
