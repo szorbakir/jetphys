@@ -2052,7 +2052,10 @@ void HistosFill::FillSingleBasic(HistosBasic *h)
       		ymaxdj = max(fabs(jty[i0]), fabs(jty[i1]));
       		GoodRap_reco =  (ymaxdj >= h->etamin and ymaxdj < h->etamax); 
       		GoodPt_reco = (_j1.Pt() >= 100. and _j2.Pt() >= 50.);
-		GoodMass_reco = (djmass > 160. and djmass < 7861.);
+		if(h->etamin < 1.0) GoodMass_reco = (djmass > 160. and djmass < 7861.);
+		else if(h->etamin == 1.0) GoodMass_reco = (djmass > 249. and djmass < 7861.);
+		else if(h->etamin == 1.5) GoodMass_reco = (djmass > 372. and djmass < 7861.);
+		else if(h->etamin == 2.0) GoodMass_reco = (djmass > 539. and djmass < 7861.);
       
       double j1_y = jty[i0]; 
       double j2_y = jty[i1];
@@ -2136,8 +2139,13 @@ void HistosFill::FillSingleBasic(HistosBasic *h)
       		gen_ymaxdj = max(fabs(gen_jty[0]), fabs(gen_jty[1]));
       		GoodRap_gen =  (gen_ymaxdj >= h->etamin and gen_ymaxdj < h->etamax);
       		GoodPt_gen =  (_j1_gen.Pt() >= 100. and _j2_gen.Pt() >= 50.);  
-      		GoodMass_gen = (gen_djmass > 160. and gen_djmass < 7861.);
+      		//GoodMass_gen = (gen_djmass > 160. and gen_djmass < 7861.);
+		if(h->etamin < 1.0) GoodMass_gen = (gen_djmass > 160. and gen_djmass < 7861.);
+		else if(h->etamin == 1.0) GoodMass_gen = (gen_djmass > 249. and gen_djmass < 7861.);
+		else if(h->etamin == 1.5) GoodMass_gen = (gen_djmass > 372. and gen_djmass < 7861.);
+		else if(h->etamin == 2.0) GoodMass_gen = (gen_djmass > 539. and gen_djmass < 7861.);
 		GoodGenPS = (GoodRap_gen and GoodPt_gen and GoodMass_gen);
+		
      
        double j1gen_y = gen_jty[0]; 
       double j2gen_y = gen_jty[1];
@@ -2277,7 +2285,11 @@ void HistosFill::FillSingleBasic(HistosBasic *h)
       		gen_ymaxdj = max(fabs(gen_jty[0]), fabs(gen_jty[1]));
       		GoodRap_gen =  (gen_ymaxdj >= h->etamin and gen_ymaxdj < h->etamax);
       		GoodPt_gen =  (_j1_gen.Pt() >= 100. and _j2_gen.Pt() >= 50.);  
-      		GoodMass_gen = (gen_djmass > 160. and gen_djmass < 7861.);
+      		//GoodMass_gen = (gen_djmass > 160. and gen_djmass < 7861.);
+		if(h->etamin < 1.0) GoodMass_gen = (gen_djmass > 160. and gen_djmass < 7861.);
+		else if(h->etamin == 1.0) GoodMass_gen = (gen_djmass > 249. and gen_djmass < 7861.);
+		else if(h->etamin == 1.5) GoodMass_gen = (gen_djmass > 372. and gen_djmass < 7861.);
+		else if(h->etamin == 2.0) GoodMass_gen = (gen_djmass > 539. and gen_djmass < 7861.);
       		GoodGenPS = (GoodRap_gen and GoodPt_gen and GoodMass_gen);
       }
       
@@ -2289,7 +2301,11 @@ void HistosFill::FillSingleBasic(HistosBasic *h)
       		GoodRap_reco =  (ymaxdj >= h->etamin and ymaxdj < h->etamax); 
       		GoodPt_reco = (_j1.Pt() >= 100. and _j2.Pt() >= 50.);
       		Reco_id = (_jetids[i0] and _jetids[i1]);
-      		GoodMass_reco = (djmass > 160. and djmass < 7861.);
+      		//GoodMass_reco = (djmass > 160. and djmass < 7861.);
+		if(h->etamin < 1.0) GoodMass_reco = (djmass > 160. and djmass < 7861.);
+		else if(h->etamin == 1.0) GoodMass_reco = (djmass > 249. and djmass < 7861.);
+		else if(h->etamin == 1.5) GoodMass_reco = (djmass > 372. and djmass < 7861.);
+		else if(h->etamin == 2.0) GoodMass_reco = (djmass > 539. and djmass < 7861.);
       		GoodRecPS = (GoodRap_reco and GoodPt_reco and GoodMass_reco and Reco_id and _pass_qcdmet);
       }
       		
