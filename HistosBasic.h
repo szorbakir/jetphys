@@ -70,7 +70,7 @@ public:
   // dijet mass
   TH1D *hdjmass;
   //TH1D *hdjmass_half;
-  //TH1D *hdjRMmass;
+  TH1D *hdjRMmass;
   //TH1D *hdjRMmass_half;
   // JEC variations
   TH1D *hdjmassUp;
@@ -103,7 +103,7 @@ public:
   TH1D *hpt_g2;
   TH1D *hdjmass_gen;
   //TH1D *hdjmass_half_gen;
-  //TH1D *hdjRMmass_gen;
+  TH1D *hdjRMmass_gen;
   //TH1D *hdjRMmass_half_gen;
   TH1D *hdjpt_leading_gen;
   TH1D *hdjpt_subleading_gen;
@@ -116,7 +116,7 @@ public:
 
   // unfolding studies dijet mass
   TH2D *matrix_gen_reco;
-  //TH2D *RMmatrix_gen_reco;
+  TH2D *RMmatrix_gen_reco;
   std::vector<TH2D *> RMmatrix_gen_reco_jk;
   TH2D *h2jetres;        // 2D delta mass vs mass plots for resolution studies
   TProfile *pdjmass_res; // Profile plot to monitor mean value of mass resolution
@@ -133,8 +133,10 @@ public:
   TH1D *marginal_reco_X3;
   TH1D *marginal_reco_X4;
   */
-  TH1D *miss;   
+  TH1D *miss;
+  TH1D *RMmiss;  
   TH1D *fake;
+  TH1D *RMfake;
   TH1D	*hdjmass_matched;
   TH1D	*hdjmass_gen_matched;
   //Lost gen jets investigation (Looks like we dont need these set of plots since we know that lost jets problem coming from ECAL veto //// 20.03.2020)

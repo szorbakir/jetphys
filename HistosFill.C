@@ -1935,6 +1935,11 @@ void HistosFill::FillSingleBasic(HistosBasic *h)
   // if (h->ismcdir)
   //   h->hpthatnlo->Fill(pthat);
 
+  if(jp::isdt){
+    double prescale = _prescales[h->trigname].find(run)->second;
+    _w *= prescale;
+  }
+
   //{ Pre-calculate some nice garden tools
   int i0 = jt3leads[0];
   int i1 = jt3leads[1];
@@ -2071,7 +2076,8 @@ void HistosFill::FillSingleBasic(HistosBasic *h)
 
           assert(h->hdjmass);
           h->hdjmass->Fill(djmass, _w);
-
+          h->hdjRMmass->Fill(djmass, _w);
+          
           // Half binned mass histo
           //assert(h->hdjmass_half);
           //h->hdjmass_half->Fill(djmass, _w);
@@ -2160,6 +2166,7 @@ void HistosFill::FillSingleBasic(HistosBasic *h)
           
           assert(h->hdjmass_gen);
           h->hdjmass_gen->Fill(gen_djmass, _w);
+          h->hdjRMmass_gen->Fill(gen_djmass, _w);
 
           // Fill half binned gen spectrum
           //assert(h->hdjmass_half_gen);
@@ -2326,7 +2333,8 @@ void HistosFill::FillSingleBasic(HistosBasic *h)
         
           assert(h->matrix_gen_reco);
           h->matrix_gen_reco->Fill(gen_djmass, djmass, _w);
-          
+          h->RMmatrix_gen_reco->Fill(gen_djmass, djmass, _w);
+
 	  assert(h->hdjmass_matched);
           h->hdjmass_matched->Fill(djmass, _w);
           
@@ -2356,9 +2364,11 @@ void HistosFill::FillSingleBasic(HistosBasic *h)
             
 	  assert(h->miss);
           h->miss->Fill(gen_djmass, _w);
-          
-	  assert(h->fake);
+          h->RMmiss->Fill(gen_djmass, _w);     
+	  
+          assert(h->fake);
           h->fake->Fill(djmass, _w);
+          h->RMfake->Fill(djmass, _w);
       }	
 
       else if (!GoodRecPS and GoodGenPS) h->miss->Fill(gen_djmass,_w);    

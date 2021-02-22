@@ -54,13 +54,33 @@ HistosBasic::HistosBasic(TDirectory *dir, string trigname, double etamin, double
 {160,  200,  249,  306,  372,  449,  539, 641,  756,  887, 1029, 1187, 1361, 1556, 1769, 2008, 2273, 2572, 2915, 3306, 3754, 4244, 4805, 5374, 6094, 6908, 7861, 8929, 10050},
 {160,  200,  249,  306,  372,  449,  539, 641,  756,  887, 1029, 1187, 1361, 1556, 1769, 2008, 2273, 2572, 2915, 3306, 3754, 4244, 4805, 5374, 6094, 6908, 7861, 8929, 10050},
 {249,  306,  372,  449,  539, 641,  756,  887, 1029, 1187, 1361, 1556, 1769, 2008, 2273, 2572, 2915, 3306, 3754, 4244, 4805, 5374, 6094, 6908, 7861, 8929, 10050},
-{372,  449,  539, 641,  756,  887, 1029, 1187, 1361, 1556, 1769, 2008, 2273, 2572, 2915, 3306, 3754, 4244, 4805, 5374, 6094, 6908, 7861, 8929, 10050},
-{539, 641,  756,  887, 1029, 1187, 1361, 1556, 1769, 2008, 2273, 2572, 2915, 3306, 3754, 4244, 4805, 5374, 6094, 6908, 7861, 8929, 10050},
-      {419, 565, 740, 944, 1181, 1455, 1770, 2132, 2546, 3019, 3558, 4171, 4869, 5663, 6564, 7589, 8752, 10072}, // dummy
-      {419, 565, 740, 944, 1181, 1455, 1770, 2132, 2546, 3019, 3558, 4171, 4869, 5663, 6564, 7589, 8752, 10072}, // dummy
-      {419, 565, 740, 944, 1181, 1455, 1770, 2132, 2546, 3019, 3558, 4171, 4869, 5663, 6564, 7589, 8752, 10072}, // dummy
+{372, 539, 756, 1029, 1361, 1769, 2273, 2915, 3754, 4805, 6094, 7861, 10050},
+{539, 756, 1029, 1361, 1769, 2273, 2915, 3754, 4805, 6094, 7861, 10050},
+
+//{372,  449,  539, 641,  756,  887, 1029, 1187, 1361, 1556, 1769, 2008, 2273, 2572, 2915, 3306, 3754, 4244, 4805, 5374, 6094, 6908, 7861, 8929, 10050},
+////{539, 641,  756,  887, 1029, 1187, 1361, 1556, 1769, 2008, 2273, 2572, 2915, 3306, 3754, 4244, 4805, 5374, 6094, 6908, 7861, 8929, 10050},
+{419, 565, 740, 944, 1181, 1455, 1770, 2132, 2546, 3019, 3558, 4171, 4869, 5663, 6564, 7589, 8752, 10072}, // dummy
+{419, 565, 740, 944, 1181, 1455, 1770, 2132, 2546, 3019, 3558, 4171, 4869, 5663, 6564, 7589, 8752, 10072}, // dummy
+{419, 565, 740, 944, 1181, 1455, 1770, 2132, 2546, 3019, 3558, 4171, 4869, 5663, 6564, 7589, 8752, 10072}, // dummy
   };
-  constexpr const unsigned int nomassranges = sizeof(massrangevseta) / sizeof(massrangevseta[0]);
+
+constexpr const unsigned int nomassranges = sizeof(massrangevseta) / sizeof(massrangevseta[0]);
+ 
+//Dijet mass binning RM
+constexpr const unsigned int noRMmass_eta = 49;
+constexpr const double RMmassrangevseta[][noRMmass_eta] = {
+  {160,  200,  249,  306,  372,  449,  539, 641,  756,  887, 1029, 1187, 1361, 1556, 1769, 2008, 2273, 2572, 2915, 3306, 3754, 4244, 4805, 5374, 6094, 6908, 7861, 8929, 10050},
+  {160,  200,  249,  306,  372,  449,  539, 641,  756,  887, 1029, 1187, 1361, 1556, 1769, 2008, 2273, 2572, 2915, 3306, 3754, 4244, 4805, 5374, 6094, 6908, 7861, 8929, 10050},
+  {249,  306,  372,  449,  539, 641,  756,  887, 1029, 1187, 1361, 1556, 1769, 2008, 2273, 2572, 2915, 3306, 3754, 4244, 4805, 5374, 6094, 6908, 7861, 8929, 10050},
+  {372,  449,  539, 641,  756,  887, 1029, 1187, 1361, 1556, 1769, 2008, 2273, 2572, 2915, 3306, 3754, 4244, 4805, 5374, 6094, 6908, 7861, 8929, 10050},
+  {539, 641,  756,  887, 1029, 1187, 1361, 1556, 1769, 2008, 2273, 2572, 2915, 3306, 3754, 4244, 4805, 5374, 6094, 6908, 7861, 8929, 10050},
+
+  {244, 296, 354, 419, 489, 565, 649, 740, 838, 944, 1058, 1181, 1313, 1455, 1607, 1770, 1945, 2132, 2332, 2546, 2775, 3019, 3279, 3558, 3854, 4171, 4509, 4869, 5253, 5663, 6099, 6564, 7060, 7589, 8152},
+  {244, 296, 354, 419, 489, 565, 649, 740, 838, 944, 1058, 1181, 1313, 1455, 1607, 1770, 1945, 2132, 2332, 2546, 2775, 3019, 3279, 3558, 3854, 4171, 4509, 4869, 5253, 5663, 6099, 6564, 7060, 7589, 8152},
+  {244, 296, 354, 419, 489, 565, 649, 740, 838, 944, 1058, 1181, 1313, 1455, 1607, 1770, 1945, 2132, 2332, 2546, 2775, 3019, 3279, 3558, 3854, 4171, 4509, 4869, 5253, 5663, 6099, 6564, 7060, 7589, 8152}};
+  constexpr const unsigned int noRMmassranges = sizeof(RMmassrangevseta) / sizeof(RMmassrangevseta[0]);
+
+
 /*
   //Half Dijet mass binning
   constexpr const unsigned int nomass_eta_half = 24;
@@ -78,7 +98,7 @@ HistosBasic::HistosBasic(TDirectory *dir, string trigname, double etamin, double
   };
   constexpr const unsigned int nomassranges_half = sizeof(massrangevseta_half) / sizeof(massrangevseta_half[0]);
 
-  //Dijet mass binning RM
+  Dijet mass binning RM
   constexpr const unsigned int noRMmass_eta = 49;
   constexpr const double RMmassrangevseta[][noRMmass_eta] = {
       {88, 156, 197, 249, 306, 372, 449, 539, 641, 756, 887, 1029, 1187, 1361, 1556, 1769, 2008, 2273, 2572, 2915, 3306, 3754, 4244, 4805, 5374, 6094},
@@ -133,7 +153,20 @@ HistosBasic::HistosBasic(TDirectory *dir, string trigname, double etamin, double
     x_mass.push_back(massrangevseta[ieta_mass][i]);
   }
   const int nx_mass = x_mass.size() - 1;
-/*
+ 
+  // RM
+  unsigned int ieta_RMmass = int(0.5 * (etamin + etamax) / 0.5);
+  assert(ieta_RMmass < noRMmassranges);
+  vector<double> x_RMmass;
+  //Chose ptrange according to eta
+  for (unsigned int i = 0; i < noRMmass_eta and RMmassrangevseta[ieta_RMmass][i] != 0; ++i){
+  if (RMmassrangevseta[ieta_RMmass][i] < 0.001)
+    break; // There are zeros in the end of the array when we're out of barrel
+  x_RMmass.push_back(RMmassrangevseta[ieta_RMmass][i]);
+  }
+const int nx_RMmass = x_RMmass.size() - 1;
+  
+  /*
   // half mass bins
   unsigned int ieta_mass_half = int(0.5 * (etamin + etamax) / 0.5);
   assert(ieta_mass_half < nomassranges_half);
@@ -234,7 +267,7 @@ HistosBasic::HistosBasic(TDirectory *dir, string trigname, double etamin, double
   //hdjmass_half = new TH1D("hdjmass_half", "", nx_mass_half, &x_mass_half[0]);
 
   // dijet mass RM
-  //hdjRMmass = new TH1D("hdjRMmass", "", nx_RMmass, &x_RMmass[0]);
+  hdjRMmass = new TH1D("hdjRMmass", "", nx_RMmass, &x_RMmass[0]);
   //hdjRMmass_half = new TH1D("hdjRMmass_half", "", nx_RMmass_half, &x_RMmass_half[0]);
 
   if (jp::isdt and jp::doUnc)
@@ -263,7 +296,7 @@ HistosBasic::HistosBasic(TDirectory *dir, string trigname, double etamin, double
     //hdjmass_half_gen = new TH1D("hdjmass_half_gen", "", nx_mass_half, &x_mass_half[0]);
 
     //GEN Info RM
-    //hdjRMmass_gen = new TH1D("hdjRMmass_gen", "", nx_RMmass, &x_RMmass[0]);
+    hdjRMmass_gen = new TH1D("hdjRMmass_gen", "", nx_RMmass, &x_RMmass[0]);
     //hdjRMmass_half_gen = new TH1D("hdjRMmass_half_gen", "", nx_RMmass_half, &x_RMmass_half[0]);
 
     // Fakes and losses...
@@ -281,7 +314,9 @@ HistosBasic::HistosBasic(TDirectory *dir, string trigname, double etamin, double
     marginal_reco_X4 = new TH1D("marginal_reco_X4", "", nx_mass, &x_mass[0]);
     */
     miss = new TH1D("miss", "", nx_mass, &x_mass[0]);
+    RMmiss = new TH1D("miss", "", nx_RMmass, &x_RMmass[0]);
     fake = new TH1D("fake", "", nx_mass, &x_mass[0]);
+    RMfake = new TH1D("fake", "", nx_RMmass, &x_RMmass[0]);
     hdjmass_gen_matched = new TH1D("hdjmass_gen_matched", "", nx_mass, &x_mass[0]);
     hdjmass_matched = new TH1D("hdjmass_matched", "", nx_mass, &x_mass[0]);
 
@@ -316,7 +351,7 @@ HistosBasic::HistosBasic(TDirectory *dir, string trigname, double etamin, double
 
     // Unfolding and resolution studies
     matrix_gen_reco = new TH2D("matrix_gen_reco", "Response_Matrix;Mjj_{gen};Mjj_{reco}", nx_mass, &x_mass[0], nx_mass, &x_mass[0]);
-    //RMmatrix_gen_reco = new TH2D("RMmatrix_gen_reco", "Response_Matrix;Mjj_{reco};Mjj_{gen}", nx_RMmass, &x_RMmass[0], nx_RMmass_half, &x_RMmass_half[0]);
+    RMmatrix_gen_reco = new TH2D("matrix_gen_reco", "Response_Matrix;Mjj_{gen};Mjj_{reco}", nx_mass, &x_mass[0], nx_RMmass, &x_RMmass[0]);
     h2jetres = new TH2D("h2jetres", "Resolution;Mjj_{gen};#Deltamass", nx_mass, &x_mass[0], 300, 0., 3.); // Delta mass vs mass plots for resolution studies
     pdjmass_res = new TProfile("pdjmass_res", "", nx_mass, &x_mass[0]);                                   //Profile plot to monitor mean values of mass resolution
   }
