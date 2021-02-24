@@ -314,9 +314,9 @@ const int nx_RMmass = x_RMmass.size() - 1;
     marginal_reco_X4 = new TH1D("marginal_reco_X4", "", nx_mass, &x_mass[0]);
     */
     miss = new TH1D("miss", "", nx_mass, &x_mass[0]);
-    RMmiss = new TH1D("miss", "", nx_RMmass, &x_RMmass[0]);
+    RMmiss = new TH1D("RMmiss", "", nx_RMmass, &x_RMmass[0]);
     fake = new TH1D("fake", "", nx_mass, &x_mass[0]);
-    RMfake = new TH1D("fake", "", nx_RMmass, &x_RMmass[0]);
+    RMfake = new TH1D("RMfake", "", nx_RMmass, &x_RMmass[0]);
     hdjmass_gen_matched = new TH1D("hdjmass_gen_matched", "", nx_mass, &x_mass[0]);
     hdjmass_matched = new TH1D("hdjmass_matched", "", nx_mass, &x_mass[0]);
 
@@ -351,7 +351,7 @@ const int nx_RMmass = x_RMmass.size() - 1;
 
     // Unfolding and resolution studies
     matrix_gen_reco = new TH2D("matrix_gen_reco", "Response_Matrix;Mjj_{gen};Mjj_{reco}", nx_mass, &x_mass[0], nx_mass, &x_mass[0]);
-    RMmatrix_gen_reco = new TH2D("matrix_gen_reco", "Response_Matrix;Mjj_{gen};Mjj_{reco}", nx_mass, &x_mass[0], nx_RMmass, &x_RMmass[0]);
+    RMmatrix_gen_reco = new TH2D("RMmatrix_gen_reco", "Response_Matrix;Mjj_{gen};Mjj_{reco}", nx_mass, &x_mass[0], nx_RMmass, &x_RMmass[0]);
     h2jetres = new TH2D("h2jetres", "Resolution;Mjj_{gen};#Deltamass", nx_mass, &x_mass[0], 300, 0., 3.); // Delta mass vs mass plots for resolution studies
     pdjmass_res = new TProfile("pdjmass_res", "", nx_mass, &x_mass[0]);                                   //Profile plot to monitor mean values of mass resolution
   }
