@@ -2007,9 +2007,9 @@ void HistosFill::FillSingleBasic(HistosBasic *h)
      }
   }
 
-  if (_pass_qcdmet and i0 >= 0 and _jetids[i0] and jtpt[i0] >= jp::goodPt and fabs(jty[i0]) <= 3.0)
+  if (_pass_qcdmet and i0 >= 0 and _jetids[i0] and jtpt[i0] >= jp::goodPt and fabs(jty[i0]) <= 2.5)
   { 
-    if (i1 >= 0 and _jetids[i1] and jtpt[i1] >= jp::goodPt and fabs(jty[i1]) <= 3.0)
+    if (i1 >= 0 and _jetids[i1] and jtpt[i1] >= jp::goodPt and fabs(jty[i1]) <= 2.5)
     { 
 
 
@@ -2133,7 +2133,7 @@ void HistosFill::FillSingleBasic(HistosBasic *h)
   // GEN-LEVEL calculation
   if (jp::ismc) {
    
-   global_gen =  (gen_njt >= 2 and gen_jtpt[0] >= jp::goodPt and gen_jtpt[1] >= jp::goodPt and fabs(gen_jty[0]) <= 3.0 and fabs(gen_jty[1]) <= 3.0);
+   global_gen =  (gen_njt >= 2 and gen_jtpt[0] >= jp::goodPt and gen_jtpt[1] >= jp::goodPt and fabs(gen_jty[0]) <= 2.5 and fabs(gen_jty[1]) <= 2.5);
     
    if (global_gen)
     {
@@ -2281,8 +2281,8 @@ void HistosFill::FillSingleBasic(HistosBasic *h)
     if (jp::doRmatrix){
 
 
-      global_reco = (njt >= 2 and jtpt[i0] >= jp::goodPt and jtpt[i1] >= jp::goodPt and fabs(jty[i0]) <= 3.0 and fabs(jty[i1]) <= 3.0);
-      global_gen =  (gen_njt >= 2 and gen_jtpt[0] >= jp::goodPt and gen_jtpt[1] >= jp::goodPt and fabs(gen_jty[0]) <= 3.0 and fabs(gen_jty[1]) <= 3.0);
+      global_reco = (njt >= 2 and jtpt[i0] >= jp::goodPt and jtpt[i1] >= jp::goodPt and fabs(jty[i0]) <= 2.5 and fabs(jty[i1]) <= 2.5);
+      global_gen =  (gen_njt >= 2 and gen_jtpt[0] >= jp::goodPt and gen_jtpt[1] >= jp::goodPt and fabs(gen_jty[0]) <= 2.5 and fabs(gen_jty[1]) <= 2.5);
       
      
      if (global_gen){
